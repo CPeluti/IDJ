@@ -10,14 +10,14 @@ Music::Music (std::string file){
     music = nullptr;
     Open(file);
 }
-void Music::Stop (int ms = 1500){
+void Music::Stop (int ms){
     Mix_FadeOutMusic(ms);
 }
 Music::~Music (){
     Music::Stop();
     Mix_FreeMusic(music);
 }
-void Music::Play (int times = -1){
+void Music::Play (int times){
     if(IsOpen()){
         Mix_PlayMusic(music, times);
     }
