@@ -16,7 +16,7 @@ Game::Game(std::string title, int width, int height) {
         Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024);
         Mix_AllocateChannels(32);
         this->window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
-        this->renderer = SDL_CreateRenderer(this->window, -1, (SDL_RENDERER_SOFTWARE | SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE));
+        this->renderer = SDL_CreateRenderer(this->window, -1, (SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE));
         this->state = new State();
     }
 }
@@ -29,7 +29,7 @@ Game::~Game() {
     SDL_Quit();
 }
 SDL_Renderer* Game::GetRenderer() {
-    return renderer;
+    return this->renderer;
 }
 State& Game::GetState() {
     return *state;

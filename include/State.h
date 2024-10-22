@@ -10,6 +10,6 @@ class State{
         void Run ();
     private: 
         Sprite* bg;
-        Music music;
+        Music* music;
         bool quitRequested;
 };

@@ -16,11 +16,11 @@ Sprite::~Sprite(){
     }
 }
 void Sprite::Open(std::string file){
-    if(!IsOpen()){
+    if(IsOpen()){
         SDL_DestroyTexture(texture);
     }
     texture = IMG_LoadTexture(Game::GetInstance().GetRenderer(), file.c_str());
-    if(IsOpen()){
+    if(!IsOpen()){
         std::cout << "Error loading texture: " << SDL_GetError() << std::endl;
         return;
     }

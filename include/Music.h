@@ -6,8 +6,8 @@ class Music {
         Music ();
         Music (std::string file);
         ~Music ();
-        void Play (int times);
-        void Stop (int ms);
+        void Play (int times = -1);
+        void Stop (int ms = 1500);
         void Open (std::string file);
         bool IsOpen ();
     private:
