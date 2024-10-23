@@ -50,4 +50,4 @@ Component* GameObject::GetComponent(std::string type) {
         }
     }
     return nullptr;
-};
+}
