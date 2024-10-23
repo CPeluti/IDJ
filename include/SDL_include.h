@@ -1,4 +1,4 @@
-
+// #pragma once
 /* - Como usar esse arquivo:
  *
  * Onde quiser adicionar, por exemplo, SDL_image e SDL_mixer em um arquivo, faça o seguinte e
