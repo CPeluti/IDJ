@@ -4,43 +4,54 @@
 #include "SpriteRenderer.h"
 #include <iostream>
 
-State::State (){
+State::State()
+{
     quitRequested = false;
     // bg = new Sprite();
-    GameObject* bg = new GameObject();
-    SpriteRenderer* sr = new SpriteRenderer(*bg, "resources/img/Background.png",1,1);
+    GameObject *bg = new GameObject();
+    SpriteRenderer *sr = new SpriteRenderer(*bg, "resources/img/Background.png", 1, 1);
     bg->AddComponent(sr);
     this->AddObject(bg);
     music = new Music("resources/audio/BGM.wav");
     music->Play();
-} 
-State::~State (){
+}
+State::~State()
+{
     this->objectArray.clear();
 }
-bool State::QuitRequested (){
+bool State::QuitRequested()
+{
     return quitRequested;
 }
-void State::LoadAssets (){}
-void State::Update (float dt){
-    for(int i = 0; (int)this->objectArray.size(); i++){
+void State::LoadAssets() {}
+void State::Update(float dt)
+{
+    for (int i = 0; (int)this->objectArray.size(); i++)
+    {
         objectArray[i]->Update(dt);
     }
-    if (SDL_QuitRequested()){
+    if (SDL_QuitRequested())
+    {
         quitRequested = true;
     }
-    for(int i = 0; (int)this->objectArray.size(); i++){
-        if (objectArray[i]->IsDead()){
+    for (int i = 0; (int)this->objectArray.size(); i++)
+    {
+        if (objectArray[i]->IsDead())
+        {
             objectArray.erase(objectArray.begin() + i);
         }
     }
 }
-void State::Render (){
-    for(int i = 0; (int)this->objectArray.size(); i++){
+void State::Render()
+{
+    for (int i = 0; (int)this->objectArray.size(); i++)
+    {
         objectArray[i]->Render();
     }
     // bg->Open("resources/img/Background.png");
     // bg->Render(0, 0);
 }
-void State::AddObject(GameObject* object){
+void State::AddObject(GameObject *object)
+{
     objectArray.emplace_back(std::unique_ptr<GameObject>(object));
 }
