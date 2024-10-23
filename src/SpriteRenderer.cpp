@@ -11,9 +11,11 @@ SpriteRenderer::SpriteRenderer(GameObject &associated) : Component(associated)
     this->timeElapsed = 0;
 }
 
-SpriteRenderer::SpriteRenderer(GameObject &associated, std::string file, int frameCountW, int frameCountH) : Component(associated)
+SpriteRenderer::SpriteRenderer(GameObject &associated, std::string file, int frameCountW, int frameCountH) : Component(associated), sprite(file, frameCountW, frameCountH)
 {
-    this->sprite = Sprite(file, frameCountW, frameCountH);
+    // this->sprite.Open(file);
+    // this->sprite.SetFrameCount(frameCountW, frameCountH);
+
     associated.box.w = sprite.GetWidth();
     associated.box.h = sprite.GetHeight();
     this->frameStart = 0;
@@ -62,7 +64,6 @@ void SpriteRenderer::Update(float dt)
 
 void SpriteRenderer::Render()
 {
-    std::cout << "aqui" << std::endl;
     sprite.Render(associated.box.x, associated.box.y, associated.box.w, associated.box.h);
 }
 
