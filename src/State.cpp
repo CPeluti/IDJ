@@ -9,7 +9,7 @@ State::State()
     quitRequested = false;
     // bg = new Sprite();
     GameObject *bg = new GameObject();
-    SpriteRenderer *sr = new SpriteRenderer(*bg, "resources/img/Background.png", 1, 1);
+    SpriteRenderer *sr = new SpriteRenderer(*bg, "resources/img/Player.png", 1, 1);
     bg->AddComponent(sr);
     this->AddObject(bg);
     music = new Music("resources/audio/BGM.wav");
@@ -26,7 +26,7 @@ bool State::QuitRequested()
 void State::LoadAssets() {}
 void State::Update(float dt)
 {
-    for (int i = 0; (int)this->objectArray.size(); i++)
+    for (int i = 0; i < (int)this->objectArray.size(); i++)
     {
         objectArray[i]->Update(dt);
     }
@@ -34,7 +34,7 @@ void State::Update(float dt)
     {
         quitRequested = true;
     }
-    for (int i = 0; (int)this->objectArray.size(); i++)
+    for (int i = 0; i < (int)this->objectArray.size(); i++)
     {
         if (objectArray[i]->IsDead())
         {
@@ -44,7 +44,7 @@ void State::Update(float dt)
 }
 void State::Render()
 {
-    for (int i = 0; (int)this->objectArray.size(); i++)
+    for (int i = 0; i < (int)this->objectArray.size(); i++)
     {
         objectArray[i]->Render();
     }

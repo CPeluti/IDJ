@@ -27,7 +27,6 @@ void GameObject::Render()
 {
     for (int i = 0; i < (int)this->components.size(); i++)
     {
-        std::cout << "teste" << std::endl;
         this->components[i]->Render();
     }
 }

@@ -5,10 +5,12 @@
 #include "SDL_include.h"
 #include "Game.h"
 
-Game* Game::instance = nullptr;
+Game *Game::instance = nullptr;
 
-Game::Game(std::string title, int width, int height) {
-    if(this->instance == nullptr) {
+Game::Game(std::string title, int width, int height)
+{
+    if (this->instance == nullptr)
+    {
         this->instance = this;
         SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
         IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF);
@@ -20,7 +22,8 @@ Game::Game(std::string title, int width, int height) {
         this->state = new State();
     }
 }
-Game::~Game() {
+Game::~Game()
+{
     SDL_DestroyRenderer(this->renderer);
     SDL_DestroyWindow(this->window);
     Mix_CloseAudio();
@@ -28,25 +31,30 @@ Game::~Game() {
     IMG_Quit();
     SDL_Quit();
 }
-SDL_Renderer* Game::GetRenderer() {
+SDL_Renderer *Game::GetRenderer()
+{
     return this->renderer;
 }
-State& Game::GetState() {
+State &Game::GetState()
+{
     return *state;
 }
-Game& Game::GetInstance() {
-    if(Game::instance == nullptr) {
+Game &Game::GetInstance()
+{
+    if (Game::instance == nullptr)
+    {
         new Game("190085312", 1200, 900);
     }
     return *Game::instance;
 }
-void Game::Run() {
-    while(!state->QuitRequested()) {
+void Game::Run()
+{
+    while (!state->QuitRequested())
+    {
         state->Update(0);
         state->Render();
         SDL_RenderPresent(renderer);
         SDL_Delay(33);
-
     }
     return;
 }
