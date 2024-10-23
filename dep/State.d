@@ -1,8 +1,8 @@
-dep/main.d bin/main.o: src/main.cpp /usr/include/stdc-predef.h \
- include/SDL_include.h include/SDL2/SDL.h include/SDL2/SDL_main.h \
- include/SDL2/SDL_stdinc.h include/SDL2/SDL_config.h \
- include/SDL2/SDL_platform.h include/SDL2/begin_code.h \
- include/SDL2/close_code.h \
+dep/State.d bin/State.o: src/State.cpp /usr/include/stdc-predef.h \
+ include/SDL_include.h include/SDL2/SDL_image.h include/SDL2/SDL.h \
+ include/SDL2/SDL_main.h include/SDL2/SDL_stdinc.h \
+ include/SDL2/SDL_config.h include/SDL2/SDL_platform.h \
+ include/SDL2/begin_code.h include/SDL2/close_code.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stddef.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdarg.h \
  /usr/lib/gcc/x86_64-linux-gnu/13/include/stdint.h /usr/include/stdint.h \
@@ -170,9 +170,8 @@ dep/main.d bin/main.o: src/main.cpp /usr/include/stdc-predef.h \
  include/SDL2/SDL_render.h include/SDL2/SDL_shape.h \
  include/SDL2/SDL_system.h include/SDL2/SDL_timer.h \
  include/SDL2/SDL_version.h include/SDL2/SDL_locale.h \
- include/SDL2/SDL_misc.h include/Game.h include/SDL_include.h \
- include/State.h include/Sprite.h /usr/include/c++/13/string \
- /usr/include/c++/13/bits/requires_hosted.h \
+ include/SDL2/SDL_misc.h include/State.h include/Sprite.h \
+ /usr/include/c++/13/string /usr/include/c++/13/bits/requires_hosted.h \
  /usr/include/c++/13/bits/stringfwd.h \
  /usr/include/c++/13/bits/memoryfwd.h \
  /usr/include/c++/13/bits/char_traits.h \
@@ -232,9 +231,9 @@ dep/main.d bin/main.o: src/main.cpp /usr/include/stdc-predef.h \
  /usr/include/c++/13/bits/charconv.h \
  /usr/include/c++/13/bits/functional_hash.h \
  /usr/include/c++/13/bits/hash_bytes.h \
- /usr/include/c++/13/bits/basic_string.tcc include/SDL2/SDL_image.h \
- include/SDL2/SDL.h include/Music.h include/SDL2/SDL_mixer.h \
- /usr/include/c++/13/vector /usr/include/c++/13/bits/stl_uninitialized.h \
+ /usr/include/c++/13/bits/basic_string.tcc include/SDL_include.h \
+ include/Music.h include/SDL2/SDL_mixer.h /usr/include/c++/13/vector \
+ /usr/include/c++/13/bits/stl_uninitialized.h \
  /usr/include/c++/13/bits/stl_vector.h \
  /usr/include/c++/13/bits/stl_bvector.h \
  /usr/include/c++/13/bits/vector.tcc /usr/include/c++/13/memory \
@@ -272,6 +271,7 @@ dep/main.d bin/main.o: src/main.cpp /usr/include/stdc-predef.h \
  /usr/include/c++/13/bits/atomic_lockfree_defines.h \
  /usr/include/c++/13/backward/auto_ptr.h include/GameObject.h \
  include/Rect.h include/Vec2.h include/Component.h \
+ include/SpriteRenderer.h include/Animation.h \
  /usr/include/c++/13/iostream /usr/include/c++/13/ostream \
  /usr/include/c++/13/ios /usr/include/c++/13/bits/ios_base.h \
  /usr/include/c++/13/bits/locale_classes.h \
@@ -292,6 +292,7 @@ dep/main.d bin/main.o: src/main.cpp /usr/include/stdc-predef.h \
  /usr/include/c++/13/bits/istream.tcc
 /usr/include/stdc-predef.h:
 include/SDL_include.h:
+include/SDL2/SDL_image.h:
 include/SDL2/SDL.h:
 include/SDL2/SDL_main.h:
 include/SDL2/SDL_stdinc.h:
@@ -493,8 +494,6 @@ include/SDL2/SDL_timer.h:
 include/SDL2/SDL_version.h:
 include/SDL2/SDL_locale.h:
 include/SDL2/SDL_misc.h:
-include/Game.h:
-include/SDL_include.h:
 include/State.h:
 include/Sprite.h:
 /usr/include/c++/13/string:
@@ -573,8 +572,7 @@ include/Sprite.h:
 /usr/include/c++/13/bits/functional_hash.h:
 /usr/include/c++/13/bits/hash_bytes.h:
 /usr/include/c++/13/bits/basic_string.tcc:
-include/SDL2/SDL_image.h:
-include/SDL2/SDL.h:
+include/SDL_include.h:
 include/Music.h:
 include/SDL2/SDL_mixer.h:
 /usr/include/c++/13/vector:
@@ -626,6 +624,8 @@ include/GameObject.h:
 include/Rect.h:
 include/Vec2.h:
 include/Component.h:
+include/SpriteRenderer.h:
+include/Animation.h:
 /usr/include/c++/13/iostream:
 /usr/include/c++/13/ostream:
 /usr/include/c++/13/ios:
