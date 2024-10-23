@@ -2,6 +2,7 @@
 #include "SDL_include.h"
 #include "State.h"
 #include "SpriteRenderer.h"
+#include "Zombie.h"
 #include <iostream>
 
 State::State()
@@ -9,9 +10,15 @@ State::State()
     quitRequested = false;
     // bg = new Sprite();
     GameObject *bg = new GameObject();
-    SpriteRenderer *sr = new SpriteRenderer(*bg, "resources/img/Player.png", 1, 1);
+    SpriteRenderer *sr = new SpriteRenderer(*bg, "resources/img/Background.png", 1, 1);
     bg->AddComponent(sr);
     this->AddObject(bg);
+
+    GameObject* enemy = new GameObject();
+    Component *zombie = new Zombie(*enemy);
+    enemy->AddComponent(zombie);
+    this->AddObject(enemy);
+
     music = new Music("resources/audio/BGM.wav");
     music->Play();
 }

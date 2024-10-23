@@ -63,6 +63,7 @@ void Sprite::Render(int x, int y, int w, int h)
     dstRect.y = y;
     dstRect.w = clipRect.w;
     dstRect.h = clipRect.h;
+    // std::cout << "x: " << x << std::endl << " y: " << y << std::endl << " w: " << w << std::endl << " h: " << h << std::endl;
     SDL_RenderCopy(Game::GetInstance().GetRenderer(), texture, &clipRect, &dstRect);
 }
 int Sprite::GetWidth()
