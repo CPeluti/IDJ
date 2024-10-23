@@ -1,11 +1,16 @@
 #define INCLUDE_SDL_IMAGE
 #include "SDL_include.h"
 #include "State.h"
+#include "SpriteRenderer.h"
 #include <iostream>
 
 State::State (){
     quitRequested = false;
-    bg = new Sprite();
+    // bg = new Sprite();
+    GameObject* bg = new GameObject();
+    SpriteRenderer* sr = new SpriteRenderer(*bg, "resources/img/Background.png",1,1);
+    bg->AddComponent(sr);
+    this->AddObject(bg);
     music = new Music("resources/audio/BGM.wav");
     music->Play();
 } 
@@ -33,7 +38,7 @@ void State::Render (){
     for(int i = 0; (int)this->objectArray.size(); i++){
         objectArray[i]->Render();
     }
-    bg->Open("resources/img/Background.png");
+    // bg->Open("resources/img/Background.png");
     // bg->Render(0, 0);
 }
 void State::AddObject(GameObject* object){

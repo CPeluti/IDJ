@@ -2,8 +2,8 @@
 #include <string>
 #include <vector>
 #include "Rect.h"
-
 #include "Component.h"
+// class Component;
 
 class GameObject{
     public:

@@ -7,6 +7,13 @@ Rect::Rect() {
     this->h = 0;
 }
 
+Rect::Rect(float x, float y, float w, float h) {
+    this->x = x;
+    this->y = y;
+    this->w = w;
+    this->h = h;
+}
+
 Rect Rect::AddVector(Rect a, Vec2 b){
     return Rect(a.x + b.x, a.y + b.y, a.w, a.h);
 }

@@ -1,7 +1,8 @@
 #include "GameObject.h"
 #include "Animation.h"
 #include "Sprite.h"
-class SpriteRenderer {
+
+class SpriteRenderer : public Component {
     public:
         SpriteRenderer(GameObject& associated);
         SpriteRenderer(GameObject& associated, std::string file, int frameCountW = 1, int frameCountH = 1);
