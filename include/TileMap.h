@@ -1,8 +1,8 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include "TileSet.h"
 class GameObject;
-class TileSet;
 class TileMap {
     public:
         TileMap(GameObject& associated, std::string file, TileSet* tileSet);
@@ -10,7 +10,7 @@ class TileMap {
         void SetTileSet(TileSet* tileSet);
         int& At (int x, int y, int z = 0);
         void Render();
-        void Render(int layer);
+        void RenderLayer(int layer, int cameraX, int cameraY);
         int GetWidth();
         int GetHeight();
         int GetDepth();
