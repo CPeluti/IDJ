@@ -10,7 +10,7 @@ class TileMap {
         void SetTileSet(TileSet* tileSet);
         int& At (int x, int y, int z = 0);
         void Render();
-        void RenderLayer(int layer, int cameraX, int cameraY);
+        void RenderLayer(int layer);
         int GetWidth();
         int GetHeight();
         int GetDepth();

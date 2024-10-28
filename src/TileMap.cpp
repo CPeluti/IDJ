@@ -57,7 +57,7 @@ int& TileMap::At(int x, int y, int z){
     // }
 }
 
-void TileMap::RenderLayer(int layer, int cameraX, int cameraY){
+void TileMap::RenderLayer(int layer){
     int spaceY = tileSet->GetTileHeight();
     int spaceX = tileSet->GetTileWidth();
     for(int y = 0; y<GetWidth(); y++){
@@ -69,6 +69,6 @@ void TileMap::RenderLayer(int layer, int cameraX, int cameraY){
 
 void TileMap::Render(){
     for(int z = 0; z<GetDepth(); z++){
-        RenderLayer(z,0,0);
+        RenderLayer(z);
     }
 }
