@@ -1,10 +1,13 @@
 #include "TileSet.h"
+#include <iostream>
 
-TileSet::TileSet(int tileWidth, int tileHeight, std::string file): tileSet()
+TileSet::TileSet(int tileWidth, int tileHeight, std::string file): tileSet(file)
 {
     this->tileWidth = tileWidth;
     this->tileHeight = tileHeight;
-    tileSet.Open(file);
+    // std::cout << "open" << std::endl;
+    // tileSet.Open(file);
+    // std::cout << "opened" << std::endl;
     if(tileSet.IsOpen())
     {
         int frameCountW = tileSet.GetWidth() / tileWidth;

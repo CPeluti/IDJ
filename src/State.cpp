@@ -1,7 +1,8 @@
 #define INCLUDE_SDL_IMAGE
 #include "SDL_include.h"
 #include "State.h"
-#include "SpriteRenderer.h"
+#include "TileSet.h"
+#include "TileMap.h"
 #include "Zombie.h"
 #include <iostream>
 
@@ -9,10 +10,18 @@ State::State()
 {
     quitRequested = false;
     // bg = new Sprite();
-    GameObject *bg = new GameObject();
-    SpriteRenderer *sr = new SpriteRenderer(*bg, "resources/img/Background.png", 1, 1);
-    bg->AddComponent(sr);
+    // GameObject *bg = new GameObject();
+    // SpriteRenderer *sr = new SpriteRenderer(*bg, "resources/img/Background.png", 1, 1);
+    // bg->AddComponent(sr);
+
+    GameObject* bg = new GameObject();
+    TileSet* tileset = new TileSet(64,64,"resources/img/Tileset.png");
+    TileMap* tilemap = new TileMap(*bg,"resources/map/map.txt", tileset);
+    bg->box.x = -500;
+    bg->box.y = -500;
+    bg->AddComponent(tilemap);
     this->AddObject(bg);
+
 
     GameObject* enemy = new GameObject();
     Component *zombie = new Zombie(*enemy);
@@ -53,6 +62,7 @@ void State::Render()
 {
     for (int i = 0; i < (int)this->objectArray.size(); i++)
     {
+        std::cout << "rendering" << std::endl;
         objectArray[i]->Render();
     }
     // bg->Open("resources/img/Background.png");

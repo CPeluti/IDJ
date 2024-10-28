@@ -209,7 +209,7 @@ dep/State.d bin/State.o: src/State.cpp include/SDL_include.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/atomic_lockfree_defines.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/backward/auto_ptr.h \
  include/GameObject.h include/Rect.h include/Vec2.h include/Component.h \
- include/SpriteRenderer.h include/Animation.h include/Zombie.h \
+ include/TileSet.h include/TileMap.h include/Zombie.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/iostream \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/ostream \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/ios \
@@ -487,8 +487,8 @@ include/GameObject.h:
 include/Rect.h:
 include/Vec2.h:
 include/Component.h:
-include/SpriteRenderer.h:
-include/Animation.h:
+include/TileSet.h:
+include/TileMap.h:
 include/Zombie.h:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/iostream:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/ostream:

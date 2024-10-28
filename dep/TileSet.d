@@ -181,7 +181,30 @@ dep/TileSet.d bin/TileSet.o: src/TileSet.cpp include/TileSet.h \
  include/SDL2/SDL_render.h include/SDL2/SDL_shape.h \
  include/SDL2/SDL_system.h include/SDL2/SDL_timer.h \
  include/SDL2/SDL_version.h include/SDL2/SDL_locale.h \
- include/SDL2/SDL_misc.h
+ include/SDL2/SDL_misc.h \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/iostream \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/ostream \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/ios \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/ios_base.h \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/locale_classes.h \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/locale_classes.tcc \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/system_error \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/error_constants.h \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/stdexcept \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/streambuf \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/streambuf.tcc \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/basic_ios.h \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/locale_facets.h \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/cwctype \
+ C:/TDM-GCC-32/include/wctype.h \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/ctype_base.h \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/streambuf_iterator.h \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/ctype_inline.h \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/locale_facets.tcc \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/basic_ios.tcc \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/ostream.tcc \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/istream \
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/istream.tcc
 include/TileSet.h:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/string:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/c++config.h:
@@ -403,3 +426,26 @@ include/SDL2/SDL_timer.h:
 include/SDL2/SDL_version.h:
 include/SDL2/SDL_locale.h:
 include/SDL2/SDL_misc.h:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/iostream:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/ostream:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/ios:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/ios_base.h:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/locale_classes.h:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/locale_classes.tcc:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/system_error:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/error_constants.h:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/stdexcept:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/streambuf:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/streambuf.tcc:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/basic_ios.h:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/locale_facets.h:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/cwctype:
+C:/TDM-GCC-32/include/wctype.h:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/ctype_base.h:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/streambuf_iterator.h:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/ctype_inline.h:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/locale_facets.tcc:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/basic_ios.tcc:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/ostream.tcc:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/istream:
+C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/istream.tcc:
