@@ -3,8 +3,9 @@
 #include <memory>
 #include <string>
 #include <iostream>
+#include "GameObject.h"
 
-TileMap::TileMap(GameObject& associated, std::string file, TileSet* tileSet): tileSet(tileSet){
+TileMap::TileMap(GameObject& associated, std::string file, TileSet* tileSet): Component(associated), tileSet(tileSet){
     Load(file);
 }
 
@@ -14,6 +15,7 @@ void TileMap::Load(std::string file){
     int counter = 0;
     if(map.is_open()){
         while(std::getline(map, line,',')){
+            // cout << "item" << counter
             int number = std::stoi(line);
             switch(counter){
                 case 0:
@@ -29,6 +31,7 @@ void TileMap::Load(std::string file){
                     tileMatrix.push_back(number);
                     break;
             }
+            counter++;
         }
     }
 }
@@ -50,7 +53,8 @@ void TileMap::SetTileSet(TileSet* ts){
 
 int& TileMap::At(int x, int y, int z){
     // if (x < mapWidth && y < mapHeight && z < mapDepth){
-        int pos = x*(y*GetWidth()) + z * GetHeight()* GetWidth();
+        int pos = x+(y*GetWidth()) + z * GetHeight()* GetWidth();
+    
         return this->tileMatrix[pos];
     // } else {
         // std::cout << "Coordinates exceed tilemap boundary" << std::endl;
@@ -58,17 +62,23 @@ int& TileMap::At(int x, int y, int z){
 }
 
 void TileMap::RenderLayer(int layer){
-    int spaceY = tileSet->GetTileHeight();
     int spaceX = tileSet->GetTileWidth();
+    int spaceY = tileSet->GetTileHeight();
     for(int y = 0; y<GetWidth(); y++){
         for(int x=0; x<GetHeight(); x++){
-            tileSet->RenderTile(At(x,y,layer),spaceX*x, spaceY*y);
+            tileSet->RenderTile(At(x,y,layer),spaceX*x+this->associated.box.x, spaceY*y+this->associated.box.y);
         }
     }
 }
 
 void TileMap::Render(){
+    // return;
     for(int z = 0; z<GetDepth(); z++){
         RenderLayer(z);
     }
+}
+void TileMap::Update(float dt){}
+
+bool TileMap::Is(std::string type){
+    return type == "TileMap";
 }

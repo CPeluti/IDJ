@@ -5,6 +5,8 @@
 #include "Game.h"
 Sprite::Sprite()
 {
+    frameCountH = 1;
+    frameCountW = 1;
     texture = nullptr;
 }
 Sprite::Sprite(std::string file, int frameCountW, int frameCountH)

@@ -1,9 +1,11 @@
+#pragma once
 #include <string>
 #include <vector>
 #include <memory>
 #include "TileSet.h"
+#include "Component.h"
 class GameObject;
-class TileMap {
+class TileMap : public Component {
     public:
         TileMap(GameObject& associated, std::string file, TileSet* tileSet);
         void Load (std::string file);
@@ -14,6 +16,8 @@ class TileMap {
         int GetWidth();
         int GetHeight();
         int GetDepth();
+        bool Is(std::string type);
+        void Update(float dt);
     private:
         std::vector<int> tileMatrix;
         std::unique_ptr<TileSet> tileSet;

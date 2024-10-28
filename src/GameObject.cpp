@@ -27,6 +27,7 @@ void GameObject::Render()
 {
     for (int i = 0; i < (int)this->components.size(); i++)
     {
+        std::cout << "rendering " << this->components[i]->Is("TileMap");
         this->components[i]->Render();
     }
 }

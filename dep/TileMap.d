@@ -208,7 +208,7 @@ dep/TileMap.d bin/TileMap.o: src/TileMap.cpp include/TileMap.h \
  include/SDL2/SDL_render.h include/SDL2/SDL_shape.h \
  include/SDL2/SDL_system.h include/SDL2/SDL_timer.h \
  include/SDL2/SDL_version.h include/SDL2/SDL_locale.h \
- include/SDL2/SDL_misc.h \
+ include/SDL2/SDL_misc.h include/Component.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/fstream \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/istream \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/ios \
@@ -236,7 +236,8 @@ dep/TileMap.d bin/TileMap.o: src/TileMap.cpp include/TileMap.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/basic_file.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/c++io.h \
  C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/fstream.tcc \
- C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/iostream
+ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/iostream \
+ include/GameObject.h include/Rect.h include/Vec2.h
 include/TileMap.h:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/string:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/c++config.h:
@@ -485,6 +486,7 @@ include/SDL2/SDL_timer.h:
 include/SDL2/SDL_version.h:
 include/SDL2/SDL_locale.h:
 include/SDL2/SDL_misc.h:
+include/Component.h:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/fstream:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/istream:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/ios:
@@ -513,3 +515,6 @@ C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/basic_file.h:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/mingw32/bits/c++io.h:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/bits/fstream.tcc:
 C:/TDM-GCC-32/lib/gcc/mingw32/10.3.0/include/c++/iostream:
+include/GameObject.h:
+include/Rect.h:
+include/Vec2.h:
