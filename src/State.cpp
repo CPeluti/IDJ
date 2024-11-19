@@ -62,7 +62,7 @@ void State::Render()
 {
     for (int i = 0; i < (int)this->objectArray.size(); i++)
     {
-        std::cout << "rendering" << std::endl;
+        // std::cout << "rendering" << std::endl;
         objectArray[i]->Render();
     }
     // bg->Open("resources/img/Background.png");

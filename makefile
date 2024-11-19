@@ -9,7 +9,7 @@ INC_PATHS = -I$(INC_PATH) $(addprefix -I,$(SDL_INC_PATH))
 
 FLAGS = -std=c++11 -Wall -pedantic -Wextra -Wno-unused-parameter -Werror=init-self
 
-DFLAGS = -ggdb -O0 -DDEBUG
+DFLAGS = -ggdb -O0 -DDEBUG -g
 
 RFLAGS = -O3 -mtune=native
 
