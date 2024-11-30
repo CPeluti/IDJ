@@ -5,12 +5,7 @@
 #include <iostream>
 #include "GameObject.h"
 
-<<<<<<< HEAD
 TileMap::TileMap(GameObject& associated, std::string file, TileSet* tileSet): Component(associated), tileSet(tileSet){
-=======
-TileMap::TileMap(GameObject &associated, std::string file, TileSet *tileSet) : tileSet(tileSet), Component(associated)
-{
->>>>>>> a2587e1c8163e832fa0c5f6cf63c8b44c121b8b9
     Load(file);
 }
 
@@ -19,16 +14,9 @@ void TileMap::Load(std::string file)
     std::string line;
     std::ifstream map(file);
     int counter = 0;
-<<<<<<< HEAD
     if(map.is_open()){
         while(std::getline(map, line,',')){
             // cout << "item" << counter
-=======
-    if (map.is_open())
-    {
-        while (std::getline(map, line, ','))
-        {
->>>>>>> a2587e1c8163e832fa0c5f6cf63c8b44c121b8b9
             int number = std::stoi(line);
             switch (counter)
             {
