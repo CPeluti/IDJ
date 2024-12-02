@@ -24,15 +24,14 @@ SDL_Texture* Resources::GetImage(std::string file){
 }
 
 void Resources::ClearImages(){
-    for(auto it = imageTable.cbegin(), next_it = it; it != imageTable.cend(); it=next_it){
+    for(auto const &entry : imageTable){
         try {
-            ++next_it;
-            SDL_DestroyTexture(it->second);
-            imageTable.erase(it);
+            SDL_DestroyTexture(entry.second);
         } catch (std::string e){
             std::cout << "Failed to delete texture: " << e << std::endl; 
         }
     }
+    imageTable.clear();
 }
 
 Mix_Music* Resources::GetMusic(std::string file){
@@ -50,15 +49,14 @@ Mix_Music* Resources::GetMusic(std::string file){
 }
 
 void Resources::ClearMusics(){
-    for(auto it = musicTable.cbegin(), next_it = it; it != musicTable.cend(); it=next_it){
+    for(auto const &entry : musicTable){
         try {
-            ++next_it;
-            Mix_FreeMusic(it->second);
-            musicTable.erase(it);
+            Mix_FreeMusic(entry.second);
         } catch (std::string e){
             std::cout << "Failed to delete music: " << e << std::endl; 
         }
     }
+    musicTable.clear();
 }
 
 
@@ -77,14 +75,13 @@ Mix_Chunk* Resources::GetSound(std::string file){
 }
 
 void Resources::ClearSounds(){
-    for(auto it = soundTable.cbegin(), next_it = it; it != soundTable.cend(); it=next_it){
+    for(auto const &entry : soundTable){
         try {
-            ++next_it;
-            Mix_FreeChunk(it->second);
-            soundTable.erase(it);
+            Mix_FreeChunk(entry.second);
         } catch (std::string e){
             std::cout << "Failed to delete sound: " << e << std::endl; 
         }
     }
+    soundTable.clear();
 }
 
