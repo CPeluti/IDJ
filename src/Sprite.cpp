@@ -3,6 +3,7 @@
 #include "SDL_include.h"
 #include <iostream>
 #include "Game.h"
+#include "Resources.h"
 Sprite::Sprite()
 {
     frameCountH = 1;
@@ -17,23 +18,14 @@ Sprite::Sprite(std::string file, int frameCountW, int frameCountH)
 }
 Sprite::~Sprite()
 {
-    if (IsOpen())
-    {
-        SDL_DestroyTexture(texture);
-    }
+    // if (IsOpen())
+    // {
+    //     SDL_DestroyTexture(texture);
+    // }
 }
 void Sprite::Open(std::string file)
 {
-    if (IsOpen())
-    {
-        SDL_DestroyTexture(texture);
-    }
-    texture = IMG_LoadTexture(Game::GetInstance().GetRenderer(), file.c_str());
-    if (!IsOpen())
-    {
-        std::cout << "Error loading texture: " << SDL_GetError() << std::endl;
-        return;
-    }
+    texture = Resources::GetImage(file);
     SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
     SetClip(0, 0, width, height);
 }

@@ -4,7 +4,7 @@
 #include "SpriteRenderer.h"
 #include "AnimationSetter.h"
 
-Zombie::Zombie(GameObject &associated) : Component(associated), hitpoints(100){
+Zombie::Zombie(GameObject &associated) : Component(associated), hitpoints(100), deathSound("resources/audio/Dead.wav"){
     SpriteRenderer* srZombie = new SpriteRenderer(associated, "resources/img/Enemy.png", 3, 2);
     associated.AddComponent(srZombie);
     
@@ -21,7 +21,9 @@ Zombie::Zombie(GameObject &associated) : Component(associated), hitpoints(100){
 
 void Zombie::Damage(int dmg){
     hitpoints -= dmg;
-    if(hitpoints <= 0){
+    if(hitpoints <= 0 && !isDead){
+        isDead = true;
+        deathSound.Play(1);
         AnimationSetter* as = (AnimationSetter*)associated.GetComponent("AnimationSetter") ;
         as->SetAnimation("dead");
     }

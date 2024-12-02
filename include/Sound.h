@@ -9,7 +9,7 @@ class Sound {
         ~Sound();
         void Play(int times = 1);
         void Stop();
-        void Open();
+        void Open(std::string file);
         bool IsOpen();
     
     private:

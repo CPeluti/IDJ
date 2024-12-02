@@ -1,4 +1,5 @@
 #include "Component.h"
+#include "Sound.h"
 class GameObject;
 class Zombie : public Component
 {
@@ -10,5 +11,7 @@ public:
     bool Is(std::string type);
 
 private:
+    bool isDead;
     int hitpoints;
+    Sound deathSound;
 };

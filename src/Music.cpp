@@ -3,6 +3,7 @@
 #include <string>
 #include "SDL_include.h"
 #include "Music.h"
+#include "Resources.h"
 Music::Music (){
     music = nullptr;
 }
@@ -15,7 +16,7 @@ void Music::Stop (int ms){
 }
 Music::~Music (){
     Music::Stop();
-    Mix_FreeMusic(music);
+    // Mix_FreeMusic(music);
 }
 void Music::Play (int times){
     if(IsOpen()){
@@ -23,7 +24,8 @@ void Music::Play (int times){
     }
 }
 void Music::Open (std::string file){
-    music = Mix_LoadMUS(file.c_str());
+    // music = Mix_LoadMUS(file.c_str());
+    music = Resources::GetMusic(file);
 }
 bool Music::IsOpen (){
     return music != nullptr;
