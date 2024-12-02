@@ -22,11 +22,14 @@ State::State()
     bg->AddComponent(tilemap);
     this->AddObject(bg);
 
-
-    GameObject* enemy = new GameObject();
-    Component *zombie = new Zombie(*enemy);
-    enemy->AddComponent(zombie);
-    this->AddObject(enemy);
+    for(int i = 0; i<10; i++){
+        GameObject* enemy = new GameObject();
+        Component *zombie = new Zombie(*enemy);
+        enemy->AddComponent(zombie);
+        this->AddObject(enemy);
+        enemy->box.x = enemy->box.x + 50 * i; 
+        enemy->box.y = enemy->box.y + 10 * i; 
+    }
 
     music = new Music("resources/audio/BGM.wav");
     music->Play();
