@@ -4,7 +4,17 @@
 #include "TileSet.h"
 #include "TileMap.h"
 #include "Zombie.h"
+#include "InputManager.h"
 #include <iostream>
+
+void createZombie (int x, int y, State* state){
+    GameObject* enemy = new GameObject();
+    Component *zombie = new Zombie(*enemy);
+    enemy->AddComponent(zombie);
+    state->AddObject(enemy);
+    enemy->box.x = x; 
+    enemy->box.y = y; 
+}
 
 State::State()
 {
@@ -22,17 +32,9 @@ State::State()
     bg->AddComponent(tilemap);
     this->AddObject(bg);
 
-    for(int i = 0; i<10; i++){
-        GameObject* enemy = new GameObject();
-        Component *zombie = new Zombie(*enemy);
-        enemy->AddComponent(zombie);
-        this->AddObject(enemy);
-        enemy->box.x = enemy->box.x + 50 * i; 
-        enemy->box.y = enemy->box.y + 10 * i; 
-    }
-
     music = new Music("resources/audio/BGM.wav");
     music->Play();
+
 }
 State::~State()
 {
@@ -45,6 +47,14 @@ bool State::QuitRequested()
 void State::LoadAssets() {}
 void State::Update(float dt)
 {
+    InputManager& ip = InputManager::GetInstance();
+
+    if(ip.KeyPress(ESCAPE_KEY) || ip.QuitRequested()){
+        quitRequested = true;
+    }
+    if(ip.KeyPress(SPACE_KEY)){
+        createZombie(ip.GetMouseX(), ip.GetMouseY(), this);
+    }
     for (int i = 0; i < (int)this->objectArray.size(); i++)
     {
         objectArray[i]->Update(dt);
