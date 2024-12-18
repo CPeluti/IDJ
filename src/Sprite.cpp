@@ -4,6 +4,7 @@
 #include <iostream>
 #include "Game.h"
 #include "Resources.h"
+#include "Camera.h"
 Sprite::Sprite()
 {
     frameCountH = 1;
@@ -53,8 +54,8 @@ void Sprite::SetFrameCount(int frameCountW, int frameCountH)
 void Sprite::Render(int x, int y, int w, int h)
 {
     SDL_Rect dstRect;
-    dstRect.x = x;
-    dstRect.y = y;
+    dstRect.x = x-Camera::pos.x;
+    dstRect.y = y-Camera::pos.y;
     dstRect.w = clipRect.w;
     dstRect.h = clipRect.h;
     // std::cout << "x: " << x << std::endl << " y: " << y << std::endl << " w: " << w << std::endl << " h: " << h << std::endl;

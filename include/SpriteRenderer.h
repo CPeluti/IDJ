@@ -15,13 +15,9 @@ public:
     void Update(float dt);
     void Render();
     bool Is(std::string type);
-    void SetAnimation(Animation *animation);
+    void SetFrame(int frame);
 
 private:
     Sprite sprite;
-    int frameStart;
-    int frameEnd;
-    float frameTime;
-    int currentFrame;
-    float timeElapsed;
+
 };

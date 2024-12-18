@@ -3,9 +3,9 @@
 #include <unordered_map>
 class Animation;
 
-class AnimationSetter: public Component {
+class Animator: public Component {
     public:
-        AnimationSetter(GameObject &associated);
+        Animator(GameObject &associated);
         void Update(float dt);
         void Render();
         bool Is(std::string type);
@@ -13,4 +13,9 @@ class AnimationSetter: public Component {
         void AddAnimation(std::string name, Animation *animation);
     private:
         std::unordered_map<std::string, Animation*> animations;
+        int frameStart;
+        int frameEnd;
+        float frameTime;
+        int currentFrame;
+        float timeElapsed;
 };
