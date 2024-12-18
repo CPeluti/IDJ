@@ -8,7 +8,7 @@ GameObject::GameObject()
 
 GameObject::~GameObject()
 {
-    for (int i = (int)this->components.size(); i >= 0; i--)
+    for (int i = (int)this->components.size()-1; i >= 0; i--)
     {
         delete this->components[i];
     }

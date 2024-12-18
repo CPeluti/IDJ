@@ -22,6 +22,8 @@ Game::Game(std::string title, int width, int height)
         this->window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
         this->renderer = SDL_CreateRenderer(this->window, -1, (SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE));
         this->state = new State();
+        frameStart = SDL_GetTicks();
+        dt = 0;
     }
 }
 Game::~Game()
@@ -41,6 +43,14 @@ State &Game::GetState()
 {
     return *state;
 }
+
+Vec2 Game::GetWindowSize(){
+    int x;
+    int y;
+    SDL_GetWindowSize(window, &x, &y);
+    return Vec2(x,y); 
+}
+
 Game &Game::GetInstance()
 {
     if (Game::instance == nullptr)
@@ -49,16 +59,28 @@ Game &Game::GetInstance()
     }
     return *Game::instance;
 }
+
+void Game::CalculateDeltaTime(){
+    int oldFrame = frameStart;
+    frameStart = SDL_GetTicks();
+    dt = (frameStart-oldFrame)/1000.0;
+}
+
+float Game::GetDeltaTime(){
+    return dt;
+}
+
 void Game::Run()
 {
     InputManager& inputManager = InputManager::GetInstance();
     while (!state->QuitRequested())
     {
+        CalculateDeltaTime();
         inputManager.Update();
-        state->Update(0);
+        state->Update(dt);
         state->Render();
         SDL_RenderPresent(renderer);
-        SDL_Delay(33);
+        SDL_Delay(8);
     }
     Resources::ClearImages();
     Resources::ClearMusics();

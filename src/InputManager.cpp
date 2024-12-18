@@ -2,6 +2,8 @@
 #include "SDL_include.h"
 #include <iostream>
 #include "InputManager.h"
+#include "Game.h"
+#include "Camera.h"
 InputManager& InputManager::GetInstance(){
     static InputManager inputManager;
     return inputManager;
@@ -11,12 +13,10 @@ InputManager::InputManager():quitRequested(false), updateCounter(0), mouseX(0), 
 
 void InputManager::Update(){
     quitRequested = false;
-
     SDL_GetMouseState(&this->mouseX, &this->mouseY);
     updateCounter = SDL_GetTicks();
     SDL_Event event;
-    if(SDL_PollEvent(&event)){
-        std::cout << event.type << std::endl;
+    while(SDL_PollEvent(&event)){
         switch (event.type)
         {
         case SDL_KEYDOWN:
@@ -65,6 +65,7 @@ bool InputManager::IsKeyDown(int key){
     if(keyState.find(key) != keyState.end()){
         return keyState[key];
     }
+    return false;
 }
 
 bool InputManager::MousePress(int button){
@@ -80,11 +81,11 @@ bool InputManager::IsMouseDown(int button){
 }
 
 int InputManager::GetMouseX(){
-    return mouseX;
+    return mouseX+Camera::pos.x;
 }
 
 int InputManager::GetMouseY(){
-    return mouseY;
+    return mouseY+Camera::pos.y;
 }
 
 bool InputManager::QuitRequested(){

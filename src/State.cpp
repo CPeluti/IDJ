@@ -7,13 +7,16 @@
 #include "InputManager.h"
 #include <iostream>
 
-void createZombie (int x, int y, State* state){
+#include "Camera.h"
+
+GameObject* createZombie (int x, int y, State* state){
     GameObject* enemy = new GameObject();
     Component *zombie = new Zombie(*enemy);
     enemy->AddComponent(zombie);
     state->AddObject(enemy);
-    enemy->box.x = x; 
-    enemy->box.y = y; 
+    enemy->box.x = x-enemy->box.w/2; 
+    enemy->box.y = y-enemy->box.h/2; 
+    return enemy;
 }
 
 State::State()
@@ -23,6 +26,7 @@ State::State()
     // GameObject *bg = new GameObject();
     // SpriteRenderer *sr = new SpriteRenderer(*bg, "resources/img/Background.png", 1, 1);
     // bg->AddComponent(sr);
+    
 
     GameObject* bg = new GameObject();
     TileSet* tileset = new TileSet(64,64,"resources/img/Tileset.png");
@@ -34,6 +38,7 @@ State::State()
 
     music = new Music("resources/audio/BGM.wav");
     music->Play();
+    GameObject* enemy = createZombie(500, 400, this);
 
 }
 State::~State()
@@ -49,6 +54,8 @@ void State::Update(float dt)
 {
     InputManager& ip = InputManager::GetInstance();
 
+    Camera::Update(dt);
+    
     if(ip.KeyPress(ESCAPE_KEY) || ip.QuitRequested()){
         quitRequested = true;
     }
