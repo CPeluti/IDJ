@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include "GameObject.h"
+#include "Camera.h"
 
 TileMap::TileMap(GameObject& associated, std::string file, TileSet* tileSet): Component(associated), tileSet(tileSet){
     Load(file);
@@ -71,9 +72,11 @@ int &TileMap::At(int x, int y, int z)
 void TileMap::RenderLayer(int layer){
     int spaceX = tileSet->GetTileWidth();
     int spaceY = tileSet->GetTileHeight();
+    Vec2 offset = {this->associated.box.x, this->associated.box.y};
+    Vec2 factor = layer? Vec2::Zero : Camera::pos*0.5;
     for(int y = 0; y<GetWidth(); y++){
         for(int x=0; x<GetHeight(); x++){
-            tileSet->RenderTile(At(x,y,layer),spaceX*x+this->associated.box.x, spaceY*y+this->associated.box.y);
+            tileSet->RenderTile(At(x,y,layer),(spaceX*x+offset.x+factor.x), spaceY*y+offset.y+factor.y);
         }
     }
 }

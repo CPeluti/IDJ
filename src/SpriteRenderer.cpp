@@ -41,3 +41,7 @@ void SpriteRenderer::SetFrame(int frame)
 {
     sprite.SetFrame(frame);
 }
+
+void SpriteRenderer::SetCameraFollower(bool state){
+    sprite.cameraFollower = state;
+}

@@ -29,6 +29,9 @@ Vec2 Vec2::MultiplyByScalar(Vec2 a, int b) {
 Vec2 Vec2::MultiplyByScalar(Vec2 a, float b) {
     return Vec2(a.x * b, a.y * b);
 }
+Vec2 Vec2::MultiplyByScalar(Vec2 a, double b) {
+    return Vec2(a.x * b, a.y * b);
+}
 Vec2 Vec2::DivideByScalar(Vec2 a, int b) {
     return Vec2(a.x / b, a.y / b);
 }
@@ -47,6 +50,9 @@ Vec2 operator*(const Vec2& a, int b) {
     return Vec2::MultiplyByScalar(a, b);
 }
 Vec2 operator*(const Vec2 a, float b) {
+    return Vec2::MultiplyByScalar(a, b);
+}
+Vec2 operator*(const Vec2 a, double b) {
     return Vec2::MultiplyByScalar(a, b);
 }
 float operator*(const Vec2& a, const Vec2& b) {

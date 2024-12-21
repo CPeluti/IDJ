@@ -16,6 +16,7 @@ public:
     void Render();
     bool Is(std::string type);
     void SetFrame(int frame);
+    void SetCameraFollower(bool state);
 
 private:
     Sprite sprite;
