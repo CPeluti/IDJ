@@ -1,6 +1,6 @@
 #pragma once
 #define INCLUDE_SDL_MIXER
-#include "SDL_Include.h"
+#include "SDL_include.h"
 #include <string>
 class Sound {
     public:
