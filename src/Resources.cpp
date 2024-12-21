@@ -1,4 +1,5 @@
 #define INCLUDE_SDL_IMAGE
+#define INCLUDE_SDL_MIXER
 #include "Resources.h"
 #include "SDL_include.h"
 #include "Game.h"
