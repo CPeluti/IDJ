@@ -2,7 +2,7 @@
 #include <string>
 #define INCLUDE_SDL
 #define INCLUDE_SDL_MIXER
-#include "SDL_Include.h"
+#include "SDL_include.h"
 #include <unordered_map>
 
 class Resources{
