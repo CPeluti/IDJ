@@ -1,3 +1,5 @@
+#define INCLUDE_SDL_MIXER
+#include "SDL_include.h"
 #include "Sound.h"
 #include <iostream>
 #include "Resources.h"
@@ -26,11 +28,5 @@ void Sound::Stop(){
 }
 
 void Sound::Open(std::string file){
-    // try{
-    //     chunk = Mix_LoadWAV(file.c_str());
-    // } catch (std::string e){
-    //     std::cout << "Failed to open sound: " << SDL_GetError() << std::endl;
-    // }
     chunk = Resources::GetSound(file);
-    
 }
