@@ -15,10 +15,10 @@ class Vec2{
         static Vec2 Sub(Vec2 a,Vec2 b);
         static Vec2 MultiplyByScalar(Vec2 a,int b);
         static Vec2 MultiplyByScalar(Vec2 a,float b);
+        static Vec2 MultiplyByScalar(Vec2 a,double b);
         static Vec2 DivideByScalar(Vec2 a,int b);
         static Vec2 DivideByScalar(Vec2 a,float b);
         static float Distance(Vec2 a,Vec2 b);
-        // Vec2 operator=(const Vec2& a);
 };
 
 
@@ -26,6 +26,7 @@ Vec2 operator+(const Vec2& a, const Vec2& b);
 Vec2 operator-(const Vec2& a, const Vec2& b);
 Vec2 operator*(const Vec2& a, int b);
 Vec2 operator*(const Vec2 a, float b);
+Vec2 operator*(const Vec2 a, double b);
 float operator*(const Vec2& a, const Vec2& b);
 Vec2 operator/(const Vec2& a, int b);
 Vec2 operator/(const Vec2& a, float b);

@@ -5,6 +5,7 @@
 #include "TileMap.h"
 #include "Zombie.h"
 #include "InputManager.h"
+#include "SpriteRenderer.h"
 #include <iostream>
 
 #include "Camera.h"
@@ -23,9 +24,12 @@ State::State()
 {
     quitRequested = false;
     // bg = new Sprite();
-    // GameObject *bg = new GameObject();
-    // SpriteRenderer *sr = new SpriteRenderer(*bg, "resources/img/Background.png", 1, 1);
-    // bg->AddComponent(sr);
+    GameObject *start = new GameObject();
+    SpriteRenderer *sr = new SpriteRenderer(*start, "resources/img/Background.png", 1, 1);
+    sr->SetCameraFollower(true);
+    start->AddComponent(sr);
+    this->AddObject(start);
+    
     
 
     GameObject* bg = new GameObject();
@@ -38,7 +42,6 @@ State::State()
 
     music = new Music("resources/audio/BGM.wav");
     music->Play();
-    GameObject* enemy = createZombie(500, 400, this);
 
 }
 State::~State()
