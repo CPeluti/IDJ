@@ -60,6 +60,7 @@ jobs:
         path: JOGO.exe
 
   release:
+    needs: [build-linux32, build-32bits, build-64bits]
     runs-on: ubuntu-latest
     steps:   
 
