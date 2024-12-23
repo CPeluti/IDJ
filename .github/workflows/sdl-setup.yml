@@ -24,6 +24,7 @@ jobs:
         with:
           name: win32
           path: build/Debug/JOGO.exe
+
   build-64bits:
     runs-on: windows-latest
     steps:
@@ -40,8 +41,9 @@ jobs:
           cmake --build build --verbose
       - uses: actions/upload-artifact@v4
         with:
-          name: win32
+          name: win64
           path: build/Debug/JOGO.exe
+
   build-linux32:
     runs-on: ubuntu-24.04
     steps:
@@ -56,6 +58,7 @@ jobs:
       with:
         name: linux32
         path: JOGO.exe
+
   release:
     runs-on: ubuntu-latest
     steps:   
