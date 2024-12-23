@@ -2,10 +2,6 @@ cmake_minimum_required(VERSION 3.31.2)
 
 project(JOGO)
 
-set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-set(BUILD_SHARED_LIBS OFF)
-set(CMAKE_EXE_LINKER_FLAGS "-static")
-
 option(MYGAME_VENDORED "Use vendored libraries" OFF)
 # list(APPEND CMAKE_PREFIX_PATH "C:/setupsdl")
 
