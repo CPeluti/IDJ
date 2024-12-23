@@ -9,7 +9,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: libsdl-org/setup-sdl@try-node16
+      - uses: libsdl-org/setup-sdl@main
         id: sdl
         with:
           version: 2-latest
