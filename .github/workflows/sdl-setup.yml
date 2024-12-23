@@ -83,7 +83,7 @@ jobs:
     - name: copy resources to win32
       run: cp -r resources win32
     - name: windows32 pkg
-      run: zip win32.zip win32
+      run: zip -r win32.zip win32
 
     - uses: actions/download-artifact@v4
       with:
@@ -92,7 +92,7 @@ jobs:
     - name: copy resources to win64
       run: cp -r resources win64
     - name: windows32 pkg
-      run: zip win64.zip win64
+      run: zip -r win64.zip win64
 
     - name: Release
       uses: softprops/action-gh-release@v2
