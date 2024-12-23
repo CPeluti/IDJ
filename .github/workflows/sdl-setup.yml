@@ -1,8 +1,8 @@
 name: "sdl"
-on: 
-    push:
-        branches:
-            - test
+on:
+  push:
+    tags:
+      - "*.*.*"
 
 jobs:
   build-32bits:
