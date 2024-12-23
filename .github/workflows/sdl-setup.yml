@@ -16,8 +16,6 @@ jobs:
           version: 2-latest
           version-sdl-image: 2-latest
           version-sdl-mixer: 2-latest
-      - name: create directory
-        run: mkdir build
       - name: 'Configure and build your project'
         run: |
           cmake -A Win32 -S . -B build
