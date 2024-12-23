@@ -7,7 +7,7 @@ set(BUILD_SHARED_LIBS OFF)
 set(CMAKE_EXE_LINKER_FLAGS "-static")
 
 option(MYGAME_VENDORED "Use vendored libraries" OFF)
-list(APPEND CMAKE_PREFIX_PATH "C:\\SDL2\\")
+list(APPEND CMAKE_PREFIX_PATH "C:/setupsdl")
 
 # file(GLOB HEADERS "./include/*.h")
 # file(GLOB libs "./include/^(?!main).*.cpp")
