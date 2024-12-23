@@ -18,5 +18,5 @@ jobs:
           version-sdl-mixer: 2-latest
       - name: 'Configure and build your project'
         run: |
-          cmake -A Win32 -S . -B build
+          cmake -DCMAKE_PREFIX_PATH=${{ steps.sdl.outputs.prefix }} -A Win32 -S . -B build
           cmake --build build --verbose
