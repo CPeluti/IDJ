@@ -74,7 +74,7 @@ jobs:
         name: linux32
     - run: ls -R
     - name: linux pkg
-      run: tar -cvf linux32.tar resources linux32
+      run: tar -cvf linux32.tar resources JOGO
     
     - uses: actions/download-artifact@v4
       with:
