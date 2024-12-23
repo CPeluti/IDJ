@@ -57,7 +57,7 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: linux32
-        path: JOGO.exe
+        path: JOGO
 
   release:
     needs: [build-linux32, build-32bits, build-64bits]
