@@ -17,10 +17,11 @@ public:
     void AddComponent(Component *cpt);
     void RemoveComponent(Component *cpt);
     Component *GetComponent(std::string type);
-
+    void Start();
     Rect box;
 
 private:
+    bool started;
     std::vector<Component *> components;
     bool isDead;
 };

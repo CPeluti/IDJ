@@ -20,9 +20,8 @@ GameObject* createZombie (int x, int y, State* state){
     return enemy;
 }
 
-State::State()
+State::State() : started (false), quitRequested(false)
 {
-    quitRequested = false;
     // bg = new Sprite();
     GameObject *start = new GameObject();
     SpriteRenderer *sr = new SpriteRenderer(*start, "resources/img/Background.png", 1, 1);
@@ -91,7 +90,30 @@ void State::Render()
     // bg->Open("resources/img/Background.png");
     // bg->Render(0, 0);
 }
-void State::AddObject(GameObject *object)
+
+void State::Start(){
+    LoadAssets();
+    for(auto object : objectArray){
+        object->Start();
+    }
+    started = true;
+}
+
+std::weak_ptr<GameObject> State::AddObject(GameObject *object)
 {
-    objectArray.emplace_back(std::unique_ptr<GameObject>(object));
+    std::shared_ptr<GameObject> obj = std::shared_ptr<GameObject>(object);
+    objectArray.push_back(obj);
+    if(started){
+        obj->Start();
+    }
+    return std::weak_ptr<GameObject>(obj);
+}
+
+std::weak_ptr<GameObject> State::GetObjectPtr(GameObject *object){
+    for(auto iter : objectArray){
+        if(iter == std::shared_ptr<GameObject>(object)){
+            return std::weak_ptr<GameObject>(iter);
+        }
+    }
+    return std::weak_ptr<GameObject>();
 }
