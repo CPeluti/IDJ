@@ -9,14 +9,17 @@ class State{
     public:
         State ();
         ~State ();
+        void Start();
         bool QuitRequested ();
         void LoadAssets ();
         void Update (float dt);
         void Render ();
         void Run ();
-        void AddObject(GameObject* object);
+        std::weak_ptr<GameObject> AddObject(GameObject* object);
+        std::weak_ptr<GameObject> GetObjectPtr(GameObject* go);
     private: 
+        bool started;
+        std::vector<std::shared_ptr<GameObject>> objectArray;
         Music* music;
         bool quitRequested;
-        std::vector<std::unique_ptr<GameObject>> objectArray;
 };
