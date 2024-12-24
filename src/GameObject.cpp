@@ -3,7 +3,8 @@
 // #include "Component.h"
 GameObject::GameObject()
 {
-    this->isDead = false;
+    isDead = false;
+    started = false;
 }
 
 GameObject::~GameObject()
@@ -13,6 +14,13 @@ GameObject::~GameObject()
         delete this->components[i];
     }
     this->components.clear();
+}
+
+void GameObject::Start(){
+    for(auto iter : components){
+        iter->Start();
+    }
+    started = true;
 }
 
 void GameObject::Update(float dt)
@@ -45,6 +53,9 @@ void GameObject::RequestDelete()
 void GameObject::AddComponent(Component *cpt)
 {
     this->components.push_back(cpt);
+    if(started){
+        cpt->Start();
+    }
 }
 
 void GameObject::RemoveComponent(Component *cpt)
