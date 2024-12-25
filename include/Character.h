@@ -2,7 +2,7 @@
 #include <memory>
 #include <queue>
 #include "Timer.h"
-class Character: Component{
+class Character: public Component{
     public:
         Character (GameObject& associated, std::string sprite);
         ~Character ();
@@ -18,7 +18,7 @@ class Character: Component{
                 Vec2 pos;
         };
         void Issue (Command task);
-        Character* player;
+        static Character* player;
     private:
         std::weak_ptr<GameObject> gun;
         std::queue<Command> taskQueue;

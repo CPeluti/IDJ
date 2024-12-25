@@ -1,7 +1,7 @@
 #include "Animator.h"
 #include "SpriteRenderer.h"
 
-Animator::Animator(GameObject &associated) : Component(associated), frameStart(0), frameEnd(0), frameTime(0), currentFrame(0), timeElapsed(0) {}
+Animator::Animator(GameObject &associated) : Component(associated), current(""), frameStart(0), frameEnd(0), frameTime(0), currentFrame(0), timeElapsed(0) {}
 void Animator::Update(float dt) {
     int oldCurrentFrame = currentFrame;
     if(frameTime != 0) timeElapsed++;
@@ -21,7 +21,8 @@ bool Animator::Is(std::string type) {
     return type == "Animator";
 }
 void Animator::SetAnimation(std::string name) {
-    if(animations.find(name) != animations.end()) {
+    if(animations.find(name) != animations.end() && name != current) {
+        current = name;
         Animation *animation = animations[name];
         frameStart = animation->frameStart;
         frameEnd = animation->frameEnd;
