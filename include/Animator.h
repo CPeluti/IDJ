@@ -12,6 +12,7 @@ class Animator: public Component {
         void SetAnimation(std::string name);
         void AddAnimation(std::string name, Animation *animation);
     private:
+        std::string current;
         std::unordered_map<std::string, Animation*> animations;
         int frameStart;
         int frameEnd;
