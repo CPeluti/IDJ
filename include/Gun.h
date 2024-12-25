@@ -3,7 +3,7 @@
 #include "Sound.h" 
 #include "Timer.h" 
 #include <memory> 
-class Gun : Component{
+class Gun : public Component{
     public:
         Gun(GameObject& associated, std::weak_ptr<GameObject>character);
         void Update(float dt);
