@@ -11,5 +11,10 @@ class Rect {
         static float CenterDistance(Rect a, Rect b);
         //Check if a point is inside the rectangle
         bool contains(Vec2 point);
-
+        void operator=(const Rect& b){
+            this->h = b.h; 
+            this->w = b.w;
+            this->x = b.x;
+            this->y = b.y;
+        }
 };
