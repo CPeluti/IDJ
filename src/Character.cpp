@@ -76,3 +76,11 @@ void Character::Update(float dt){
         }
     }
 }
+
+bool Character::Is(std::string type){
+    return type == "Character";
+}
+
+void Character::Issue(Command c){
+    taskQueue.push(c);
+}
