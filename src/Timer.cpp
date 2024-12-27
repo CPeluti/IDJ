@@ -13,3 +13,7 @@ void Timer::Restart(){
 bool Timer::Expired(){
     return time >= amount;
 }
+
+float Timer::GetTime(){
+    return time;
+}

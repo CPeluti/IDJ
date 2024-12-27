@@ -1,5 +1,6 @@
 #include "Vec2.h"
 #include <cmath>
+#include <math.h>
 Vec2 Vec2::Zero = Vec2();
 Vec2::Vec2() {
     this->x = 0;
@@ -91,7 +92,8 @@ float Vec2::inclination(){
 }
 
 float Vec2::Angle(Vec2 a, Vec2 b){
-    return acos((a*b)/(a.magnitude()*b.magnitude()));
+    float angle = atan2(b.y-a.y, b.x-a.x)*180/M_PI;
+    return angle < 0 ? angle + 360: angle;
 }
 
 Vec2 Vec2::Rotate(Vec2 a, float angle){

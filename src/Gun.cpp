@@ -1,6 +1,7 @@
 #include "Gun.h"
 #include "SpriteRenderer.h"
 #include "Animator.h"
+#include <iostream>
 #define offset 100
 Gun::Gun(GameObject& associated, std::weak_ptr<GameObject>character): 
 Component(associated), 
@@ -16,29 +17,33 @@ angle(0)
     
     associated.AddComponent(sr);
     associated.AddComponent(animator);
-    
     animator->AddAnimation("idle", new Animation(0, 0, 0));
-    animator->AddAnimation("reloading", new Animation(1, 5, 5));
+    animator->AddAnimation("reloading", new Animation(1, 5, cooldown/5.0));
+
+    animator->SetAnimation("idle");
 }
 
 void Gun::Update(float dt){
-    Animator* animator = new Animator(associated);
+    Animator* animator = (Animator*)associated.GetComponent("Animator");
     if(auto c = character.lock()){
+        int centroCharX = c->box.x+c->box.w/2; 
+        int centroCharY = c->box.y+c->box.h/2;
+
+        associated.box.x = centroCharX - associated.box.w/2;
+        associated.box.y = centroCharY - associated.box.h/2;
+        if(angle > 90 && angle <=270){
+            associated.box.x -= offset;
+        } else {
+            associated.box.x += offset;
+        }
         if(cdTimer.Expired()){
-            int centroCharX = c->box.x+c->box.w/2; 
-            int centroCharY = c->box.y+c->box.h/2;
+            animator->SetAnimation("idle");
 
-            associated.box.x = centroCharX - associated.box.w/2;
-            associated.box.y = centroCharY - associated.box.h/2;
-
-            if(angle > 180 && angle <=360){
-                associated.box.x -= offset;
-            } else {
-                associated.box.x += offset;
-            }
         } else {
             animator->SetAnimation("reloading");
-            reloadSound.Play();
+            if(cdTimer.GetTime() == 0){
+                reloadSound.Play();
+            }
             cdTimer.Update(dt);
         }
     } else {
@@ -48,9 +53,14 @@ void Gun::Update(float dt){
 }
 
 void Gun::Shoot(Vec2 target){
+    Vec2 centro;
+    if(auto c = character.lock()){
+        centro.x = c->box.x+c->box.w/2; 
+        centro.y = c->box.y+c->box.h/2;
+    }
     if(cdTimer.Expired()){
-        Vec2 centro = {associated.box.x+associated.box.w/2, associated.box.y+associated.box.h/2};
-        Vec2::Angle(centro,target);
+        angle = Vec2::Angle(centro,target);
+        std::cout << angle << std::endl;
         shotSound.Play();
         cdTimer.Restart();
     }
@@ -59,3 +69,5 @@ void Gun::Shoot(Vec2 target){
 bool Gun::Is(std::string type){
     return type == "Gun";
 }
+
+void Gun::Render(){}
