@@ -4,6 +4,7 @@
 #include "TileSet.h"
 #include "TileMap.h"
 #include "Zombie.h"
+#include "Character.h"
 #include "InputManager.h"
 #include "SpriteRenderer.h"
 #include <iostream>
@@ -20,7 +21,7 @@ GameObject* createZombie (int x, int y, State* state){
     return enemy;
 }
 
-State::State() : started (false), quitRequested(false)
+State::State() : started (false), quitRequested(false), objectArray()
 {
     // bg = new Sprite();
     GameObject *start = new GameObject();
@@ -28,8 +29,6 @@ State::State() : started (false), quitRequested(false)
     sr->SetCameraFollower(true);
     start->AddComponent(sr);
     this->AddObject(start);
-    
-    
 
     GameObject* bg = new GameObject();
     TileSet* tileset = new TileSet(64,64,"resources/img/Tileset.png");
@@ -42,6 +41,13 @@ State::State() : started (false), quitRequested(false)
     music = new Music("resources/audio/BGM.wav");
     music->Play();
 
+    GameObject* character = new GameObject();
+    Character* characterComponent = new Character(*character, "resources/img/Player.png");
+    character->AddComponent(characterComponent);
+    this->AddObject(character);
+    character->box.x = 1280;
+    character->box.y = 1280;
+    Camera::Follow(character);
 }
 State::~State()
 {
@@ -84,7 +90,7 @@ void State::Render()
 {
     for (int i = 0; i < (int)this->objectArray.size(); i++)
     {
-        // std::cout << "rendering" << std::endl;
+        // std::cout << "rendering" << std::endl;5
         objectArray[i]->Render();
     }
     // bg->Open("resources/img/Background.png");
@@ -101,18 +107,17 @@ void State::Start(){
 
 std::weak_ptr<GameObject> State::AddObject(GameObject *object)
 {
-    std::shared_ptr<GameObject> obj = std::shared_ptr<GameObject>(object);
-    objectArray.push_back(obj);
+    objectArray.emplace_back(object);
     if(started){
-        obj->Start();
+        object->Start();
     }
-    return std::weak_ptr<GameObject>(obj);
+    return GetObjectPtr(object);
 }
 
 std::weak_ptr<GameObject> State::GetObjectPtr(GameObject *object){
-    for(auto iter : objectArray){
-        if(iter == std::shared_ptr<GameObject>(object)){
-            return std::weak_ptr<GameObject>(iter);
+    for(int i = 0; i<objectArray.size(); i++){
+        if(objectArray[i].get() == object){
+            return std::weak_ptr<GameObject>(objectArray[i]);
         }
     }
     return std::weak_ptr<GameObject>();

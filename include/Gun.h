@@ -1,3 +1,4 @@
+#pragma once
 #include "Component.h" 
 #include "Vec2.h" 
 #include "Sound.h" 

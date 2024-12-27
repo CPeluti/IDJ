@@ -1,4 +1,6 @@
 #pragma once
+#define _USE_MATH_DEFINES
+
 class Vec2{
     public:
         static Vec2 Zero;

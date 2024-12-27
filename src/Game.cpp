@@ -73,6 +73,7 @@ float Game::GetDeltaTime(){
 void Game::Run()
 {
     InputManager& inputManager = InputManager::GetInstance();
+    state->Start();
     while (!state->QuitRequested())
     {
         CalculateDeltaTime();

@@ -13,7 +13,7 @@ class Character: public Component{
         class Command {
             public:
                 enum CommandType {MOVE, SHOOT};
-                Command (CommandType type, float x, float y);
+                Command (CommandType type, Vec2 pos);
                 CommandType type;
                 Vec2 pos;
         };

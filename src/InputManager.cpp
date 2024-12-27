@@ -21,13 +21,13 @@ void InputManager::Update(){
         {
         case SDL_KEYDOWN:
             if(!event.key.repeat){
-                keyState[event.key.keysym.sym] = true;
-                keyUpdate[event.key.keysym.sym] = updateCounter;
+                keyState[event.key.keysym.scancode] = true;
+                keyUpdate[event.key.keysym.scancode] = updateCounter;
             }
             break;
         case SDL_KEYUP:
-            keyState[event.key.keysym.sym] = false;
-            keyUpdate[event.key.keysym.sym] = updateCounter;
+            keyState[event.key.keysym.scancode] = false;
+            keyUpdate[event.key.keysym.scancode] = updateCounter;
             break;
         case SDL_MOUSEBUTTONDOWN:
             mouseState[event.button.button] = true;
