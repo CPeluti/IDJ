@@ -1,6 +1,13 @@
+#pragma once
 #include <unordered_map>
 #define INCLUDE_SDL
 #include "SDL_include.h"
+
+#define W_KEY               SDL_SCANCODE_W
+#define A_KEY               SDL_SCANCODE_A
+#define S_KEY               SDL_SCANCODE_S
+#define D_KEY               SDL_SCANCODE_D
+
 #define LEFT_ARROW_KEY      SDLK_LEFT
 #define RIGHT_ARROW_KEY     SDLK_RIGHT
 #define UP_ARROW_KEY        SDLK_UP

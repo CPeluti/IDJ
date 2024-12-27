@@ -52,7 +52,7 @@ void GameObject::RequestDelete()
 
 void GameObject::AddComponent(Component *cpt)
 {
-    this->components.push_back(cpt);
+    this->components.emplace_back(cpt);
     if(started){
         cpt->Start();
     }
