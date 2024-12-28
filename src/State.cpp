@@ -115,7 +115,7 @@ std::weak_ptr<GameObject> State::AddObject(GameObject *object)
 }
 
 std::weak_ptr<GameObject> State::GetObjectPtr(GameObject *object){
-    for(int i = 0; i<objectArray.size(); i++){
+    for(unsigned int i = 0; i<objectArray.size(); i++){
         if(objectArray[i].get() == object){
             return std::weak_ptr<GameObject>(objectArray[i]);
         }

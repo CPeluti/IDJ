@@ -19,7 +19,7 @@ class State{
         std::weak_ptr<GameObject> GetObjectPtr(GameObject* go);
     private: 
         bool started;
+        bool quitRequested;
         std::vector<std::shared_ptr<GameObject>> objectArray;
         Music* music;
-        bool quitRequested;
 };

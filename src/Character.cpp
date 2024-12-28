@@ -28,14 +28,17 @@ Character::Character(GameObject& associated, std::string sprite):
     associated.AddComponent(playerController);
 
 
-    animator->AddAnimation("walking", new Animation(0, 5, 10));
-    animator->AddAnimation("idle", new Animation(6, 9, 5));
-    animator->AddAnimation("dead", new Animation(10, 11, 5));
+    animator->AddAnimation("walking", new Animation(0, 5, 0.2));
+    animator->AddAnimation("idle", new Animation(6, 9, 0.5));
+    animator->AddAnimation("i_walking", new Animation(0, 5, 0.2, SDL_FLIP_HORIZONTAL));
+    animator->AddAnimation("i_idle", new Animation(6, 9, 0.5, SDL_FLIP_HORIZONTAL));
+    animator->AddAnimation("dead", new Animation(10, 11, 0.5));
     animator->SetAnimation("idle");
+    flip = false;
+    Character::player = this;
 }
 
 Character::~Character(){
-    player = nullptr;
 }
 
 void Character::Start(){
@@ -77,13 +80,12 @@ void Character::Update(float dt){
         }
         taskQueue.pop();
         if(speed.x || speed.y){
-            std::cout << speed.x << std::endl;
-            animator->SetAnimation("walking");
+            animator->SetAnimation(flip?"walking":"i_walking");
             Vec2 newSpeed = (speed * dt);
             associated.box.x += newSpeed.x;
             associated.box.y += newSpeed.y;
         } else {
-            animator->SetAnimation("idle");
+            animator->SetAnimation(flip?"idle":"i_idle");
         }
     }
 }
