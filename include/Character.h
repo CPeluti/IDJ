@@ -19,6 +19,7 @@ class Character: public Component{
         };
         void Issue (Command task);
         static Character* player;
+        bool flip;
     private:
         std::weak_ptr<GameObject> gun;
         std::queue<Command> taskQueue;
