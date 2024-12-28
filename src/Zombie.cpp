@@ -49,8 +49,8 @@ void Zombie::Damage(int dmg){
     }
 }
 
-bool checkClickInsideBox(int x, int y, Rect box){
-    return (x > box.x && x < box.x+box.w) && (y > box.y && y < box.y+box.h);
+bool checkClickInsideBox(int x, int y, float boxX, float boxY, float boxW, float boxH){
+    return (x > boxX && x < boxX+boxW) && (y > boxY && y < boxY+boxH);
 }
 
 void Zombie::Update(float dt){
@@ -65,7 +65,7 @@ void Zombie::Update(float dt){
         }
     } else {
         InputManager ip = InputManager::GetInstance();
-        if(checkClickInsideBox(ip.GetMouseX(), ip.GetMouseY(), associated.box) && ip.MousePress(LEFT_MOUSE_BUTTON)){
+        if(checkClickInsideBox(ip.GetMouseX(), ip.GetMouseY(), associated.box.x, associated.box.y, associated.box.w, associated.box.h) && ip.MousePress(LEFT_MOUSE_BUTTON)){
             this->Damage(50);
         }
         if(hit && hitTimer.Expired() && !isDead){

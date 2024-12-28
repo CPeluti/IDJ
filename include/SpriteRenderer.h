@@ -15,10 +15,9 @@ public:
     void Update(float dt);
     void Render();
     bool Is(std::string type);
-    void SetFrame(int frame);
     void SetCameraFollower(bool state);
-
+    void SetScale(float scaleX, float scaleY);
+    void SetFrame(int frame, SDL_RendererFlip flip);
 private:
     Sprite sprite;
-
 };

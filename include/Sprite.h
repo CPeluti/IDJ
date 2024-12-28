@@ -2,6 +2,7 @@
 #define INCLUDE_SDL_IMAGE
 #include <string>
 #include "SDL_include.h"
+#include "Vec2.h"
 class Sprite{
     public:
         Sprite();
@@ -9,13 +10,16 @@ class Sprite{
         ~Sprite();
         void Open(std::string file);
         void SetClip(int x, int y, int w, int h);
-        void Render(int x, int y, int w, int h);
+        void Render(int x, int y, int w, int h, float angle = 0);
         void SetFrame (int frame);
         void SetFrameCount (int frameCountW, int frameCountH);
         int GetWidth();
         int GetHeight();
         bool IsOpen();
         bool cameraFollower;
+        void SetScale(float scaleX, float scaleY);
+        Vec2 GetScale();
+        void SetFlip(SDL_RendererFlip flip);
     private:
         int frameCountW;
         int frameCountH;
@@ -23,4 +27,6 @@ class Sprite{
         int width;
         int height;
         SDL_Rect clipRect;
+        SDL_RendererFlip flip;
+        Vec2 scale;
 };
