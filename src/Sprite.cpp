@@ -34,14 +34,14 @@ void Sprite::Open(std::string file)
 {
     texture = Resources::GetImage(file);
     SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
-    SetClip(0, 0, width, height);
+    SetClip({0, 0}, {width, height});
 }
-void Sprite::SetClip(int x, int y, int w, int h)
+void Sprite::SetClip(Vec2 pos, Vec2 size)
 {
-    clipRect.x = x;
-    clipRect.y = y;
-    clipRect.w = w;
-    clipRect.h = h;
+    clipRect.x = pos.x;
+    clipRect.y = pos.y;
+    clipRect.w = size.x;
+    clipRect.h = size.y;
 }
 void Sprite::SetFrame(int frame)
 {
@@ -50,16 +50,16 @@ void Sprite::SetFrame(int frame)
     int h = height / frameCountH;
     int x = (frame % frameCountW) * w;
     int y = (frame / frameCountW) * h;
-    SetClip(x, y, w, h);
+    SetClip({x, y}, {w, h});
 }
 void Sprite::SetFrameCount(int frameCountW, int frameCountH)
 {
     this->frameCountH = frameCountH;
     this->frameCountW = frameCountW;
 }
-void Sprite::Render(int x, int y, int w, int h, float angle)
+void Sprite::Render(Vec2 pos, Vec2 size, float angle)
 {
-    SDL_Rect dstRect = {x,y, (int)(clipRect.w * scale.x), (int)(clipRect.h * scale.y)};
+    SDL_Rect dstRect = {(int)pos.x,(int)pos.y, (int)(clipRect.w * scale.x), (int)(clipRect.h * scale.y)};
     if(!cameraFollower){
         dstRect.y -= Camera::pos.y;
         dstRect.x -= Camera::pos.x;   

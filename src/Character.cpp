@@ -82,8 +82,9 @@ void Character::Update(float dt){
         if(speed.x || speed.y){
             animator->SetAnimation(flip?"walking":"i_walking");
             Vec2 newSpeed = (speed * dt);
-            associated.box.x += newSpeed.x;
-            associated.box.y += newSpeed.y;
+            Vec2 currentPos = associated.box.GetPos();
+            
+            associated.box.RawMove(currentPos+newSpeed);
         } else {
             animator->SetAnimation(flip?"idle":"i_idle");
         }

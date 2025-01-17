@@ -20,7 +20,7 @@ void TileSet::RenderTile(unsigned index, float x, float y)
 {
     if(index < (unsigned int)tileWidth*tileHeight){
         tileSet.SetFrame(index);
-        tileSet.Render(x, y, tileSet.GetWidth(), tileSet.GetHeight());
+        tileSet.Render({x, y}, {tileSet.GetWidth(), tileSet.GetHeight()});
     }
 }
 
