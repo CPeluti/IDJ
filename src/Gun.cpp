@@ -43,9 +43,10 @@ void Gun::Update(float dt){
         Vec2 centroChar = c->box.center();
         Vec2 size = associated.box.GetSize();
         Vec2 target = {(float)ip.GetMouseX(), (float)ip.GetMouseY()};
-        
-        angle = Vec2::Angle(centroChar,target);
-        associated.angleDeg = angle;
+        if(this->cdTimer.Expired()){
+            angle = Vec2::Angle(centroChar,target);
+            associated.angleDeg = angle;
+        }
 
         if(angle >= 90 && angle <=270){
             inverted = false;
@@ -58,7 +59,7 @@ void Gun::Update(float dt){
 
         Vec2 pos = {OFFSET, 0};
         Vec2 currentPos = associated.box.GetPos();
-        
+
         pos = Vec2::Rotate(pos, angle);
 
         associated.box.Move(currentPos+pos);

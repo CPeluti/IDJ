@@ -6,6 +6,7 @@ GameObject::GameObject()
     isDead = false;
     started = false;
     angleDeg = 0;
+    z=1;
 }
 
 GameObject::~GameObject()
