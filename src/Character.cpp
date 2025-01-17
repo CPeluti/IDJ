@@ -63,6 +63,9 @@ void Character::Update(float dt){
         }
         return;
     }
+    if(taskQueue.size()==0){
+        animator->SetAnimation(flip?"idle":"i_idle");
+    }
     while(taskQueue.size()>0){
         speed = {0,0};
         Command c = taskQueue.front();
@@ -85,8 +88,6 @@ void Character::Update(float dt){
             Vec2 currentPos = associated.box.GetPos();
             
             associated.box.RawMove(currentPos+newSpeed);
-        } else {
-            animator->SetAnimation(flip?"idle":"i_idle");
         }
     }
 }
