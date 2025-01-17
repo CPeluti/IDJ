@@ -1,6 +1,6 @@
 #include <string>
 #include "GameObject.h"
-class Bullet{
+class Bullet : public Component {
     public:
         Bullet(GameObject& associated, float angle, float speed, int damage, float maxDistance);
         void Update(float dt);

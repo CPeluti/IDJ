@@ -23,8 +23,10 @@ void Camera::Update(float dt){
 
     if(focus != nullptr){
         Vec2 size = game.GetWindowSize();
-        Camera::pos.x = focus->box.x-(size.x/2);
-        Camera::pos.y = focus->box.y-(size.y/2);
+
+        Vec2 pos = focus->box.GetPos(); 
+        Camera::pos.x = pos.x-(size.x/2);
+        Camera::pos.y = pos.y-(size.y/2);
     } else {
         if(ip.IsKeyDown(LEFT_ARROW_KEY)){
             direction.x -= 1;

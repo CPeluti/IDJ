@@ -11,8 +11,7 @@ SpriteRenderer::SpriteRenderer(GameObject &associated, std::string file, int fra
     // this->sprite.Open(file);
     // this->sprite.SetFrameCount(frameCountW, frameCountH);
 
-    associated.box.w = sprite.GetWidth();
-    associated.box.h = sprite.GetHeight();
+    associated.box.SetSize({sprite.GetWidth(),sprite.GetHeight()});
 }
 
 void SpriteRenderer::SetFrameCount(int frameCountW, int frameCountH)
@@ -34,7 +33,7 @@ void SpriteRenderer::Update(float dt){}
 
 void SpriteRenderer::Render()
 {
-    sprite.Render(associated.box.x, associated.box.y, associated.box.w, associated.box.h, associated.angleDeg);
+    sprite.Render(associated.box.GetPos(), associated.box.GetSize(), associated.angleDeg);
 }
 
 void SpriteRenderer::SetFrame(int frame, SDL_RendererFlip flip)
@@ -48,19 +47,17 @@ void SpriteRenderer::SetCameraFollower(bool state){
 }
 
 void SpriteRenderer::SetScale(float scaleX, float scaleY){
-    Vec2 center = {
-        abs(associated.box.x-associated.box.w/2),
-        abs(associated.box.y-associated.box.h/2)
-    };
+    Vec2 center = associated.box.center();
 
     sprite.SetScale(scaleX,scaleY);
 
-    associated.box.w = sprite.GetWidth();
-    associated.box.h = sprite.GetHeight();
+    associated.box.SetSize({sprite.GetWidth(),sprite.GetHeight()});
 
-    associated.box.x = abs(center.x+associated.box.w/2);
-    associated.box.y = abs(center.y+associated.box.h/2);
-    std::cout << associated.box.y << " " << center.y << std::endl;
+    Vec2 size = associated.box.GetSize()/2;
+
+
+    associated.box.RawMove(center+size);
+
 }
 
 //newBoxPos-NewBoxSize/2 = oldBoxPos - oldBoxSize/2 

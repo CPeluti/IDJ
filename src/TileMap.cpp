@@ -72,7 +72,7 @@ int &TileMap::At(int x, int y, int z)
 void TileMap::RenderLayer(int layer){
     int spaceX = tileSet->GetTileWidth();
     int spaceY = tileSet->GetTileHeight();
-    Vec2 offset = {this->associated.box.x, this->associated.box.y};
+    Vec2 offset = associated.box.GetPos();
     Vec2 factor = layer? Vec2::Zero : Camera::pos*0.5;
     for(int y = 0; y<GetWidth(); y++){
         for(int x=0; x<GetHeight(); x++){

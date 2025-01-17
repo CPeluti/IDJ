@@ -7,10 +7,13 @@ class Vec2{
         float x,y;
         Vec2();
         Vec2(float x,float y);
+        Vec2(int x,int y);
         Vec2 normalized();
         float magnitude();
         float inclination();
+        //receive angle in degrees
         static Vec2 Rotate(Vec2 a,float angle);
+        //return angle in degrees
         static float Angle(Vec2 a,Vec2 b);
         static float Dot(Vec2 a,Vec2 b);
         static Vec2 Add(Vec2 a,Vec2 b);
