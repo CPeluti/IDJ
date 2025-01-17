@@ -18,4 +18,5 @@ class Gun : public Component{
         Timer cdTimer;
         std::weak_ptr<GameObject> character;
         float angle;
+        Vec2 bulletOutput;
 };

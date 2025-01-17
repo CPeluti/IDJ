@@ -27,8 +27,7 @@ Zombie::Zombie(GameObject &associated) :
     animator->AddAnimation("hit", new Animation(4, 4, 0));
     associated.AddComponent(animator);
 
-    associated.box.x = 600; 
-    associated.box.y = 450; 
+    associated.box.Move({600,450}); 
 
     animator->SetAnimation("walking");
 }
@@ -65,7 +64,10 @@ void Zombie::Update(float dt){
         }
     } else {
         InputManager ip = InputManager::GetInstance();
-        if(checkClickInsideBox(ip.GetMouseX(), ip.GetMouseY(), associated.box.x, associated.box.y, associated.box.w, associated.box.h) && ip.MousePress(LEFT_MOUSE_BUTTON)){
+        Vec2 pos = associated.box.GetPos();
+        Vec2 size = associated.box.GetSize();
+
+        if(checkClickInsideBox(ip.GetMouseX(), ip.GetMouseY(), pos.x, pos.y, size.x, size.y) && ip.MousePress(LEFT_MOUSE_BUTTON)){
             this->Damage(50);
         }
         if(hit && hitTimer.Expired() && !isDead){

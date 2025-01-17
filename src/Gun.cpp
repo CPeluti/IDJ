@@ -4,8 +4,11 @@
 #include "InputManager.h"
 #include "Character.h"
 #include "Game.h"
+#include "Bullet.h"
 #include <iostream>
-#define offset 100
+#include <cmath>
+
+#define OFFSET 70
 Gun::Gun(GameObject& associated, std::weak_ptr<GameObject>character): 
 Component(associated), 
 shotSound("resources/audio/Range.wav"),
@@ -13,7 +16,8 @@ reloadSound("resources/audio/PumpAction.mp3"),
 cooldown(1),
 cdTimer(cooldown),
 character(character),
-angle(0)
+angle(0),
+bulletOutput(0,0)
 {
     SpriteRenderer* sr = new SpriteRenderer(associated, "resources/img/Gun.png", 3, 2);
     Animator* animator = new Animator(associated);
@@ -26,6 +30,7 @@ angle(0)
     animator->AddAnimation("i_reloading", new Animation(1, 5, cooldown/5.0,SDL_FLIP_VERTICAL));
 
     animator->SetAnimation("idle");
+
 }
 
 void Gun::Update(float dt){
@@ -35,12 +40,11 @@ void Gun::Update(float dt){
     bool inverted = true;
     if(auto c = character.lock()){
 
-        float centroCharX = c->box.x+c->box.w/2; 
-        float centroCharY = c->box.y+c->box.h/2;
-        Vec2 centro = {centroCharX, centroCharY};
+        Vec2 centroChar = c->box.center();
+        Vec2 size = associated.box.GetSize();
         Vec2 target = {(float)ip.GetMouseX(), (float)ip.GetMouseY()};
         
-        angle = Vec2::Angle(centro,target);
+        angle = Vec2::Angle(centroChar,target);
         associated.angleDeg = angle;
 
         if(angle >= 90 && angle <=270){
@@ -50,15 +54,14 @@ void Gun::Update(float dt){
             inverted = true;
             Character::player->flip = true;
         }
+        associated.box.RawMove(centroChar);
 
-        associated.box.x = centroCharX - associated.box.w/2;
-        associated.box.y = centroCharY - associated.box.h/2;
+        Vec2 pos = {OFFSET, 0};
+        Vec2 currentPos = associated.box.GetPos();
         
-        Vec2 pos = {associated.box.w, 0};
-        double rad = (double)angle*M_PI/180;
-        pos = Vec2::Rotate(pos, rad);
-        associated.box.x += pos.x;
-        associated.box.y += pos.y;
+        pos = Vec2::Rotate(pos, angle);
+
+        associated.box.Move(currentPos+pos);
 
         if(cdTimer.Expired()){
             animator->SetAnimation(inverted?"idle":"i_idle");
@@ -78,13 +81,24 @@ void Gun::Update(float dt){
 void Gun::Shoot(Vec2 target){
     Vec2 centro;
     if(auto c = character.lock()){
-        centro.x = c->box.x+c->box.w/2; 
-        centro.y = c->box.y+c->box.h/2;
+        centro = c->box.center();
     }
     if(cdTimer.Expired()){
+
+        Vec2 bulletSize;
+        GameObject* bullet = new GameObject();
         angle = Vec2::Angle(centro,target);
-        // Vec2 pos = {associated.box.x, associated.box.y};
-        // Vec2 teste = Vec2::Rotate(targe)
+
+        Bullet* bulletComponent = new Bullet(*bullet, angle,100,10,400);
+        Vec2 gunOffset = {associated.box.GetSize().x+OFFSET, .0};
+        Vec2 bulletOffset = Vec2::Rotate(gunOffset, angle);
+        bullet->box.Move(centro+bulletOffset);
+
+        // bullet->box.Move(centro);
+
+        bullet->AddComponent(bulletComponent);
+        bullet->angleDeg = angle+90;
+        Game::GetInstance().GetState().AddObject(bullet);
         associated.angleDeg = angle;
         shotSound.Play();
         cdTimer.Restart();

@@ -9,8 +9,8 @@ class Sprite{
         Sprite(std::string file, int frameCountW = 1, int frameCountH = 1);
         ~Sprite();
         void Open(std::string file);
-        void SetClip(int x, int y, int w, int h);
-        void Render(int x, int y, int w, int h, float angle = 0);
+        void SetClip(Vec2 pos, Vec2 size);
+        void Render(Vec2 pos, Vec2 size, float angle = 0);
         void SetFrame (int frame);
         void SetFrameCount (int frameCountW, int frameCountH);
         int GetWidth();

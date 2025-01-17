@@ -11,13 +11,14 @@
 
 #include "Camera.h"
 
-GameObject* createZombie (int x, int y, State* state){
+GameObject* createZombie (Vec2 pos, State* state){
     GameObject* enemy = new GameObject();
     Component *zombie = new Zombie(*enemy);
     enemy->AddComponent(zombie);
     state->AddObject(enemy);
-    enemy->box.x = x-enemy->box.w/2; 
-    enemy->box.y = y-enemy->box.h/2; 
+
+    Vec2 pivot = enemy->box.GetPivot();
+    enemy->box.SetPos(pos-pivot); 
     return enemy;
 }
 
@@ -33,8 +34,7 @@ State::State() : started (false), quitRequested(false), objectArray()
     GameObject* bg = new GameObject();
     TileSet* tileset = new TileSet(64,64,"resources/img/Tileset.png");
     TileMap* tilemap = new TileMap(*bg,"resources/map/map.txt", tileset);
-    bg->box.x = -500;
-    bg->box.y = -500;
+    bg->box.RawMove({-500,-500});
     bg->AddComponent(tilemap);
     this->AddObject(bg);
 
@@ -45,8 +45,7 @@ State::State() : started (false), quitRequested(false), objectArray()
     Character* characterComponent = new Character(*character, "resources/img/Player.png");
     character->AddComponent(characterComponent);
     this->AddObject(character);
-    character->box.x = 1280;
-    character->box.y = 1280;
+    character->box.RawMove({1280,1280});
     Camera::Follow(character);
 }
 State::~State()
@@ -68,7 +67,7 @@ void State::Update(float dt)
         quitRequested = true;
     }
     if(ip.KeyPress(SPACE_KEY)){
-        createZombie(ip.GetMouseX(), ip.GetMouseY(), this);
+        createZombie({ip.GetMouseX(), ip.GetMouseY()}, this);
     }
     for (int i = 0; i < (int)this->objectArray.size(); i++)
     {
