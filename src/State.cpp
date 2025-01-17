@@ -8,8 +8,19 @@
 #include "InputManager.h"
 #include "SpriteRenderer.h"
 #include <iostream>
+#include <algorithm>
 
 #include "Camera.h"
+
+
+bool y_sort (std::shared_ptr<GameObject> i,std::shared_ptr<GameObject> j){
+    return(i->box.GetPos().y<j->box.GetPos().y);
+}
+
+bool z_sort (std::shared_ptr<GameObject> i,std::shared_ptr<GameObject> j){
+    return(i->z<j->z);
+}
+
 
 GameObject* createZombie (Vec2 pos, State* state){
     GameObject* enemy = new GameObject();
@@ -24,14 +35,16 @@ GameObject* createZombie (Vec2 pos, State* state){
 
 State::State() : started (false), quitRequested(false), objectArray()
 {
-    // bg = new Sprite();
-    GameObject *start = new GameObject();
-    SpriteRenderer *sr = new SpriteRenderer(*start, "resources/img/Background.png", 1, 1);
-    sr->SetCameraFollower(true);
-    start->AddComponent(sr);
-    this->AddObject(start);
+    // // bg = new Sprite();
+    // GameObject *start = new GameObject();
+    // SpriteRenderer *sr = new SpriteRenderer(*start, "resources/img/Background.png", 1, 1);
+    // start->z=-1;
+    // sr->SetCameraFollower(true);
+    // start->AddComponent(sr);
+    // this->AddObject(start);
 
     GameObject* bg = new GameObject();
+    bg->z=0;
     TileSet* tileset = new TileSet(64,64,"resources/img/Tileset.png");
     TileMap* tilemap = new TileMap(*bg,"resources/map/map.txt", tileset);
     bg->box.RawMove({-500,-500});
@@ -39,7 +52,7 @@ State::State() : started (false), quitRequested(false), objectArray()
     this->AddObject(bg);
 
     music = new Music("resources/audio/BGM.wav");
-    music->Play();
+    // music->Play();
 
     GameObject* character = new GameObject();
     Character* characterComponent = new Character(*character, "resources/img/Player.png");
@@ -47,6 +60,8 @@ State::State() : started (false), quitRequested(false), objectArray()
     this->AddObject(character);
     character->box.RawMove({1280,1280});
     Camera::Follow(character);
+
+    createZombie({1200,1200}, this);
 }
 State::~State()
 {
@@ -87,6 +102,8 @@ void State::Update(float dt)
 }
 void State::Render()
 {
+    std::stable_sort(objectArray.begin(), objectArray.end(), y_sort);
+    std::stable_sort(objectArray.begin(), objectArray.end(), z_sort);
     for (int i = 0; i < (int)this->objectArray.size(); i++)
     {
         // std::cout << "rendering" << std::endl;5

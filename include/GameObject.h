@@ -19,6 +19,7 @@ public:
     Component *GetComponent(std::string type);
     void Start();
     Rect box;
+    int z;
     double angleDeg;
 private:
     bool started;

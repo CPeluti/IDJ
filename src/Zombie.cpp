@@ -43,6 +43,7 @@ void Zombie::Damage(int dmg){
     animator->SetAnimation("hit");
     if(hitpoints <= 0 && !isDead){
         isDead = true;
+        deathTimer.Restart();
         deathSound.Play(1);
         animator->SetAnimation("dead");
     }
