@@ -13,17 +13,29 @@ Game::Game(std::string title, int width, int height)
 {
     if (this->instance == nullptr)
     {
-        this->instance = this;
-        SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER);
-        IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF);
-        Mix_Init(MIX_INIT_OGG | MIX_INIT_MP3);
-        Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024);
-        Mix_AllocateChannels(32);
-        this->window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
-        this->renderer = SDL_CreateRenderer(this->window, -1, (SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE));
-        this->state = new State();
-        frameStart = SDL_GetTicks();
-        dt = 0;
+            this->instance = this;
+            if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER)){
+                SDL_Log("Failed to start SDL");
+                SDL_Log(SDL_GetError());
+            }
+            if(IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF)){
+                SDL_Log("Failed to start SDL_Image");
+                SDL_Log(SDL_GetError());
+            }
+            if(Mix_Init(MIX_INIT_OGG | MIX_INIT_MP3)){
+                SDL_Log("Failed to start SDL_Mixer");
+                SDL_Log(SDL_GetError());
+            }
+            if(Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024)){
+                SDL_Log("Failed open mix audio");
+                SDL_Log(SDL_GetError());
+            }
+            Mix_AllocateChannels(32);
+            this->window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
+            this->renderer = SDL_CreateRenderer(this->window, -1, (SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE));
+            this->state = new State();
+            frameStart = SDL_GetTicks();
+            dt = 0;
     }
 }
 Game::~Game()
