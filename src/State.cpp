@@ -52,7 +52,7 @@ State::State() : started (false), quitRequested(false), objectArray()
     this->AddObject(bg);
 
     music = new Music("resources/audio/BGM.wav");
-    // music->Play();
+    music->Play();
 
     GameObject* character = new GameObject();
     Character* characterComponent = new Character(*character, "resources/img/Player.png");
@@ -115,8 +115,8 @@ void State::Render()
 
 void State::Start(){
     LoadAssets();
-    for(auto object : objectArray){
-        object->Start();
+    for(unsigned int i = 0; i<objectArray.size(); i++){
+        objectArray[i]->Start();
     }
     started = true;
 }

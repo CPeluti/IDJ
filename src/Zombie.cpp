@@ -52,7 +52,7 @@ void Zombie::Damage(int dmg){
 bool checkClickInsideBox(int x, int y, float boxX, float boxY, float boxW, float boxH){
     return (x > boxX && x < boxX+boxW) && (y > boxY && y < boxY+boxH);
 }
-
+void Zombie::Start(){}
 void Zombie::Update(float dt){
 
     // this->Damage(1);

@@ -8,6 +8,7 @@ public:
     Zombie(GameObject &associated);
     void Damage(int dmg);
     void Update(float dt);
+    void Start();
     void Render();
     bool Is(std::string type);
 
