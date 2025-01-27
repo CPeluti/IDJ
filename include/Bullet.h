@@ -7,6 +7,7 @@ class Bullet : public Component {
         void Render();
         bool Is(std::string type);
         int GetDamage();
+        void NotifyCollision(GameObject& other);
     private:
         Vec2 speed;
         float distanceLeft;

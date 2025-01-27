@@ -7,7 +7,10 @@
 #include "Character.h"
 #include "InputManager.h"
 #include "SpriteRenderer.h"
+#include "Collision.cpp"
+#include "Collider.h"
 #include <iostream>
+#include <set>
 #include <algorithm>
 
 #include "Camera.h"
@@ -22,15 +25,13 @@ bool z_sort (std::shared_ptr<GameObject> i,std::shared_ptr<GameObject> j){
 }
 
 
-GameObject* createZombie (Vec2 pos, State* state){
+void createZombie (Vec2 pos, State* state){
     GameObject* enemy = new GameObject();
     Component *zombie = new Zombie(*enemy);
     enemy->AddComponent(zombie);
     state->AddObject(enemy);
 
-    Vec2 pivot = enemy->box.GetPivot();
-    enemy->box.SetPos(pos-pivot); 
-    return enemy;
+    enemy->box.Move(pos); 
 }
 
 State::State() : started (false), quitRequested(false), objectArray()
@@ -52,7 +53,7 @@ State::State() : started (false), quitRequested(false), objectArray()
     this->AddObject(bg);
 
     music = new Music("resources/audio/BGM.wav");
-    // music->Play();
+    music->Play();
 
     GameObject* character = new GameObject();
     Character* characterComponent = new Character(*character, "resources/img/Player.png");
@@ -60,6 +61,7 @@ State::State() : started (false), quitRequested(false), objectArray()
     this->AddObject(character);
     character->box.RawMove({1280,1280});
     Camera::Follow(character);
+
 
     createZombie({1200,1200}, this);
 }
@@ -82,11 +84,31 @@ void State::Update(float dt)
         quitRequested = true;
     }
     if(ip.KeyPress(SPACE_KEY)){
-        createZombie({ip.GetMouseX(), ip.GetMouseY()}, this);
+        std::cout << "criou zombie" << std::endl;
+        // createZombie({ip.GetMouseX(), ip.GetMouseY()}, this);
     }
     for (int i = 0; i < (int)this->objectArray.size(); i++)
     {
         objectArray[i]->Update(dt);
+    }
+    std::set<std::pair<int,int>> checked;
+    for (int i = 0; i < (int)this->objectArray.size(); i++)
+    {
+        Collider* colliderA = (Collider*)objectArray[i]->GetComponent("Collider");
+        if(colliderA != nullptr){
+            for (int j = 0; j < (int)this->objectArray.size(); j++){
+                if(j!=i && checked.find({i,j})==checked.end() && checked.find({j,i})==checked.end()){
+                    checked.insert({i,j});
+                    Collider* colliderB = (Collider*)objectArray[j]->GetComponent("Collider");
+                    if(colliderB != nullptr){
+                        if(Collision::IsColliding(colliderA->box, colliderB->box, objectArray[i]->angleDeg, objectArray[j]->angleDeg)){
+                            objectArray[i]->NotifyCollision(*objectArray[j]);
+                            objectArray[j]->NotifyCollision(*objectArray[i]);
+                        }
+                    }
+                }
+            }
+        }
     }
     if (SDL_QuitRequested())
     {
@@ -115,8 +137,8 @@ void State::Render()
 
 void State::Start(){
     LoadAssets();
-    for(auto object : objectArray){
-        object->Start();
+    for(unsigned int i = 0; i<objectArray.size(); i++){
+        objectArray[i]->Start();
     }
     started = true;
 }

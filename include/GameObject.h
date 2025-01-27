@@ -19,6 +19,7 @@ public:
     Component *GetComponent(std::string type);
     void Start();
     Rect box;
+    void NotifyCollision(GameObject& other);
     int z;
     double angleDeg;
 private:
