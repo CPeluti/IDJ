@@ -1,9 +1,15 @@
 #include "Bullet.h"
 #include "SpriteRenderer.h"
 #include "Vec2.h"
+#include "Collider.h"
+
+#include <iostream>
+
 Bullet::Bullet(GameObject& associated, float angle, float speed, int damage, float maxDistance):Component(associated){
     SpriteRenderer* sr = new SpriteRenderer(associated, "resources/img/Bullet.png", 1, 1);
     associated.AddComponent(sr);
+    Collider* collider = new Collider(associated);
+    associated.AddComponent(collider);
 
     this->speed = {speed, .0};
     this->speed = Vec2::Rotate(this->speed, angle);
@@ -38,3 +44,7 @@ int Bullet::GetDamage(){
 }
 
 void Bullet::Render(){}
+
+void Bullet::NotifyCollision(GameObject& other){
+    std::cout<<"bullet colidiu"<<std::endl;
+}

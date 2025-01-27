@@ -7,6 +7,7 @@
 #include "SpriteRenderer.h"
 #include "PlayerController.h"
 #include "Animator.h"
+#include "Collider.h"
 
 Character* Character::player = nullptr;
 
@@ -22,10 +23,12 @@ Character::Character(GameObject& associated, std::string sprite):
     SpriteRenderer* sr = new SpriteRenderer(associated, sprite, 3, 4);
     Animator* animator = new Animator(associated);
     PlayerController* playerController = new PlayerController(associated);
+    Collider* collider = new Collider(associated);
 
     associated.AddComponent(sr);
     associated.AddComponent(animator);
     associated.AddComponent(playerController);
+    associated.AddComponent(collider);
 
 
     animator->AddAnimation("walking", new Animation(0, 5, 0.2));
@@ -103,3 +106,7 @@ void Character::Issue(Command c){
 }
 
 Character::Command::Command(CommandType type, Vec2 pos): type(type), pos(pos){}
+
+void Character::NotifyCollision(GameObject& other){
+    std::cout<<"character colidiu"<<std::endl;
+}

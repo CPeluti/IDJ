@@ -19,6 +19,7 @@ class Character: public Component{
         };
         void Issue (Command task);
         static Character* player;
+        void NotifyCollision(GameObject& other);
         bool flip;
     private:
         std::weak_ptr<GameObject> gun;

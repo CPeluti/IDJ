@@ -6,6 +6,7 @@
 #include "InputManager.h"
 #include "Game.h"
 #include "Camera.h"
+#include "Collider.h"
 #include <iostream>
 
 Zombie::Zombie(GameObject &associated) : 
@@ -20,6 +21,8 @@ Zombie::Zombie(GameObject &associated) :
 {
     SpriteRenderer* srZombie = new SpriteRenderer(associated, "resources/img/Enemy.png", 3, 2);
     associated.AddComponent(srZombie);
+    Collider* collider = new Collider(associated);
+    associated.AddComponent(collider);
     
     Animator* animator = new Animator(associated);
     animator->AddAnimation("walking", new Animation(0, 3, 10));
@@ -53,6 +56,9 @@ bool checkClickInsideBox(int x, int y, float boxX, float boxY, float boxW, float
     return (x > boxX && x < boxX+boxW) && (y > boxY && y < boxY+boxH);
 }
 
+Zombie::~Zombie(){}
+void Zombie::Start(){}
+
 void Zombie::Update(float dt){
 
     // this->Damage(1);
@@ -85,3 +91,7 @@ bool Zombie::Is(std::string type){
 }
 
 void Zombie::Render(){}
+
+void Zombie::NotifyCollision(GameObject& other){
+    std::cout<<"zombie colidiu"<<std::endl;
+}
