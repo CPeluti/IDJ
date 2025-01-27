@@ -14,7 +14,7 @@ option(MYGAME_VENDORED "Use vendored libraries" OFF)
 include_directories(include)
 
 file(GLOB SOURCES "src/*.cpp")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ".")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "..")
 
 if(MYGAME_VENDORED)
     add_subdirectory(vendored/sdl EXCLUDE_FROM_ALL)
