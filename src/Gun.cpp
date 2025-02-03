@@ -83,26 +83,25 @@ void Gun::Shoot(Vec2 target){
     Vec2 centro;
     if(auto c = character.lock()){
         centro = c->box.center();
-    }
-    if(cdTimer.Expired()){
+        if(cdTimer.Expired()){
 
-        Vec2 bulletSize;
-        GameObject* bullet = new GameObject();
-        angle = Vec2::Angle(centro,target);
+            GameObject* bullet = new GameObject();
+            angle = Vec2::Angle(centro,target);
 
-        Bullet* bulletComponent = new Bullet(*bullet, angle,100,10,400);
-        Vec2 gunOffset = {associated.box.GetSize().x+OFFSET, .0};
-        Vec2 bulletOffset = Vec2::Rotate(gunOffset, angle);
-        bullet->box.Move(centro+bulletOffset);
+            Bullet* bulletComponent = new Bullet(*bullet, angle,100,10,400);
+            Vec2 gunOffset = {associated.box.GetSize().x+OFFSET, .0};
+            Vec2 bulletOffset = Vec2::Rotate(gunOffset, angle);
+            bullet->box.Move(centro+bulletOffset);
 
-        // bullet->box.Move(centro);
+            // bullet->box.Move(centro);
 
-        bullet->AddComponent(bulletComponent);
-        bullet->angleDeg = angle+90;
-        Game::GetInstance().GetState().AddObject(bullet);
-        associated.angleDeg = angle;
-        shotSound.Play();
-        cdTimer.Restart();
+            bullet->AddComponent(bulletComponent);
+            bullet->angleDeg = angle+90;
+            Game::GetInstance().GetState().AddObject(bullet);
+            associated.angleDeg = angle;
+            shotSound.Play();
+            cdTimer.Restart();
+        }
     }
 }
 
