@@ -3,33 +3,33 @@
 #include "Game.h"
 #include "Component.h"
 #include "Character.h"
+#include "Bullet.h"
+#include "Zombie.h"
 #include "Gun.h"
 #include "SpriteRenderer.h"
 #include "PlayerController.h"
 #include "Animator.h"
 #include "Collider.h"
 
-Character* Character::player = nullptr;
+Character *Character::player = nullptr;
 
-Character::Character(GameObject& associated, std::string sprite): 
-    Component(associated), 
-    gun(), 
-    taskQueue(), 
-    speed{1,1}, 
-    linearSpeed(300), 
-    hp(100), 
-    deathTimer(5)
+Character::Character(GameObject &associated, std::string sprite) : Component(associated),
+                                                                   gun(),
+                                                                   taskQueue(),
+                                                                   speed{1, 1},
+                                                                   linearSpeed(300),
+                                                                   hp(100),
+                                                                   deathTimer(5)
 {
-    SpriteRenderer* sr = new SpriteRenderer(associated, sprite, 3, 4);
-    Animator* animator = new Animator(associated);
-    PlayerController* playerController = new PlayerController(associated);
-    Collider* collider = new Collider(associated);
+    SpriteRenderer *sr = new SpriteRenderer(associated, sprite, 3, 4);
+    Animator *animator = new Animator(associated);
+    PlayerController *playerController = new PlayerController(associated);
+    Collider *collider = new Collider(associated);
 
     associated.AddComponent(sr);
     associated.AddComponent(animator);
     associated.AddComponent(playerController);
     associated.AddComponent(collider);
-
 
     animator->AddAnimation("walking", new Animation(0, 5, 0.2));
     animator->AddAnimation("idle", new Animation(6, 9, 0.5));
@@ -41,72 +41,94 @@ Character::Character(GameObject& associated, std::string sprite):
     Character::player = this;
 }
 
-Character::~Character(){
+Character::~Character()
+{
 }
 
-void Character::Start(){
-    State& s = Game::GetInstance().GetState();
-    GameObject* gunObj = new GameObject(); 
-    Gun* gunComponent = new Gun(*gunObj, s.GetObjectPtr(&associated)); 
+void Character::Start()
+{
+    State &s = Game::GetInstance().GetState();
+    GameObject *gunObj = new GameObject();
+    Gun *gunComponent = new Gun(*gunObj, s.GetObjectPtr(&associated));
 
     gunObj->AddComponent(gunComponent);
 
     this->gun = s.AddObject(gunObj);
-
 }
 
-void Character::Update(float dt){
-    Animator* animator = ((Animator*)associated.GetComponent("Animator"));
-    if(hp<=0){
-        if(deathTimer.Expired() && !associated.IsDead()){
+void Character::Update(float dt)
+{
+    Animator *animator = ((Animator *)associated.GetComponent("Animator"));
+    if (hp <= 0)
+    {
+        if (deathTimer.Expired() && !associated.IsDead())
+        {
             associated.RequestDelete();
-        } else {
+        }
+        else
+        {
             deathTimer.Update(dt);
             animator->SetAnimation("dead");
         }
         return;
     }
-    if(taskQueue.size()==0){
-        animator->SetAnimation(flip?"idle":"i_idle");
+    if (taskQueue.size() == 0)
+    {
+        animator->SetAnimation(flip ? "idle" : "i_idle");
     }
-    while(taskQueue.size()>0){
-        speed = {0,0};
+    while (taskQueue.size() > 0)
+    {
+        speed = {0, 0};
         Command c = taskQueue.front();
         switch (c.type)
         {
         case c.MOVE:
             speed = c.pos.normalized() * linearSpeed;
             break;
-        
+
         case c.SHOOT:
-            if(auto g = gun.lock()){
-                ((Gun*)g->GetComponent("Gun"))->Shoot(c.pos);
+            if (auto g = gun.lock())
+            {
+                ((Gun *)g->GetComponent("Gun"))->Shoot(c.pos);
             }
             break;
         }
         taskQueue.pop();
-        if(speed.x || speed.y){
-            animator->SetAnimation(flip?"walking":"i_walking");
+        if (speed.x || speed.y)
+        {
+            animator->SetAnimation(flip ? "walking" : "i_walking");
             Vec2 newSpeed = (speed * dt);
             Vec2 currentPos = associated.box.GetPos();
-            
-            associated.box.RawMove(currentPos+newSpeed);
+
+            associated.box.RawMove(currentPos + newSpeed);
         }
     }
 }
 
-void Character::Render(){}
+void Character::Render() {}
 
-bool Character::Is(std::string type){
+bool Character::Is(std::string type)
+{
     return type == "Character";
 }
 
-void Character::Issue(Command c){
+void Character::Issue(Command c)
+{
     taskQueue.push(c);
 }
 
-Character::Command::Command(CommandType type, Vec2 pos): type(type), pos(pos){}
+Character::Command::Command(CommandType type, Vec2 pos) : type(type), pos(pos) {}
 
-void Character::NotifyCollision(GameObject& other){
-    std::cout<<"character colidiu"<<std::endl;
+void Character::NotifyCollision(GameObject &other)
+{
+    Bullet *b = (Bullet *)other.GetComponent("Bullet");
+    Zombie *z = (Zombie *)other.GetComponent("Zombie");
+    if (b != nullptr && ((Character::player == this && b->targetsPlayer) || (Character::player != this)))
+    {
+        hp -= b->GetDamage();
+    }
+    if (z != nullptr)
+    {
+        hp -= z->GetDamage();
+    }
 }
