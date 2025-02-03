@@ -4,11 +4,14 @@
 #include "SpriteRenderer.h"
 #include "Bullet.h"
 #include "Animator.h"
+#include "Character.h"
 #include "InputManager.h"
 #include "Game.h"
 #include "Camera.h"
 #include "Collider.h"
 #include <iostream>
+
+int Zombie::zombieCounter = 0;
 
 Zombie::Zombie(GameObject &associated) : Component(associated),
                                          isDead(false),
@@ -34,6 +37,7 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
     associated.box.Move({600, 450});
 
     animator->SetAnimation("walking");
+    zombieCounter++;
 }
 
 void Zombie::Damage(int dmg)
@@ -60,7 +64,10 @@ bool checkClickInsideBox(int x, int y, float boxX, float boxY, float boxW, float
     return (x > boxX && x < boxX + boxW) && (y > boxY && y < boxY + boxH);
 }
 
-Zombie::~Zombie() {}
+Zombie::~Zombie()
+{
+    zombieCounter--;
+}
 void Zombie::Start() {}
 
 void Zombie::Update(float dt)
@@ -79,13 +86,12 @@ void Zombie::Update(float dt)
     }
     else
     {
-        InputManager ip = InputManager::GetInstance();
-        Vec2 pos = associated.box.GetPos();
-        Vec2 size = associated.box.GetSize();
-
-        if (checkClickInsideBox(ip.GetMouseX(), ip.GetMouseY(), pos.x, pos.y, size.x, size.y) && ip.MousePress(LEFT_MOUSE_BUTTON))
+        if (Character::player != nullptr)
         {
-            this->Damage(50);
+            Vec2 playerPos = Character::player->GetPos();
+            Vec2 distance = playerPos - associated.box.center();
+            Vec2 currentPos = this->associated.box.center();
+            this->associated.box.Move(currentPos + distance * dt * 0.5);
         }
         if (hit && hitTimer.Expired() && !isDead)
         {
