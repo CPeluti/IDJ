@@ -14,6 +14,7 @@ public:
     bool Is(std::string type);
     void NotifyCollision(GameObject &other);
     int GetDamage();
+    static int zombieCounter;
 
 private:
     bool isDead;

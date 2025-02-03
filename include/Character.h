@@ -2,30 +2,38 @@
 #include <memory>
 #include <queue>
 #include "Timer.h"
-class Character: public Component{
+class Character : public Component
+{
+public:
+    Character(GameObject &associated, std::string sprite);
+    ~Character();
+    void Start();
+    void Update(float dt);
+    void Render();
+    bool Is(std::string type);
+    class Command
+    {
     public:
-        Character (GameObject& associated, std::string sprite);
-        ~Character ();
-        void Start();
-        void Update (float dt);
-        void Render ();
-        bool Is (std::string type);
-        class Command {
-            public:
-                enum CommandType {MOVE, SHOOT};
-                Command (CommandType type, Vec2 pos);
-                CommandType type;
-                Vec2 pos;
+        enum CommandType
+        {
+            MOVE,
+            SHOOT
         };
-        void Issue (Command task);
-        static Character* player;
-        void NotifyCollision(GameObject& other);
-        bool flip;
-    private:
-        std::weak_ptr<GameObject> gun;
-        std::queue<Command> taskQueue;
-        Vec2 speed;
-        float linearSpeed;
-        int hp;
-        Timer deathTimer;
+        Command(CommandType type, Vec2 pos);
+        CommandType type;
+        Vec2 pos;
+    };
+    void Issue(Command task);
+    static Character *player;
+    void NotifyCollision(GameObject &other);
+    Vec2 GetPos();
+    bool flip;
+
+private:
+    std::weak_ptr<GameObject> gun;
+    std::queue<Command> taskQueue;
+    Vec2 speed;
+    float linearSpeed;
+    int hp;
+    Timer deathTimer;
 };
