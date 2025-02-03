@@ -6,11 +6,14 @@
 #include "Game.h"
 #include "Resources.h"
 #include "InputManager.h"
+#include <cstdlib>
+#include <ctime>
 
 Game *Game::instance = nullptr;
 
 Game::Game(std::string title, int width, int height)
 {
+    srand(time(NULL));
     if (this->instance == nullptr)
     {
             this->instance = this;
