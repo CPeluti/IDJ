@@ -12,7 +12,8 @@ public:
     void Update(float dt);
     void Render();
     bool Is(std::string type);
-    void NotifyCollision(GameObject& other);
+    void NotifyCollision(GameObject &other);
+    int GetDamage();
 
 private:
     bool isDead;
@@ -20,7 +21,7 @@ private:
     Sound damageSound;
     Sound deathSound;
     bool hit;
-
+    int damage;
     Timer hitTimer;
     Timer deathTimer;
 };
