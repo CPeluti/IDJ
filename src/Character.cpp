@@ -132,3 +132,8 @@ void Character::NotifyCollision(GameObject &other)
         hp -= z->GetDamage();
     }
 }
+
+Vec2 Character::GetPos()
+{
+    return this->associated.box.center();
+}

@@ -7,6 +7,7 @@
 #include "Character.h"
 #include "InputManager.h"
 #include "SpriteRenderer.h"
+#include "WaveSpawner.h"
 #include "Collision.cpp"
 #include "Collider.h"
 #include <iostream>
@@ -15,26 +16,27 @@
 
 #include "Camera.h"
 
-
-bool y_sort (std::shared_ptr<GameObject> i,std::shared_ptr<GameObject> j){
-    return(i->box.GetPos().y<j->box.GetPos().y);
+bool y_sort(std::shared_ptr<GameObject> i, std::shared_ptr<GameObject> j)
+{
+    return (i->box.GetPos().y < j->box.GetPos().y);
 }
 
-bool z_sort (std::shared_ptr<GameObject> i,std::shared_ptr<GameObject> j){
-    return(i->z<j->z);
+bool z_sort(std::shared_ptr<GameObject> i, std::shared_ptr<GameObject> j)
+{
+    return (i->z < j->z);
 }
 
-
-void createZombie (Vec2 pos, State* state){
-    GameObject* enemy = new GameObject();
+void createZombie(Vec2 pos, State *state)
+{
+    GameObject *enemy = new GameObject();
     Component *zombie = new Zombie(*enemy);
     enemy->AddComponent(zombie);
     state->AddObject(enemy);
 
-    enemy->box.Move(pos); 
+    enemy->box.Move(pos);
 }
 
-State::State() : started (false), quitRequested(false), objectArray()
+State::State() : started(false), quitRequested(false), objectArray()
 {
     // // bg = new Sprite();
     // GameObject *start = new GameObject();
@@ -44,26 +46,30 @@ State::State() : started (false), quitRequested(false), objectArray()
     // start->AddComponent(sr);
     // this->AddObject(start);
 
-    GameObject* bg = new GameObject();
-    bg->z=0;
-    TileSet* tileset = new TileSet(64,64,"resources/img/Tileset.png");
-    TileMap* tilemap = new TileMap(*bg,"resources/map/map.txt", tileset);
-    bg->box.RawMove({-500,-500});
+    GameObject *bg = new GameObject();
+    bg->z = 0;
+    TileSet *tileset = new TileSet(64, 64, "resources/img/Tileset.png");
+    TileMap *tilemap = new TileMap(*bg, "resources/map/map.txt", tileset);
+    bg->box.RawMove({-500, -500});
     bg->AddComponent(tilemap);
     this->AddObject(bg);
 
     music = new Music("resources/audio/BGM.wav");
     music->Play();
 
-    GameObject* character = new GameObject();
-    Character* characterComponent = new Character(*character, "resources/img/Player.png");
+    GameObject *character = new GameObject();
+    Character *characterComponent = new Character(*character, "resources/img/Player.png");
     character->AddComponent(characterComponent);
     this->AddObject(character);
-    character->box.RawMove({1280,1280});
+    character->box.RawMove({1280, 1280});
     Camera::Follow(character);
 
+    GameObject *waveSpawner = new GameObject();
+    WaveSpawner *ws = new WaveSpawner(*waveSpawner);
+    waveSpawner->AddComponent(ws);
+    this->AddObject(waveSpawner);
 
-    createZombie({1200,1200}, this);
+    createZombie({1200, 1200}, this);
 }
 State::~State()
 {
@@ -76,14 +82,16 @@ bool State::QuitRequested()
 void State::LoadAssets() {}
 void State::Update(float dt)
 {
-    InputManager& ip = InputManager::GetInstance();
+    InputManager &ip = InputManager::GetInstance();
 
     Camera::Update(dt);
-    
-    if(ip.KeyPress(ESCAPE_KEY) || ip.QuitRequested()){
+
+    if (ip.KeyPress(ESCAPE_KEY) || ip.QuitRequested())
+    {
         quitRequested = true;
     }
-    if(ip.KeyPress(SPACE_KEY)){
+    if (ip.KeyPress(SPACE_KEY))
+    {
         std::cout << "criou zombie" << std::endl;
         // createZombie({ip.GetMouseX(), ip.GetMouseY()}, this);
     }
@@ -91,17 +99,22 @@ void State::Update(float dt)
     {
         objectArray[i]->Update(dt);
     }
-    std::set<std::pair<int,int>> checked;
+    std::set<std::pair<int, int>> checked;
     for (int i = 0; i < (int)this->objectArray.size(); i++)
     {
-        Collider* colliderA = (Collider*)objectArray[i]->GetComponent("Collider");
-        if(colliderA != nullptr){
-            for (int j = 0; j < (int)this->objectArray.size(); j++){
-                if(j!=i && checked.find({i,j})==checked.end() && checked.find({j,i})==checked.end()){
-                    checked.insert({i,j});
-                    Collider* colliderB = (Collider*)objectArray[j]->GetComponent("Collider");
-                    if(colliderB != nullptr){
-                        if(Collision::IsColliding(colliderA->box, colliderB->box, objectArray[i]->angleDeg, objectArray[j]->angleDeg)){
+        Collider *colliderA = (Collider *)objectArray[i]->GetComponent("Collider");
+        if (colliderA != nullptr)
+        {
+            for (int j = 0; j < (int)this->objectArray.size(); j++)
+            {
+                if (j != i && checked.find({i, j}) == checked.end() && checked.find({j, i}) == checked.end())
+                {
+                    checked.insert({i, j});
+                    Collider *colliderB = (Collider *)objectArray[j]->GetComponent("Collider");
+                    if (colliderB != nullptr)
+                    {
+                        if (Collision::IsColliding(colliderA->box, colliderB->box, objectArray[i]->angleDeg, objectArray[j]->angleDeg))
+                        {
                             objectArray[i]->NotifyCollision(*objectArray[j]);
                             objectArray[j]->NotifyCollision(*objectArray[i]);
                         }
@@ -135,9 +148,11 @@ void State::Render()
     // bg->Render(0, 0);
 }
 
-void State::Start(){
+void State::Start()
+{
     LoadAssets();
-    for(unsigned int i = 0; i<objectArray.size(); i++){
+    for (unsigned int i = 0; i < objectArray.size(); i++)
+    {
         objectArray[i]->Start();
     }
     started = true;
@@ -146,15 +161,19 @@ void State::Start(){
 std::weak_ptr<GameObject> State::AddObject(GameObject *object)
 {
     objectArray.emplace_back(object);
-    if(started){
+    if (started)
+    {
         object->Start();
     }
     return GetObjectPtr(object);
 }
 
-std::weak_ptr<GameObject> State::GetObjectPtr(GameObject *object){
-    for(unsigned int i = 0; i<objectArray.size(); i++){
-        if(objectArray[i].get() == object){
+std::weak_ptr<GameObject> State::GetObjectPtr(GameObject *object)
+{
+    for (unsigned int i = 0; i < objectArray.size(); i++)
+    {
+        if (objectArray[i].get() == object)
+        {
             return std::weak_ptr<GameObject>(objectArray[i]);
         }
     }
