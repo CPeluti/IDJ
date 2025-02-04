@@ -15,7 +15,7 @@ int Zombie::zombieCounter = 0;
 
 Zombie::Zombie(GameObject &associated) : Component(associated),
                                          isDead(false),
-                                         hitpoints(20),
+                                         hitpoints(600),
                                          damageSound("resources/audio/Hit1.wav"),
                                          deathSound("resources/audio/Dead.wav"),
                                          hit(false),
@@ -33,6 +33,7 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
     animator->AddAnimation("r_walking", new Animation(0, 3, 0.3, SDL_FLIP_HORIZONTAL));
     animator->AddAnimation("dead", new Animation(5, 5, 0));
     animator->AddAnimation("hit", new Animation(4, 4, 0));
+    animator->AddAnimation("r_hit", new Animation(4, 4, 0, SDL_FLIP_HORIZONTAL));
     associated.AddComponent(animator);
 
     associated.box.Move({600, 450});
@@ -50,7 +51,8 @@ void Zombie::Damage(int dmg)
     damageSound.Play(1);
     hit = true;
     hitTimer.Restart();
-    animator->SetAnimation("hit");
+    if(flip) animator->SetAnimation("r_hit");
+    else animator->SetAnimation("hit");
     if (hitpoints <= 0 && !isDead)
     {
         this->associated.RemoveComponent(this->associated.GetComponent("Collider"));
