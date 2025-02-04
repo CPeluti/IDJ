@@ -5,7 +5,7 @@
 class Character : public Component
 {
 public:
-    Character(GameObject &associated, std::string sprite);
+    Character(GameObject &associated, std::string sprite, bool isPlayer = false);
     ~Character();
     void Start();
     void Update(float dt);
@@ -25,12 +25,15 @@ public:
     };
     void Issue(Command task);
     static Character *player;
+    static int npcCounter;
     void NotifyCollision(GameObject &other);
     Vec2 GetPos();
+    void Damage(int amount);
     bool flip;
 
 private:
     std::weak_ptr<GameObject> gun;
+    bool isDead;
     std::queue<Command> taskQueue;
     Vec2 speed;
     float linearSpeed;

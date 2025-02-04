@@ -58,10 +58,11 @@ State::State() : started(false), quitRequested(false), objectArray()
     music->Play();
 
     GameObject *character = new GameObject();
-    Character *characterComponent = new Character(*character, "resources/img/Player.png");
+    Character *characterComponent = new Character(*character, "resources/img/Player.png", true);
     character->AddComponent(characterComponent);
     this->AddObject(character);
     character->box.RawMove({1280, 1280});
+    Character::player = characterComponent;
     Camera::Follow(character);
 
     GameObject *waveSpawner = new GameObject();
@@ -69,7 +70,7 @@ State::State() : started(false), quitRequested(false), objectArray()
     waveSpawner->AddComponent(ws);
     this->AddObject(waveSpawner);
 
-    createZombie({1200, 1200}, this);
+    // createZombie({1200, 1200}, this);
 }
 State::~State()
 {

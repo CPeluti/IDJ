@@ -15,9 +15,10 @@ public:
     void NotifyCollision(GameObject &other);
     int GetDamage();
     static int zombieCounter;
+    bool isDead;
+    bool flip;
 
 private:
-    bool isDead;
     int hitpoints;
     Sound damageSound;
     Sound deathSound;
