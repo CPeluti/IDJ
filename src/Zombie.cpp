@@ -15,7 +15,7 @@ int Zombie::zombieCounter = 0;
 
 Zombie::Zombie(GameObject &associated) : Component(associated),
                                          isDead(false),
-                                         hitpoints(100),
+                                         hitpoints(20),
                                          damageSound("resources/audio/Hit1.wav"),
                                          deathSound("resources/audio/Dead.wav"),
                                          hit(false),
@@ -29,7 +29,8 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
     associated.AddComponent(collider);
 
     Animator *animator = new Animator(associated);
-    animator->AddAnimation("walking", new Animation(0, 3, 10));
+    animator->AddAnimation("walking", new Animation(0, 3, 0.3));
+    animator->AddAnimation("r_walking", new Animation(0, 3, 0.3, SDL_FLIP_HORIZONTAL));
     animator->AddAnimation("dead", new Animation(5, 5, 0));
     animator->AddAnimation("hit", new Animation(4, 4, 0));
     associated.AddComponent(animator);
@@ -52,6 +53,7 @@ void Zombie::Damage(int dmg)
     animator->SetAnimation("hit");
     if (hitpoints <= 0 && !isDead)
     {
+        this->associated.RemoveComponent(this->associated.GetComponent("Collider"));
         isDead = true;
         deathTimer.Restart();
         deathSound.Play(1);
@@ -72,7 +74,7 @@ void Zombie::Start() {}
 
 void Zombie::Update(float dt)
 {
-
+    Animator *animator = ((Animator *)associated.GetComponent("Animator"));
     // this->Damage(1);
     hitTimer.Update(dt);
     if (isDead)
@@ -86,16 +88,27 @@ void Zombie::Update(float dt)
     }
     else
     {
-        if (Character::player != nullptr)
+        if (!hit && Character::player != nullptr)
         {
             Vec2 playerPos = Character::player->GetPos();
             Vec2 distance = playerPos - associated.box.center();
             Vec2 currentPos = this->associated.box.center();
             this->associated.box.Move(currentPos + distance * dt * 0.5);
+            flip = distance.x < 0;
+            if(flip){
+                animator->SetAnimation("r_walking");
+            } else {
+                animator->SetAnimation("walking");
+            }
         }
         if (hit && hitTimer.Expired() && !isDead)
         {
-            ((Animator *)associated.GetComponent("Animator"))->SetAnimation("walking");
+            if(flip){
+                animator->SetAnimation("r_walking");
+            } else {
+                animator->SetAnimation("walking");
+            }
+            
             hit = false;
         }
     }
@@ -116,7 +129,7 @@ int Zombie::GetDamage()
 void Zombie::NotifyCollision(GameObject &other)
 {
     Bullet *b = (Bullet *)other.GetComponent("Bullet");
-    if (b != nullptr)
+    if (b != nullptr && !this->isDead)
     {
         this->Damage(b->GetDamage());
     }

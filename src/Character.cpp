@@ -3,6 +3,7 @@
 #include "Game.h"
 #include "Component.h"
 #include "Character.h"
+#include "Camera.h"
 #include "Bullet.h"
 #include "Zombie.h"
 #include "Gun.h"
@@ -12,23 +13,29 @@
 #include "Collider.h"
 
 Character *Character::player = nullptr;
+int Character::npcCounter = 0;
 
-Character::Character(GameObject &associated, std::string sprite) : Component(associated),
+Character::Character(GameObject &associated, std::string sprite, bool isPlayer) : Component(associated),
                                                                    gun(),
                                                                    taskQueue(),
                                                                    speed{1, 1},
                                                                    linearSpeed(300),
-                                                                   hp(100),
-                                                                   deathTimer(5)
+                                                                   hp(500),
+                                                                   deathTimer(5),
+                                                                   isDead(false)
 {
     SpriteRenderer *sr = new SpriteRenderer(associated, sprite, 3, 4);
     Animator *animator = new Animator(associated);
-    PlayerController *playerController = new PlayerController(associated);
+    if(!isPlayer){
+        Character::npcCounter++;
+    } else {
+        PlayerController *playerController = new PlayerController(associated);
+        associated.AddComponent(playerController);
+    }
     Collider *collider = new Collider(associated);
 
     associated.AddComponent(sr);
     associated.AddComponent(animator);
-    associated.AddComponent(playerController);
     associated.AddComponent(collider);
 
     animator->AddAnimation("walking", new Animation(0, 5, 0.2));
@@ -38,11 +45,14 @@ Character::Character(GameObject &associated, std::string sprite) : Component(ass
     animator->AddAnimation("dead", new Animation(10, 11, 0.5));
     animator->SetAnimation("idle");
     flip = false;
-    Character::player = this;
+
 }
 
 Character::~Character()
 {
+    if(Character::player != this){
+        Character::npcCounter--;
+    }
 }
 
 void Character::Start()
@@ -55,20 +65,32 @@ void Character::Start()
 
     this->gun = s.AddObject(gunObj);
 }
-
+void Character::Damage(int amount){
+    hp -= amount;
+    Animator *animator = (Animator *)associated.GetComponent("Animator");
+    animator->SetAnimation("hit");
+    if (hp <= 0 && !isDead)
+    {
+        if(auto g = this->gun.lock()){
+            g->RequestDelete();
+        }
+        isDead = true;
+        deathTimer.Restart();
+        animator->SetAnimation("dead");
+        if(Character::player == this){
+            Camera::Unfollow();
+        }
+    }
+}
 void Character::Update(float dt)
 {
     Animator *animator = ((Animator *)associated.GetComponent("Animator"));
-    if (hp <= 0)
+    if (isDead)
     {
-        if (deathTimer.Expired() && !associated.IsDead())
+        deathTimer.Update(dt);
+        if (deathTimer.Expired())
         {
             associated.RequestDelete();
-        }
-        else
-        {
-            deathTimer.Update(dt);
-            animator->SetAnimation("dead");
         }
         return;
     }
@@ -125,11 +147,11 @@ void Character::NotifyCollision(GameObject &other)
     Zombie *z = (Zombie *)other.GetComponent("Zombie");
     if (b != nullptr && ((Character::player == this && b->targetsPlayer) || (Character::player != this)))
     {
-        hp -= b->GetDamage();
+        Damage(b->GetDamage());
     }
-    if (z != nullptr)
+    if (z != nullptr && !z->isDead && (Character::player == this))
     {
-        hp -= z->GetDamage();
+        Damage(z->GetDamage());
     }
 }
 

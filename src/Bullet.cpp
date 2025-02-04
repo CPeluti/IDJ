@@ -17,6 +17,7 @@ Bullet::Bullet(GameObject &associated, float angle, float speed, int damage, flo
     this->speed = Vec2::Rotate(this->speed, angle);
     this->distanceLeft = maxDistance;
     associated.angleDeg = angle;
+    this->damage = damage;
     // this->speed = {speed, speed}
 }
 
