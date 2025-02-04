@@ -5,6 +5,7 @@
 #include "Resources.h"
 Sound::Sound(){
     chunk = nullptr;
+    channel = -1;
 }
 
 Sound::Sound(std::string file): Sound(){
@@ -23,7 +24,7 @@ void Sound::Play(int times){
 }
 
 void Sound::Stop(){
-    if(chunk != nullptr)
+    if(chunk != nullptr && channel >= 0)
     Mix_HaltChannel(channel);
 }
 

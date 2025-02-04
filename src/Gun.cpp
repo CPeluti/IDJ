@@ -39,10 +39,13 @@ void Gun::Update(float dt)
     bool inverted = true;
     if (auto c = character.lock())
     {
-
+        Character* charComponent = ((Character*)c->GetComponent("Character"));
         Vec2 centroChar = c->box.center();
         Vec2 size = associated.box.GetSize();
         Vec2 target = {(float)ip.GetMouseX(), (float)ip.GetMouseY()};
+        if(charComponent != Character::player){
+            target = Character::player->GetPos();
+        }
         if (this->cdTimer.Expired())
         {
             angle = Vec2::Angle(centroChar, target);
@@ -52,12 +55,12 @@ void Gun::Update(float dt)
         if (angle >= 90 && angle <= 270)
         {
             inverted = false;
-            Character::player->flip = false;
+            charComponent->flip=false;
         }
         else
         {
             inverted = true;
-            Character::player->flip = true;
+            charComponent->flip=true;
         }
         associated.box.RawMove(centroChar);
 
@@ -101,7 +104,7 @@ void Gun::Shoot(Vec2 target)
             GameObject *bullet = new GameObject();
             angle = Vec2::Angle(centro, target);
 
-            Bullet *bulletComponent = new Bullet(*bullet, angle, 100, 10, 400, Character::player != this->associated.GetComponent("Character"));
+            Bullet *bulletComponent = new Bullet(*bullet, angle, 700, 100, 400, Character::player != this->associated.GetComponent("Character"));
             Vec2 gunOffset = {associated.box.GetSize().x + OFFSET, .0};
             Vec2 bulletOffset = Vec2::Rotate(gunOffset, angle);
             bullet->box.Move(centro + bulletOffset);

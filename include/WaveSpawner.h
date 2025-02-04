@@ -12,6 +12,7 @@ public:
 
 private:
     int zombieCounter;
+    int npcCounter;
     std::vector<Wave *> waves;
     int currentWave;
 };
