@@ -12,9 +12,9 @@ jobs:
       - uses: libsdl-org/setup-sdl@main
         id: sdl
         with:
-          version: 2-latest
-          version-sdl-image: 2-latest
-          version-sdl-mixer: 2-latest
+          version: 2.30.12
+          version-sdl-image: 2.8.4
+          version-sdl-mixer: 2.8.0
           cmake-arguments: -A Win32
       - name: 'Configure and build your project'
         run: |
@@ -32,9 +32,9 @@ jobs:
       - uses: libsdl-org/setup-sdl@main
         id: sdl
         with:
-          version: 2-latest
-          version-sdl-image: 2-latest
-          version-sdl-mixer: 2-latest
+          version: 2.30.12
+          version-sdl-image: 2.8.4
+          version-sdl-mixer: 2.8.0
       - name: 'Configure and build your project'
         run: |
           cmake -DCMAKE_PREFIX_PATH=${{ steps.sdl.outputs.prefix }} -S . -B build
