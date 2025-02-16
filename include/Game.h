@@ -3,23 +3,34 @@
 #include "SDL_include.h"
 #include "State.h"
 #include <string>
+#include <stack>
 class Game {
     public:
-        Game();
+        Game(std::string title, int width, int height);
         ~Game();
-        void Run();
-        SDL_Renderer* GetRenderer();
-        State& GetState();
+        
         static Game& GetInstance();
+        SDL_Renderer* GetRenderer();
+        State& GetCurrentState();
+        
+        void Push(State* state);
+        
+        void Run();
+        
         float GetDeltaTime();
         Vec2 GetWindowSize();
     private:
+    
+        void CalculateDeltaTime();
+        
         int frameStart;
         float dt;
-        void CalculateDeltaTime();
-        Game(std::string title, int width, int height);
+        
         static Game* instance;
+
+        State* storedState;
         SDL_Window* window;
         SDL_Renderer* renderer;
-        State* state;
+        std::stack<std::unique_ptr<State>> stateStack;
+        
 };

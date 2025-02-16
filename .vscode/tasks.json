@@ -8,7 +8,7 @@
         "label": "debug",
         "type": "shell",
         "command":"make",
-        "args": ["debug"],
+        "args": ["debug", "-j8"],
         "group": "build",
         "dependsOn": [
             "clean"

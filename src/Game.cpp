@@ -11,7 +11,7 @@
 
 Game *Game::instance = nullptr;
 
-Game::Game(std::string title, int width, int height)
+Game::Game(std::string title, int width, int height): stateStack()
 {
     srand(time(NULL));
     if (this->instance == nullptr)
@@ -36,13 +36,20 @@ Game::Game(std::string title, int width, int height)
             Mix_AllocateChannels(32);
             this->window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
             this->renderer = SDL_CreateRenderer(this->window, -1, (SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE));
-            this->state = new State();
+            this->storedState = nullptr;
             frameStart = SDL_GetTicks();
             dt = 0;
     }
 }
 Game::~Game()
 {
+    if(storedState != nullptr){
+        delete storedState;
+    }
+    stateStack = std::stack<std::unique_ptr<State>>();
+    Resources::ClearImages();
+    Resources::ClearMusics();
+    Resources::ClearSounds();
     SDL_DestroyRenderer(this->renderer);
     SDL_DestroyWindow(this->window);
     Mix_CloseAudio();
@@ -50,13 +57,18 @@ Game::~Game()
     IMG_Quit();
     SDL_Quit();
 }
+
+void Game::Push(State* state){
+    storedState = state;
+}
+
 SDL_Renderer *Game::GetRenderer()
 {
     return this->renderer;
 }
-State &Game::GetState()
+State &Game::GetCurrentState()
 {
-    return *state;
+    return *stateStack.top();
 }
 
 Vec2 Game::GetWindowSize(){
@@ -88,13 +100,29 @@ float Game::GetDeltaTime(){
 void Game::Run()
 {
     InputManager& inputManager = InputManager::GetInstance();
-    state->Start();
-    while (!state->QuitRequested())
+    if(storedState != nullptr){
+        stateStack.emplace(storedState);
+        storedState = nullptr;
+        GetCurrentState().Start();
+    }
+    while (!GetCurrentState().QuitRequested() && !stateStack.empty())
     {
+        if(GetCurrentState().PopRequested()){
+            stateStack.pop();
+            if(!stateStack.empty()){
+                GetCurrentState().Resume();
+            }
+            
+        }
+        if(storedState != nullptr){
+            stateStack.emplace(storedState);
+            storedState->Start();
+            storedState = nullptr;
+        }
         CalculateDeltaTime();
         inputManager.Update();
-        state->Update(dt);
-        state->Render();
+        GetCurrentState().Update(dt);
+        GetCurrentState().Render();
         SDL_RenderPresent(renderer);
         // SDL_Delay(33);
         SDL_Delay(16);
