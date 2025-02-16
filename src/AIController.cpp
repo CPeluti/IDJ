@@ -23,7 +23,6 @@ void AIController::Update(float dt){
             if(Character::player != nullptr){
                 Vec2 playerPos = Character::player->GetPos();
                 Vec2 distance = (playerPos - associated.box.center()).normalized();
-                Vec2 currentPos = this->associated.box.center();
                 ((Character*)this->associated.GetComponent("Character"))->Issue(Character::Command(Character::Command::MOVE,distance));
                 if(Vec2::Distance(playerPos,this->associated.box.GetPos()) < 400){
                     ((Character*)this->associated.GetComponent("Character"))->Issue(Character::Command(Character::Command::SHOOT,playerPos));

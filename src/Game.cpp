@@ -1,5 +1,6 @@
 #define INCLUDE_SDL_IMAGE
 #define INCLUDE_SDL_MIXER
+#define INCLUDE_SDL_TTF
 #include <string>
 #include <iostream>
 #include "SDL_include.h"
@@ -31,6 +32,10 @@ Game::Game(std::string title, int width, int height): stateStack()
             }
             if(Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024)){
                 SDL_Log("Failed open mix audio");
+                SDL_Log(SDL_GetError());
+            }
+            if(TTF_Init()){
+                SDL_Log("Failed to init ttf");
                 SDL_Log(SDL_GetError());
             }
             Mix_AllocateChannels(32);

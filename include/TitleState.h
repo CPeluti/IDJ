@@ -1,5 +1,6 @@
 #pragma once
 #include "State.h"
+#include "Text.h"
 
 class TitleState : public State{
     public:

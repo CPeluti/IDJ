@@ -37,17 +37,17 @@ bool State::QuitRequested()
     return quitRequested;
 }
 void State::StartArray(){
-    for(int i = 0; i<objectArray.size(); i++){
+    for(int i = 0; i<(int)objectArray.size(); i++){
         objectArray[i]->Start();
     }
 }
 void State::UpdateArray(float dt){
-    for(int i = 0; i<objectArray.size(); i++){
+    for(int i = 0; i<(int)objectArray.size(); i++){
         objectArray[i]->Update(dt);
     }
 } 
 void State::RenderArray(){
-    for(int i = 0; i<objectArray.size(); i++){
+    for(int i = 0; i<(int)objectArray.size(); i++){
         objectArray[i]->Render();
     }
 }
