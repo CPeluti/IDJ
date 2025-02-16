@@ -52,6 +52,8 @@ Character::~Character()
 {
     if(Character::player != this){
         Character::npcCounter--;
+    } else {
+        Character::player = nullptr;
     }
 }
 

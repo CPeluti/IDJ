@@ -12,7 +12,7 @@
 Gun::Gun(GameObject &associated, std::weak_ptr<GameObject> character) : Component(associated),
                                                                         shotSound("resources/audio/Range.wav"),
                                                                         reloadSound("resources/audio/PumpAction.mp3"),
-                                                                        cooldown(1),
+                                                                        cooldown(0.1),
                                                                         cdTimer(cooldown),
                                                                         character(character),
                                                                         angle(0),
@@ -42,9 +42,14 @@ void Gun::Update(float dt)
         Character* charComponent = ((Character*)c->GetComponent("Character"));
         Vec2 centroChar = c->box.center();
         Vec2 size = associated.box.GetSize();
-        Vec2 target = {(float)ip.GetMouseX(), (float)ip.GetMouseY()};
-        if(charComponent != Character::player){
+        Vec2 target;
+        if(charComponent == Character::player){
+            target = {(float)ip.GetMouseX(), (float)ip.GetMouseY()};
+
+        } else if (charComponent != Character::player && Character::player != nullptr){
             target = Character::player->GetPos();
+        } else {
+            target = {0,0};
         }
         if (this->cdTimer.Expired())
         {

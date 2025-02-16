@@ -62,11 +62,13 @@ void GameObject::AddComponent(Component *cpt)
 
 void GameObject::RemoveComponent(Component *cpt)
 {
-    for (int i = 0; i < (int)this->components.size(); i++)
+    for (int i = 0; i < (int)this->components.size();)
     {
         if (this->components[i] == cpt)
         {
             this->components.erase(this->components.begin() + i);
+        } else {
+            i++;
         }
     }
 }
