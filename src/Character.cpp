@@ -59,7 +59,7 @@ Character::~Character()
 
 void Character::Start()
 {
-    State &s = Game::GetInstance().GetState();
+    State &s = Game::GetInstance().GetCurrentState();
     GameObject *gunObj = new GameObject();
     Gun *gunComponent = new Gun(*gunObj, s.GetObjectPtr(&associated));
 
