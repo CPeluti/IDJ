@@ -118,7 +118,7 @@ void Gun::Shoot(Vec2 target)
 
             bullet->AddComponent(bulletComponent);
             bullet->angleDeg = angle + 90;
-            Game::GetInstance().GetState().AddObject(bullet);
+            Game::GetInstance().GetCurrentState().AddObject(bullet);
             associated.angleDeg = angle;
             shotSound.Play();
             cdTimer.Restart();

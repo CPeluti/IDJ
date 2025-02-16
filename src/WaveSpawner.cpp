@@ -33,7 +33,7 @@ void WaveSpawner::Update(float dt)
             GameObject *go = new GameObject();
             Zombie *z = new Zombie(*go);
             go->AddComponent(z);
-            Game::GetInstance().GetState().AddObject(go);
+            Game::GetInstance().GetCurrentState().AddObject(go);
             go->box.Move(Camera::pos + windowSize / 2 + Vec2::Rotate({distance}, randomAngle));
 
             randomAngle = rand() % 36000 / 100.0;
@@ -42,7 +42,7 @@ void WaveSpawner::Update(float dt)
             AIController* a = new AIController(*cgo);
             cgo->AddComponent(c);
             cgo->AddComponent(a);
-            Game::GetInstance().GetState().AddObject(cgo);
+            Game::GetInstance().GetCurrentState().AddObject(cgo);
             cgo->box.Move(Camera::pos + windowSize / 2 + Vec2::Rotate({distance}, randomAngle));
 
 
