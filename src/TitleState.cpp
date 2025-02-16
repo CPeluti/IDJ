@@ -4,6 +4,7 @@
 #include "SpriteRenderer.h"
 #include "StageState.h"
 #include "InputManager.h"
+#include "Camera.h"
 #include "Game.h"
 #include <iostream>
 #include <set>
@@ -17,6 +18,12 @@ TitleState::TitleState()
     start->AddComponent(sr);
     this->AddObject(start);
 
+    GameObject* text = new GameObject();
+    Text* textComponent = new Text(*text, "resources/font/neodgm.ttf", 20, Text::SOLID, "teste de texto",{255,255,255});
+    text->AddComponent(textComponent);
+    this->AddObject(text);
+    text->box.Move({Camera::pos.x+Game::GetInstance().GetWindowSize().x/2, Camera::pos.y+Game::GetInstance().GetWindowSize().y/2});
+    text->z = 1;
 }
 TitleState::~TitleState()
 {
@@ -50,6 +57,7 @@ void TitleState::Start()
     LoadAssets();
     StartArray();
     started = true;
+
 }
 
 void TitleState::Resume(){}

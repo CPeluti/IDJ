@@ -21,8 +21,8 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
                                                                    speed{1, 1},
                                                                    linearSpeed(300),
                                                                    hp(500),
-                                                                   deathTimer(5),
-                                                                   isDead(false)
+                                                                   isDead(false),
+                                                                   deathTimer(5)
 {
     SpriteRenderer *sr = new SpriteRenderer(associated, sprite, 3, 4);
     Animator *animator = new Animator(associated);
