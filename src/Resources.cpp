@@ -1,5 +1,6 @@
 #define INCLUDE_SDL_IMAGE
 #define INCLUDE_SDL_MIXER
+#define INCLUDE_SDL_TTF
 #include "Resources.h"
 #include "SDL_include.h"
 #include "Game.h"
@@ -9,6 +10,7 @@
 std::unordered_map<std::string, SDL_Texture*> Resources::imageTable;
 std::unordered_map<std::string, Mix_Music*> Resources::musicTable;
 std::unordered_map<std::string, Mix_Chunk*> Resources::soundTable;
+std::unordered_map<std::string, TTF_Font*> Resources::fontTable;
 
 SDL_Texture* Resources::GetImage(std::string file){
     
@@ -84,5 +86,31 @@ void Resources::ClearSounds(){
         }
     }
     soundTable.clear();
+}
+
+
+TTF_Font* Resources::GetFont(std::string file, int ptSize){
+    
+    if(fontTable.find(file+std::to_string(ptSize)) == fontTable.end()){
+        try{
+            TTF_Font* font = TTF_OpenFont(file.c_str(), ptSize);
+            fontTable[file+std::to_string(ptSize)] = font;
+            return font;
+        } catch (std::string e){
+            std::cout << "Failed to load font: " << e << std::endl; 
+        }
+    }
+    return fontTable[file+std::to_string(ptSize)];
+}
+
+void Resources::ClearFonts(){
+    for(auto const &entry : fontTable){
+        try {
+            TTF_CloseFont(entry.second);
+        } catch (std::string e){
+            std::cout << "Failed to delete font: " << e << std::endl; 
+        }
+    }
+    fontTable.clear();
 }
 

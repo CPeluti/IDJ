@@ -17,7 +17,7 @@ WaveSpawner::WaveSpawner(GameObject &associated) : Component(associated), zombie
 
 void WaveSpawner::Update(float dt)
 {
-    if(waves.size()<=currentWave){
+    if(waves.size()<=(unsigned int)currentWave){
         this->associated.RequestDelete();
         return;
     }

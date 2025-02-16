@@ -41,7 +41,6 @@ void Gun::Update(float dt)
     {
         Character* charComponent = ((Character*)c->GetComponent("Character"));
         Vec2 centroChar = c->box.center();
-        Vec2 size = associated.box.GetSize();
         Vec2 target;
         if(charComponent == Character::player){
             target = {(float)ip.GetMouseX(), (float)ip.GetMouseY()};

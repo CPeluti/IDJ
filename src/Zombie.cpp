@@ -19,8 +19,8 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
                                          damageSound("resources/audio/Hit1.wav"),
                                          deathSound("resources/audio/Dead.wav"),
                                          hit(false),
-                                         hitTimer(0.5),
                                          damage(50),
+                                         hitTimer(0.5),
                                          deathTimer(5)
 {
     SpriteRenderer *srZombie = new SpriteRenderer(associated, "resources/img/Enemy.png", 3, 2);

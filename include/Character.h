@@ -33,10 +33,10 @@ public:
 
 private:
     std::weak_ptr<GameObject> gun;
-    bool isDead;
     std::queue<Command> taskQueue;
     Vec2 speed;
     float linearSpeed;
     int hp;
+    bool isDead;
     Timer deathTimer;
 };
