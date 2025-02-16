@@ -128,11 +128,13 @@ void State::Update(float dt)
     {
         quitRequested = true;
     }
-    for (int i = 0; i < (int)this->objectArray.size(); i++)
+    for (int i = 0; i < (int)this->objectArray.size();)
     {
         if (objectArray[i]->IsDead())
         {
             objectArray.erase(objectArray.begin() + i);
+        } else {
+            i++;
         }
     }
 }
