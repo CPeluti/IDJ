@@ -108,7 +108,7 @@ void Gun::Shoot(Vec2 target)
             GameObject *bullet = new GameObject();
             angle = Vec2::Angle(centro, target);
 
-            Bullet *bulletComponent = new Bullet(*bullet, angle, 700, 100, 400, Character::player != this->associated.GetComponent("Character"));
+            Bullet *bulletComponent = new Bullet(*bullet, angle, 350, 500, 400, Character::player != this->associated.GetComponent("Character"));
             Vec2 gunOffset = {associated.box.GetSize().x + OFFSET, .0};
             Vec2 bulletOffset = Vec2::Rotate(gunOffset, angle);
             bullet->box.Move(centro + bulletOffset);

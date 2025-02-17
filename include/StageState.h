@@ -1,7 +1,9 @@
 #pragma once
 #include "State.h"
 #include "TileSet.h"
+#include "GameObject.h"
 #include "Music.h"
+#include "WaveSpawner.h"
 
 class StageState : public State{
     public:
@@ -19,4 +21,6 @@ class StageState : public State{
     private: 
         TileSet* tileSet;
         Music backgroundMusic;
-};
+        std::weak_ptr<GameObject> player;
+        std::weak_ptr<GameObject> spawner;
+    };

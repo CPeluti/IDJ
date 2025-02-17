@@ -2,12 +2,15 @@
 #include "SDL_include.h"
 #include "StageState.h"
 #include "TileMap.h"
+#include "TitleState.h"
 #include "Zombie.h"
 #include "Character.h"
 #include "InputManager.h"
 #include "SpriteRenderer.h"
-#include "WaveSpawner.h"
 #include "Collision.cpp"
+#include "EndState.h"
+#include "Game.h"
+#include "GameData.h"
 #include "Collider.h"
 #include <iostream>
 #include <set>
@@ -41,7 +44,7 @@ StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
     bg->z = 0;
     TileSet *tileset = new TileSet(64, 64, "resources/img/Tileset.png");
     TileMap *tilemap = new TileMap(*bg, "resources/map/map.txt", tileset);
-    bg->box.RawMove({-500, -500});
+    bg->box.RawMove({0, 0});
     bg->AddComponent(tilemap);
     this->AddObject(bg);
 
@@ -49,7 +52,7 @@ StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
     GameObject *character = new GameObject();
     Character *characterComponent = new Character(*character, "resources/img/Player.png", true);
     character->AddComponent(characterComponent);
-    this->AddObject(character);
+    player = this->AddObject(character);
     character->box.RawMove({1280, 1280});
     Character::player = characterComponent;
     Camera::Follow(character);
@@ -57,7 +60,7 @@ StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
     GameObject *waveSpawner = new GameObject();
     WaveSpawner *ws = new WaveSpawner(*waveSpawner);
     waveSpawner->AddComponent(ws);
-    this->AddObject(waveSpawner);
+    spawner = this->AddObject(waveSpawner);
 
 }
 StageState::~StageState()
@@ -77,8 +80,30 @@ void StageState::Update(float dt)
     if (ip.KeyPress(ESCAPE_KEY))
     {
         popRequested = true;
+        TitleState* stage = new TitleState();
+        Game::GetInstance().Push(stage);
     }
     UpdateArray(dt);
+    if(auto p = player.lock()){
+        if(p->IsDead()){
+            popRequested = true;
+            GameData::playerWon = false;
+            EndState* stage = new EndState();
+            Game::GetInstance().Push(stage);
+            backgroundMusic.Stop();
+            return;
+        }
+        if(auto s = spawner.lock()){
+            if(s->IsDead() && !p->IsDead()){
+                popRequested = true;
+                GameData::playerWon = true;
+                EndState* stage = new EndState();
+                backgroundMusic.Stop();
+                Game::GetInstance().Push(stage);
+                return;
+            }
+        }
+    }
     std::set<std::pair<int, int>> checked;
     for (int i = 0; i < (int)this->objectArray.size(); i++)
     {

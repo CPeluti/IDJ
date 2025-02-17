@@ -17,3 +17,7 @@ bool Timer::Expired(){
 float Timer::GetTime(){
     return time;
 }
+
+float Timer::GetAmount(){
+    return amount;
+}
