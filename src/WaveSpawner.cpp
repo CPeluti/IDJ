@@ -7,7 +7,7 @@
 
 WaveSpawner::WaveSpawner(GameObject &associated) : Component(associated), zombieCounter(0), npcCounter(0), currentWave(0)
 {
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 2; i++)
     {
         Wave *w = new Wave(1, 1, 1);
         w->cooldown.Restart();

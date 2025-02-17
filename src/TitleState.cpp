@@ -19,7 +19,7 @@ TitleState::TitleState()
     this->AddObject(start);
 
     GameObject* text = new GameObject();
-    Text* textComponent = new Text(*text, "resources/font/neodgm.ttf", 20, Text::SOLID, "teste de texto",{255,255,255});
+    Text* textComponent = new Text(*text, "resources/font/neodgm.ttf", 20, Text::SOLID, "Press SPACEBAR to play again or ESC to leave",{255,255,255}, 1);
     text->AddComponent(textComponent);
     this->AddObject(text);
     text->box.Move({Camera::pos.x+Game::GetInstance().GetWindowSize().x/2, Camera::pos.y+Game::GetInstance().GetWindowSize().y/2});
@@ -40,6 +40,7 @@ void TitleState::Update(float dt)
     }
     if (ip.KeyPress(SPACE_KEY))
     {
+        popRequested = true;
         StageState* stage = new StageState();
         Game::GetInstance().Push(stage);
     }

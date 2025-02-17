@@ -15,7 +15,7 @@ void Music::Stop (int ms){
     Mix_FadeOutMusic(ms);
 }
 Music::~Music (){
-    Music::Stop();
+    Music::Stop(0);
     // Mix_FreeMusic(music);
 }
 void Music::Play (int times){

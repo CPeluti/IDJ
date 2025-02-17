@@ -10,8 +10,9 @@ Text::Text (
     int fontSize ,
     TextStyle style ,
     std::string text ,
-    SDL_Color color 
-): Component(associated)
+    SDL_Color color,
+    int blink
+): Component(associated), blink(blink)
 {
     this->font=Resources::GetFont(fontFile, fontSize);
     this->texture=nullptr;
@@ -20,6 +21,9 @@ Text::Text (
     this->fontFile=fontFile;
     this->color=color;
     this->fontSize=fontSize;
+    this->blink = Timer(blink);
+    this->blink.Restart();
+    appear = true;
     RemakeTexture();
 }
 Text::~Text(){
@@ -28,12 +32,22 @@ Text::~Text(){
         texture = nullptr;
     }
 }
-void Text::Update(float dt){}
+void Text::Update(float dt){
+    if(blink.GetAmount()>0){
+        blink.Update(dt);
+        if(blink.Expired()){
+            blink.Restart();
+            appear = !appear;
+        }
+    }
+}
 void Text::Render(){
-    SDL_Rect clipRect = {0,0,(int)associated.box.GetSize().x, (int)associated.box.GetSize().y};
-    Vec2 pos = associated.box.GetPos() - Camera::pos;
-    SDL_Rect dstRect = {(int)pos.x, (int)pos.y, (int)associated.box.GetSize().x, (int)associated.box.GetSize().y};
-    SDL_RenderCopyEx(Game::GetInstance().GetRenderer(), texture, &clipRect, &dstRect, 0, nullptr, SDL_FLIP_NONE);
+    if(appear){
+        SDL_Rect clipRect = {0,0,(int)associated.box.GetSize().x, (int)associated.box.GetSize().y};
+        Vec2 pos = associated.box.GetPos() - Camera::pos;
+        SDL_Rect dstRect = {(int)pos.x, (int)pos.y, (int)associated.box.GetSize().x, (int)associated.box.GetSize().y};
+        SDL_RenderCopyEx(Game::GetInstance().GetRenderer(), texture, &clipRect, &dstRect, this->associated.angleDeg, nullptr, SDL_FLIP_NONE);
+    }
 }
 bool Text::Is(std::string type){
     return type == "Text";
