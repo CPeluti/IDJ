@@ -106,14 +106,18 @@ void Character::Update(float dt)
         Command c = taskQueue.front();
         switch (c.type)
         {
-        case c.MOVE:
-            speed = c.pos.normalized() * linearSpeed;
+            case c.MOVE:
+            {
+                speed = c.pos.normalized() * linearSpeed;
+            }
             break;
 
-        case c.SHOOT:
-            if (auto g = gun.lock())
+            case c.SHOOT:
             {
-                ((Gun *)g->GetComponent("Gun"))->Shoot(c.pos);
+                if (auto g = gun.lock())
+                {
+                    ((Gun *)g->GetComponent("Gun"))->Shoot(c.pos);
+                }
             }
             break;
         }
@@ -123,7 +127,21 @@ void Character::Update(float dt)
             animator->SetAnimation(flip ? "walking" : "i_walking");
             Vec2 newSpeed = (speed * dt);
             Vec2 currentPos = associated.box.GetPos();
-
+            if(this == this->player){
+                Vec2 charPos = this->associated.box.GetPos();
+                if(charPos.x < 640 && newSpeed.x < 0){
+                    newSpeed.x = 0;
+                } 
+                else if (charPos.x > 1920 -associated.box.GetSize().x && newSpeed.x > 0)
+                {
+                    newSpeed.x = 0;
+                }
+                if(charPos.y < 512 && newSpeed.y < 0){
+                    newSpeed.y = 0;
+                } else if (charPos.y > 2048-associated.box.GetSize().y  && newSpeed.y > 0){
+                    newSpeed.y = 0;
+                }
+            }
             associated.box.RawMove(currentPos + newSpeed);
         }
     }

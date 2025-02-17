@@ -121,7 +121,7 @@ void Game::Run()
         }
         if(storedState != nullptr){
             stateStack.emplace(storedState);
-            storedState->Start();
+            GetCurrentState().Start();
             storedState = nullptr;
         }
         CalculateDeltaTime();

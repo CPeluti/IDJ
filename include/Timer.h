@@ -6,6 +6,7 @@ class Timer{
         void Restart();
         bool Expired();
         float GetTime();
+        float GetAmount();
 
     private:
         float amount;

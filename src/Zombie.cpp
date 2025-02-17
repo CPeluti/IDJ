@@ -95,7 +95,7 @@ void Zombie::Update(float dt)
             Vec2 playerPos = Character::player->GetPos();
             Vec2 distance = playerPos - associated.box.center();
             Vec2 currentPos = this->associated.box.center();
-            this->associated.box.Move(currentPos + distance * dt * 0.5);
+            this->associated.box.Move(currentPos + distance.normalized() * dt * 200);
             flip = distance.x < 0;
             if(flip){
                 animator->SetAnimation("r_walking");
