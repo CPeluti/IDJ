@@ -1,6 +1,10 @@
-cmake_minimum_required(VERSION 3.31.2)
+cmake_minimum_required(VERSION 4.0)
 
+set( CMAKE_PREFIX_PATH "C:/SDL2-2.32.2" )
+set( CMAKE_INSTALL_PREFIX "C:/Users/peluti/projetos/IDJ/" )
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 project(JOGO)
+
 
 option(MYGAME_VENDORED "Use vendored libraries" OFF)
 # list(APPEND CMAKE_PREFIX_PATH "C:/setupsdl")
@@ -14,7 +18,6 @@ option(MYGAME_VENDORED "Use vendored libraries" OFF)
 include_directories(include)
 
 file(GLOB SOURCES "src/*.cpp")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ".")
 
 if(MYGAME_VENDORED)
     add_subdirectory(vendored/sdl EXCLUDE_FROM_ALL)
@@ -23,6 +26,7 @@ else()
     find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
     find_package(SDL2_image REQUIRED CONFIG REQUIRED COMPONENTS SDL2_image)
     find_package(SDL2_mixer REQUIRED CONFIG REQUIRED COMPONENTS SDL2_mixer)
+    find_package(SDL2_ttf REQUIRED CONFIG REQUIRED COMPONENTS SDL2_ttf)
 
     # 1. Look for a SDL2 package, 2. Look for the SDL2maincomponent and 3. DO NOT fail when SDL2main is not available
     find_package(SDL2 REQUIRED CONFIG COMPONENTS SDL2main)
@@ -47,5 +51,22 @@ if(TARGET SDL2_mixer::SDL2_mixer)
     target_link_libraries(JOGO PRIVATE SDL2_mixer::SDL2_mixer)
 endif()
 
+if(TARGET SDL2_ttf::SDL2_ttf)
+    # It has an implicit dependency on SDL2 functions, so it MUST be added before SDL2::SDL2 (or SDL2::SDL2-static)
+    target_link_libraries(JOGO PRIVATE SDL2_ttf::SDL2_ttf)
+endif()
+
 # Link to the actual SDL2 library. SDL2::SDL2 is the shared SDL library, SDL2::SDL2-static is the static SDL libarary.
 target_link_libraries(JOGO PRIVATE SDL2::SDL2)
+
+install(TARGETS ${PROJECT_NAME})
+install(DIRECTORY resources DESTINATION bin)
+install(
+    FILES
+    lib/SDL2.dll
+    lib/SDL2_image.dll
+    lib/SDL2_mixer.dll
+    lib/SDL2_ttf.dll
+    DESTINATION
+    bin
+)
