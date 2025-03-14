@@ -1,5 +1,6 @@
 #include <memory>
 #include <iostream>
+#include <format>
 #include "Game.h"
 #include "Component.h"
 #include "Character.h"
@@ -22,7 +23,7 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
                                                                    linearSpeed(300),
                                                                    hp(500),
                                                                    isDead(false),
-                                                                   deathTimer(5)
+                                                                   deathTimer(5)                                           
 {
     SpriteRenderer *sr = new SpriteRenderer(associated, sprite, 3, 4);
     Animator *animator = new Animator(associated);
@@ -34,9 +35,14 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
     }
     Collider *collider = new Collider(associated);
 
+    Lifebar *l = new Lifebar(associated,(int)hp, {associated.box.GetSize().x, (float)10},{0,(int)associated.box.GetSize().y/4});
+    l->setAmount(hp);
+
     associated.AddComponent(sr);
     associated.AddComponent(animator);
     associated.AddComponent(collider);
+    associated.AddComponent(l);
+
 
     animator->AddAnimation("walking", new Animation(0, 5, 0.2));
     animator->AddAnimation("idle", new Animation(6, 9, 0.5));
@@ -69,6 +75,8 @@ void Character::Start()
 }
 void Character::Damage(int amount){
     hp -= amount;
+    Lifebar *l = (Lifebar *)associated.GetComponent("Lifebar");
+    l->setAmount(hp);
     Animator *animator = (Animator *)associated.GetComponent("Animator");
     animator->SetAnimation("hit");
     if (hp <= 0 && !isDead)
@@ -76,6 +84,7 @@ void Character::Damage(int amount){
         if(auto g = this->gun.lock()){
             g->RequestDelete();
         }
+        associated.RemoveComponent(l);
         isDead = true;
         deathTimer.Restart();
         animator->SetAnimation("dead");

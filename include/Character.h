@@ -1,4 +1,5 @@
 #include "GameObject.h"
+#include "Lifebar.h"
 #include <memory>
 #include <queue>
 #include "Timer.h"
