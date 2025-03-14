@@ -48,7 +48,6 @@ StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
     bg->AddComponent(tilemap);
     this->AddObject(bg);
 
-
     GameObject *character = new GameObject();
     Character *characterComponent = new Character(*character, "resources/img/Player.png", true);
     character->AddComponent(characterComponent);
@@ -146,11 +145,7 @@ void StageState::Render()
 {
     std::stable_sort(objectArray.begin(), objectArray.end(), y_sort);
     std::stable_sort(objectArray.begin(), objectArray.end(), z_sort);
-    for (int i = 0; i < (int)this->objectArray.size(); i++)
-    {
-        // std::cout << "rendering" << std::endl;5
-        RenderArray();
-    }
+    RenderArray();
     // bg->Open("resources/img/Background.png");
     // bg->Render(0, 0);
 }

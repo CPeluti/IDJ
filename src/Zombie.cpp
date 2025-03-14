@@ -8,6 +8,7 @@
 #include "InputManager.h"
 #include "Game.h"
 #include "Camera.h"
+#include "Lifebar.h"
 #include "Collider.h"
 #include <iostream>
 
@@ -36,6 +37,10 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
     animator->AddAnimation("r_hit", new Animation(4, 4, 0, SDL_FLIP_HORIZONTAL));
     associated.AddComponent(animator);
 
+    Lifebar *l = new Lifebar(associated,(int)hitpoints, {associated.box.GetSize().x, (float)10},{0,(int)associated.box.GetSize().y/4});
+    l->setAmount(hitpoints);
+    associated.AddComponent(l);
+
     associated.box.Move({600, 450});
 
     animator->SetAnimation("walking");
@@ -45,17 +50,21 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
 void Zombie::Damage(int dmg)
 {
     Animator *animator = (Animator *)associated.GetComponent("Animator");
+    Lifebar *l = (Lifebar *)associated.GetComponent("Lifebar");
 
     hitpoints -= dmg;
+    l->setAmount(hitpoints);
 
     damageSound.Play(1);
     hit = true;
+    
     hitTimer.Restart();
     if(flip) animator->SetAnimation("r_hit");
     else animator->SetAnimation("hit");
     if (hitpoints <= 0 && !isDead)
     {
         this->associated.RemoveComponent(this->associated.GetComponent("Collider"));
+        this->associated.RemoveComponent(l);
         isDead = true;
         deathTimer.Restart();
         deathSound.Play(1);
