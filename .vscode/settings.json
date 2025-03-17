@@ -54,5 +54,9 @@
         "cinttypes": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp"
-    }
+    },
+    "clangd.arguments": [
+      "--log=verbose",
+      "--query-driver=C:/msys64/ucrt64/bin/g++.exe" // Point to your g++
+    ]
 }
