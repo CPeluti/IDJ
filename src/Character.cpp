@@ -1,11 +1,10 @@
 #include <memory>
-#include <iostream>
-#include <format>
 #include "Game.h"
 #include "Component.h"
 #include "Character.h"
 #include "Camera.h"
 #include "Bullet.h"
+#include "Lifebar.h"
 #include "Zombie.h"
 #include "Gun.h"
 #include "SpriteRenderer.h"
@@ -23,7 +22,7 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
                                                                    linearSpeed(300),
                                                                    hp(500),
                                                                    isDead(false),
-                                                                   deathTimer(5)                                           
+                                                                   deathTimer(5)
 {
     SpriteRenderer *sr = new SpriteRenderer(associated, sprite, 3, 4);
     Animator *animator = new Animator(associated);
@@ -76,9 +75,9 @@ void Character::Start()
 void Character::Damage(int amount){
     hp -= amount;
     Lifebar *l = (Lifebar *)associated.GetComponent("Lifebar");
-    l->setAmount(hp);
     Animator *animator = (Animator *)associated.GetComponent("Animator");
     animator->SetAnimation("hit");
+    subject.notify(*this, Observer::Event::onTakeDamage);
     if (hp <= 0 && !isDead)
     {
         if(auto g = this->gun.lock()){
@@ -187,4 +186,8 @@ void Character::NotifyCollision(GameObject &other)
 Vec2 Character::GetPos()
 {
     return this->associated.box.center();
+}
+
+int Character::getHP() const{
+    return this->hp;
 }

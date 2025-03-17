@@ -1,0 +1,5 @@
+CompileFlags:
+  Add: 
+    - "-IC:/msys64/ucrt64/include/c++/13.2.0"
+    - "-IC:/msys64/ucrt64/include/c++/13.2.0/x86_64-w64-mingw32"
+    - "-IC:/msys64/ucrt64/include"

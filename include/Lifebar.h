@@ -3,7 +3,8 @@
 #include "SDL_include.h"
 #include <Component.h>
 #include <Vec2.h>
-class Lifebar : public Component{
+#include <Observer.h>
+class Lifebar : public Component, public Observer{
     public:
         Lifebar(GameObject &associated, float total, Vec2 size, Vec2 offset);
         void Start();
@@ -12,6 +13,7 @@ class Lifebar : public Component{
         void Render();
         void setAmount(float amount);
         void setMax(float max);
+        void onNotify(const Component& component, Event event);
     private:
         SDL_Rect lifebar;
         Vec2 size;
