@@ -1,3 +1,6 @@
+#include "Component.h"
+#include "Character.h"
+#include "Observer.h"
 #include <Lifebar.h>
 #include <GameObject.h>
 #include <Game.h>
@@ -47,3 +50,12 @@ void Lifebar::Start(){
     };
 }
 
+void Lifebar::onNotify(const Component& component, Observer::Event event){
+    switch(event){
+        case Observer::Event::onTakeDamage:
+            this->setAmount(((Character&) component).getHP());
+            break;
+        default:
+            break;
+    }
+}
