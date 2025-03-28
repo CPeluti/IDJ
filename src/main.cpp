@@ -1,4 +1,5 @@
 #define INCLUDE_SDL
+#define MAX_MEMORY 16384
 #include "SDL_include.h"
 #include "Game.h"
 #include "TitleState.h"

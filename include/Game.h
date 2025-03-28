@@ -4,6 +4,14 @@
 #include "State.h"
 #include <string>
 #include <stack>
+#define NK_INCLUDE_FIXED_TYPES
+#define NK_INCLUDE_STANDARD_IO
+#define NK_INCLUDE_STANDARD_VARARGS
+#define NK_INCLUDE_DEFAULT_ALLOCATOR
+#define NK_INCLUDE_VERTEX_BUFFER_OUTPUT
+#define NK_INCLUDE_FONT_BAKING
+#define NK_INCLUDE_DEFAULT_FONT
+#include "nuklear.h"
 class Game {
     public:
         Game(std::string title, int width, int height);
@@ -19,6 +27,7 @@ class Game {
         
         float GetDeltaTime();
         Vec2 GetWindowSize();
+        nk_context* GetContext();
     private:
     
         void CalculateDeltaTime();
@@ -27,7 +36,7 @@ class Game {
         float dt;
         
         static Game* instance;
-
+        nk_context* ctx;
         State* storedState;
         SDL_Window* window;
         SDL_Renderer* renderer;
