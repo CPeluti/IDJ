@@ -22,7 +22,8 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
                                                                    linearSpeed(300),
                                                                    hp(500),
                                                                    isDead(false),
-                                                                   deathTimer(5)
+                                                                   deathTimer(5),
+                                                                   extraProjectiles(3)
 {
     SpriteRenderer *sr = new SpriteRenderer(associated, sprite, 3, 4);
     Animator *animator = new Animator(associated);
@@ -186,6 +187,10 @@ void Character::NotifyCollision(GameObject &other)
 Vec2 Character::GetPos()
 {
     return this->associated.box.center();
+}
+
+int Character::getProjectileNumber() const{
+    return this->extraProjectiles;
 }
 
 int Character::getHP() const{
