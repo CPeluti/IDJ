@@ -32,6 +32,7 @@ public:
     void Damage(int amount);
     bool flip;
     int getHP() const;
+    int getProjectileNumber() const;
 private:
     Subject subject;
     std::weak_ptr<GameObject> gun;
@@ -41,4 +42,5 @@ private:
     int hp;
     bool isDead;
     Timer deathTimer;
+    int extraProjectiles;
 };

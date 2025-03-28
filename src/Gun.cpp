@@ -16,7 +16,8 @@ Gun::Gun(GameObject &associated, std::weak_ptr<GameObject> character) : Componen
                                                                         cdTimer(cooldown),
                                                                         character(character),
                                                                         angle(0),
-                                                                        bulletOutput(0, 0)
+                                                                        bulletOutput(0, 0),
+                                                                        projectileAmount(3)
 {
     SpriteRenderer *sr = new SpriteRenderer(associated, "resources/img/Gun.png", 3, 2);
     Animator *animator = new Animator(associated);
@@ -104,20 +105,28 @@ void Gun::Shoot(Vec2 target)
         centro = c->box.center();
         if (cdTimer.Expired())
         {
+            Character* character = (Character*)c->GetComponent("Character");
+            int projectiles = (projectileAmount+character->getProjectileNumber());
+            float angleStep = 10;
+            float startingAngle = Vec2::Angle(centro, target);
+            angle = startingAngle-((projectiles/2)*angleStep);
 
-            GameObject *bullet = new GameObject();
-            angle = Vec2::Angle(centro, target);
-
-            Bullet *bulletComponent = new Bullet(*bullet, angle, 350, 500, 400, Character::player != this->associated.GetComponent("Character"));
-            Vec2 gunOffset = {associated.box.GetSize().x + OFFSET, .0};
-            Vec2 bulletOffset = Vec2::Rotate(gunOffset, angle);
-            bullet->box.Move(centro + bulletOffset);
-
-            // bullet->box.Move(centro);
-
-            bullet->AddComponent(bulletComponent);
-            bullet->angleDeg = angle + 90;
-            Game::GetInstance().GetCurrentState().AddObject(bullet);
+            // int offset = 10;
+            // int startingPoint = -((projectileAmount/2) * 10);
+            for(int i = 0; i<projectiles; i++){
+                GameObject *bullet = new GameObject();
+                Bullet *bulletComponent = new Bullet(*bullet, angle, 350, 500, 400, Character::player != this->associated.GetComponent("Character"));
+                Vec2 gunOffset = {associated.box.GetSize().x + OFFSET, .0};
+                Vec2 bulletOffset = Vec2::Rotate(gunOffset, angle);
+                bullet->box.Move(centro + bulletOffset);
+    
+                // bullet->box.Move(centro);
+    
+                bullet->AddComponent(bulletComponent);
+                bullet->angleDeg = angle + 90;
+                Game::GetInstance().GetCurrentState().AddObject(bullet);
+                angle+=angleStep;
+            }
             associated.angleDeg = angle;
             shotSound.Play();
             cdTimer.Restart();

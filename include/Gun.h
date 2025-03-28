@@ -12,6 +12,7 @@ class Gun : public Component{
         bool Is(std::string type);
         void Shoot(Vec2 target);
     private:
+        int projectileAmount;
         Sound shotSound;
         Sound reloadSound;
         int cooldown;
