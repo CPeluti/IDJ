@@ -8,7 +8,7 @@ class Animator: public Component {
         Animator(GameObject &associated);
         void Update(float dt);
         void Render();
-        bool Is(std::string type);
+        inline bool Is(std::string type) {return type == "Animator";}
         void SetAnimation(std::string name);
         void AddAnimation(std::string name, Animation *animation);
     private:

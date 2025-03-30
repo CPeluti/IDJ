@@ -1,4 +1,4 @@
-#include "Timer.h"
+#include "Core/Timer.h"
 
 Timer::Timer(float amount):amount(amount),time(amount){}
 

@@ -1,4 +1,4 @@
-#include "GameObject.h"
+#include "Core/GameObject.h"
 #include <iostream>
 // #include "Component.h"
 GameObject::GameObject()
@@ -75,6 +75,9 @@ void GameObject::RemoveComponent(Component *cpt)
 
 Component *GameObject::GetComponent(std::string type)
 {
+    if(type == "Animator"){
+        std::cout << "teste";
+    }
     for (int i = 0; i < (int)this->components.size(); i++)
     {
         if (this->components[i]->Is(type))
@@ -85,10 +88,10 @@ Component *GameObject::GetComponent(std::string type)
     return nullptr;
 }
 
-void GameObject::NotifyCollision(GameObject& other)
-{
-    for (int i = 0; i < (int)this->components.size(); i++)
-    {
-        this->components[i]->NotifyCollision(other);
-    }
-}
+// void GameObject::NotifyCollision(GameObject& other)
+// {
+//     for (int i = 0; i < (int)this->components.size(); i++)
+//     {
+//         this->components[i]->NotifyCollision(other);
+//     }
+// }

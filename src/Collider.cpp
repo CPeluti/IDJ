@@ -1,10 +1,10 @@
-#include "Collider.h"
-#include "GameObject.h"
+#include "Core/Collider.h"
+#include "Core/GameObject.h"
 #include <math.h>
 
 #ifdef DEBUG
-#include "Camera.h"
-#include "Game.h"
+#include "Core/Camera.h"
+#include "Core/Game.h"
 
 #include <SDL2/SDL.h>
 #endif // DEBUG
