@@ -1,6 +1,11 @@
 #pragma once
+
+// #define COMPONENT_IS(targetType) inline bool Is(std::string type) const override { return type == targetType;}
+
 #include <string>
+#include "Events/BasicEvent.h"
 // #include "GameObject.h"
+
 class GameObject;
 class Component
 {
@@ -11,7 +16,9 @@ public:
     virtual void Render() = 0;
     virtual void Start();
     virtual bool Is(std::string type) = 0;
-    virtual void NotifyCollision (GameObject& other);
+    virtual void OnEvent (Event& evt) {};
+
+    // COMPONENT_IS("Component");
 
 protected:
     GameObject &associated;

@@ -1,10 +1,10 @@
-#include "Gun.h"
-#include "SpriteRenderer.h"
-#include "Animator.h"
-#include "InputManager.h"
-#include "Character.h"
-#include "Game.h"
-#include "Bullet.h"
+#include "Core/Gun.h"
+#include "Core/SpriteRenderer.h"
+#include "Core/Animator.h"
+#include "Core/InputManager.h"
+#include "Core/Character.h"
+#include "Core/Game.h"
+#include "Core/Bullet.h"
 #include <iostream>
 #include <cmath>
 
@@ -60,12 +60,12 @@ void Gun::Update(float dt)
         if (angle >= 90 && angle <= 270)
         {
             inverted = false;
-            charComponent->flip=false;
+            charComponent->SetFlip(false);
         }
         else
         {
             inverted = true;
-            charComponent->flip=true;
+            charComponent->SetFlip(true);
         }
         associated.box.RawMove(centroChar);
 

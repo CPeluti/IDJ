@@ -1,8 +1,8 @@
 #define INCLUDE_SDL_MIXER
-#include "SDL_include.h"
-#include "Sound.h"
+#include "Core/SDL_include.h"
 #include <iostream>
-#include "Resources.h"
+#include "Core/Sound.h"
+#include "Core/Resources.h"
 Sound::Sound(){
     chunk = nullptr;
     channel = -1;

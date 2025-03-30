@@ -1,4 +1,4 @@
-#include "State.h"
+#include "Core/State.h"
 
 State::State() : popRequested(false), started(false), quitRequested(false), objectArray(){}
 State::~State()

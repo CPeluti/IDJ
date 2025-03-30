@@ -1,4 +1,4 @@
-#include "TileSet.h"
+#include "Core/TileSet.h"
 #include <iostream>
 
 TileSet::TileSet(int tileWidth, int tileHeight, std::string file): tileSet(file)
