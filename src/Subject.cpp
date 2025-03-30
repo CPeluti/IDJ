@@ -1,5 +1,4 @@
-#include "Subject.h"
-#include "Lifebar.h"
+#include "Core/Subject.h"
 #include <cstddef>
 
 Subject::Subject():head(NULL){}
@@ -28,10 +27,10 @@ void Subject::removeObserver(Observer* observer){
     }
 }
 
-void Subject::notify(const Component& component, Observer::Event event){
+void Subject::notify(Event& evt){
     Observer* observer = head;
     while(observer != NULL){
-        observer->onNotify(component, event);
+        observer->OnEvent(evt);
         observer = observer->next;
     }
 }

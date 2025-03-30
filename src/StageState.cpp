@@ -1,22 +1,22 @@
 #define INCLUDE_SDL_IMAGE
-#include "SDL_include.h"
-#include "StageState.h"
-#include "TileMap.h"
-#include "TitleState.h"
-#include "Zombie.h"
-#include "Character.h"
-#include "InputManager.h"
-#include "SpriteRenderer.h"
+#include "Core/SDL_include.h"
+#include "Core/StageState.h"
+#include "Core/TileMap.h"
+#include "Core/TitleState.h"
+#include "Core/Zombie.h"
+#include "Core/Character.h"
+#include "Core/InputManager.h"
+#include "Core/SpriteRenderer.h"
 #include "Collision.cpp"
-#include "EndState.h"
-#include "Game.h"
-#include "GameData.h"
-#include "Collider.h"
+#include "Core/EndState.h"
+#include "Core/Game.h"
+#include "Core/GameData.h"
+#include "Core/Collider.h"
+#include "Core/Camera.h"
 #include <iostream>
 #include <set>
 #include <algorithm>
 
-#include "Camera.h"
 
 bool y_sort(std::shared_ptr<GameObject> i, std::shared_ptr<GameObject> j)
 {
@@ -119,8 +119,10 @@ void StageState::Update(float dt)
                     {
                         if (Collision::IsColliding(colliderA->box, colliderB->box, objectArray[i]->angleDeg, objectArray[j]->angleDeg))
                         {
-                            objectArray[i]->NotifyCollision(*objectArray[j]);
-                            objectArray[j]->NotifyCollision(*objectArray[i]);
+                            OnCollisionEvent a(*objectArray[i]);
+                            OnCollisionEvent b(*objectArray[j]);
+                            objectArray[i]->subject.notify(b);
+                            objectArray[j]->subject.notify(a);
                         }
                     }
                 }

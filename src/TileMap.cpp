@@ -1,10 +1,10 @@
-#include "TileMap.h"
+#include "Core/TileMap.h"
+#include "Core/GameObject.h"
+#include "Core/Camera.h"
 #include <fstream>
 #include <memory>
 #include <string>
 #include <iostream>
-#include "GameObject.h"
-#include "Camera.h"
 
 TileMap::TileMap(GameObject& associated, std::string file, TileSet* tileSet): Component(associated), tileSet(tileSet){
     Load(file);

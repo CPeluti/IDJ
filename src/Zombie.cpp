@@ -1,15 +1,15 @@
-#include "Zombie.h"
-#include "GameObject.h"
-#include "Animation.h"
-#include "SpriteRenderer.h"
-#include "Bullet.h"
-#include "Animator.h"
-#include "Character.h"
-#include "InputManager.h"
-#include "Game.h"
-#include "Camera.h"
-#include "Lifebar.h"
-#include "Collider.h"
+#include "Core/Zombie.h"
+#include "Core/GameObject.h"
+#include "Core/Animation.h"
+#include "Core/SpriteRenderer.h"
+#include "Core/Bullet.h"
+#include "Core/Animator.h"
+#include "Core/Character.h"
+#include "Core/InputManager.h"
+#include "Core/Game.h"
+#include "Core/Camera.h"
+#include "Core/Lifebar.h"
+#include "Core/Collider.h"
 #include <iostream>
 
 int Zombie::zombieCounter = 0;
@@ -24,6 +24,8 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
                                          hitTimer(0.5),
                                          deathTimer(5)
 {
+    this->associated.subject.addObserver(this);
+
     SpriteRenderer *srZombie = new SpriteRenderer(associated, "resources/img/Enemy.png", 3, 2);
     associated.AddComponent(srZombie);
     Collider *collider = new Collider(associated);
@@ -37,9 +39,9 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
     animator->AddAnimation("r_hit", new Animation(4, 4, 0, SDL_FLIP_HORIZONTAL));
     associated.AddComponent(animator);
 
-    Lifebar *l = new Lifebar(associated,(int)hitpoints, {associated.box.GetSize().x, (float)10},{0,(int)associated.box.GetSize().y/4});
-    l->setAmount(hitpoints);
-    associated.AddComponent(l);
+    // Lifebar *l = new Lifebar(associated,(int)hitpoints, {associated.box.GetSize().x, (float)10},{0,(int)associated.box.GetSize().y/4});
+    // l->setAmount(hitpoints);
+    // associated.AddComponent(l);
 
     associated.box.Move({600, 450});
 
@@ -50,10 +52,10 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
 void Zombie::Damage(int dmg)
 {
     Animator *animator = (Animator *)associated.GetComponent("Animator");
-    Lifebar *l = (Lifebar *)associated.GetComponent("Lifebar");
+    // Lifebar *l = (Lifebar *)associated.GetComponent("Lifebar");
 
     hitpoints -= dmg;
-    l->setAmount(hitpoints);
+    // l->setAmount(hitpoints);
 
     damageSound.Play(1);
     hit = true;
@@ -64,7 +66,7 @@ void Zombie::Damage(int dmg)
     if (hitpoints <= 0 && !isDead)
     {
         this->associated.RemoveComponent(this->associated.GetComponent("Collider"));
-        this->associated.RemoveComponent(l);
+        // this->associated.RemoveComponent(l);
         isDead = true;
         deathTimer.Restart();
         deathSound.Play(1);
@@ -137,11 +139,20 @@ int Zombie::GetDamage()
     return damage;
 }
 
-void Zombie::NotifyCollision(GameObject &other)
+void Zombie::OnEvent(Event& evt){
+    EventDispatcher dispatcher(evt);
+
+    dispatcher.Dispatch<OnCollisionEvent>(BIND_EVENT_FN(Zombie::OnCollision));
+}
+
+bool Zombie::OnCollision(OnCollisionEvent& evt)
 {
-    Bullet *b = (Bullet *)other.GetComponent("Bullet");
+    GameObject& go = evt.GetGameObject();
+    Bullet *b = (Bullet *)go.GetComponent("Bullet");
     if (b != nullptr && !this->isDead)
     {
         this->Damage(b->GetDamage());
     }
+
+    return true;
 }

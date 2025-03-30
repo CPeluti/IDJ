@@ -4,7 +4,7 @@
 class Subject {
     public:
         Subject();
-        void notify(const Component& e, Observer::Event ev);
+        void notify(Event& evt);
         void addObserver(Observer* observer);
         void removeObserver(Observer* observer);
     private:

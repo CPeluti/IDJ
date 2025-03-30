@@ -1,9 +1,9 @@
 #define INCLUDE_SDL_IMAGE
 #define INCLUDE_SDL_MIXER
 #define INCLUDE_SDL_TTF
-#include "Resources.h"
-#include "SDL_include.h"
-#include "Game.h"
+#include "Core/SDL_include.h"
+#include "Core/Resources.h"
+#include "Core/Game.h"
 #include <iostream>
 
 

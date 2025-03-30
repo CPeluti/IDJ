@@ -1,10 +1,10 @@
 #define INCLUDE_SDL
-#include "SDL_include.h"
+#include "Core/SDL_include.h"
 #include <iostream>
-#include "InputManager.h"
-#include "Game.h"
-#include "Camera.h"
-#include "nuklear_sdl_renderer.h"
+#include "Core/InputManager.h"
+#include "Core/Game.h"
+#include "Core/Camera.h"
+#include "Core/nuklear_sdl_renderer.h"
 InputManager& InputManager::GetInstance(){
     static InputManager inputManager;
     return inputManager;

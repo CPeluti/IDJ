@@ -1,5 +1,5 @@
-#include "AIController.h"
-#include "Character.h"
+#include "Core/AIController.h"
+#include "Core/Character.h"
 #include <iostream>
 
 AIController::AIController(GameObject& associated) : Component(associated), restTimer(3){

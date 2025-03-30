@@ -1,9 +1,9 @@
-#include "WaveSpawner.h"
-#include "Zombie.h"
-#include "Character.h"
-#include "Game.h"
-#include "Camera.h"
-#include "AIController.h"
+#include "Core/WaveSpawner.h"
+#include "Core/Zombie.h"
+#include "Core/Character.h"
+#include "Core/Game.h"
+#include "Core/Camera.h"
+#include "Core/AIController.h"
 
 WaveSpawner::WaveSpawner(GameObject &associated) : Component(associated), zombieCounter(0), npcCounter(0), currentWave(0)
 {

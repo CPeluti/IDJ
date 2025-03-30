@@ -1,14 +1,15 @@
-#include "Component.h"
-#include "Character.h"
-#include "Observer.h"
-#include <Lifebar.h>
-#include <GameObject.h>
-#include <Game.h>
-#include <Camera.h>
+#include "Core/Component.h"
+#include "Core/Character.h"
+#include "Core/Observer.h"
+#include "Core/Lifebar.h"
+#include "Core/GameObject.h"
+#include "Core/Game.h"
+#include "Core/Camera.h"
 #include <iostream>
-#include <format>
 
-Lifebar::Lifebar(GameObject &associated, float max, Vec2 size, Vec2 offset): Component(associated), total(max), size(size), offset(offset){}
+Lifebar::Lifebar(GameObject &associated, float max, Vec2 size, Vec2 offset): Component(associated), total(max), size(size), offset(offset){
+    this->associated.subject.addObserver(this);
+}
 
 bool Lifebar::Is(std::string type){
     return type == "Lifebar";
@@ -50,12 +51,12 @@ void Lifebar::Start(){
     };
 }
 
-void Lifebar::onNotify(const Component& component, Observer::Event event){
-    switch(event){
-        case Observer::Event::onTakeDamage:
-            this->setAmount(((Character&) component).getHP());
-            break;
-        default:
-            break;
-    }
-}
+// void Lifebar::onNotify(const Component& component, Observer::Event event){
+//     switch(event){
+//         case Observer::Event::onTakeDamage:
+//             this->setAmount(((Character&) component).getHP());
+//             break;
+//         default:
+//             break;
+//     }
+// }

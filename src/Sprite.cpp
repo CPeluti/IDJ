@@ -1,10 +1,10 @@
 #define INCLUDE_SDL_IMAGE
 #include <string>
-#include "SDL_include.h"
+#include "Core/SDL_include.h"
 #include <iostream>
-#include "Game.h"
-#include "Resources.h"
-#include "Camera.h"
+#include "Core/Game.h"
+#include "Core/Resources.h"
+#include "Core/Camera.h"
 Sprite::Sprite()
 {
     frameCountH = 1;

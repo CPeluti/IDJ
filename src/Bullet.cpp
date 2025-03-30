@@ -1,12 +1,13 @@
-#include "Bullet.h"
-#include "SpriteRenderer.h"
-#include "Vec2.h"
-#include "Collider.h"
+#include "Core/Bullet.h"
+#include "Core/SpriteRenderer.h"
+#include "Core/Vec2.h"
+#include "Core/Collider.h"
 
 #include <iostream>
 
 Bullet::Bullet(GameObject &associated, float angle, float speed, int damage, float maxDistance, bool targetsPlayer) : Component(associated)
 {
+    this->associated.subject.addObserver(this);
     SpriteRenderer *sr = new SpriteRenderer(associated, "resources/img/Bullet.png", 1, 1);
     associated.AddComponent(sr);
     Collider *collider = new Collider(associated);
@@ -51,10 +52,19 @@ int Bullet::GetDamage()
 
 void Bullet::Render() {}
 
-void Bullet::NotifyCollision(GameObject &other)
+void Bullet::OnEvent(Event& evt){
+    EventDispatcher dispatcher(evt);
+
+    dispatcher.Dispatch<OnCollisionEvent>(BIND_EVENT_FN(Bullet::OnCollision));
+}
+
+bool Bullet::OnCollision(OnCollisionEvent& evt)
 {
-    if (other.GetComponent("Zombie") != nullptr || (other.GetComponent("Character") != nullptr))
+    GameObject& go = evt.GetGameObject();
+
+    if (go.GetComponent("Zombie") != nullptr || (go.GetComponent("Character") != nullptr))
     {
         this->associated.RequestDelete();
     }
+    return true;
 }
