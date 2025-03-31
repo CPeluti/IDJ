@@ -25,7 +25,7 @@ public:
     void Render();
     inline void Issue(Command task) {taskQueue.push(task);}
     
-    void Damage(int amount);
+    // void Damage(int amount);
     
     // void OnNotify(Component& component);
     void OnEvent(Event& evt);
@@ -53,7 +53,7 @@ private:
     std::queue<Command> taskQueue;
     Vec2 speed;
     float linearSpeed;
-    int hp;
+    float hp;
     bool isDead;
     Timer deathTimer;
     int extraProjectiles;

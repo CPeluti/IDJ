@@ -3,7 +3,7 @@ set( CMAKE_PREFIX_PATH "C:/SDL2-2.32.2" )
 set( CMAKE_INSTALL_PREFIX "C:/Users/peluti/projetos/IDJ/" )
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
-# set(CMAKE_CXX_COMPILER "C:\\msys64\\ucrt64\\bin\\g++.exe")
+set(CMAKE_CXX_COMPILER "C:\\msys64\\ucrt64\\bin\\g++.exe")
 set(NUKLEAR_CXX_FLAGS "")
 project(JOGO)
 
