@@ -24,6 +24,13 @@ TitleState::TitleState()
     this->AddObject(text);
     text->box.Move({Camera::pos.x+Game::GetInstance().GetWindowSize().x/2, Camera::pos.y+Game::GetInstance().GetWindowSize().y/2});
     text->z = 1;
+
+    GameObject* particles = new GameObject();
+    ParticleSystem* ps = new ParticleSystem(*particles);
+    particles->AddComponent(ps);
+    particles->box.Move({(Camera::pos.x+Game::GetInstance().GetWindowSize().x/2)-50, (Camera::pos.y+Game::GetInstance().GetWindowSize().y/2)-50});
+    particles->z = 1;
+    particlesSystem = this->AddObject(particles);
 }
 TitleState::~TitleState()
 {
@@ -44,7 +51,15 @@ void TitleState::Update(float dt)
         StageState* stage = new StageState();
         Game::GetInstance().Push(stage);
     }
+    if(auto ps = particlesSystem.lock()){
+        //TODO: rever questão do sistema de particula estar contido em um gameObject
+        ps->box.Move({ip.GetMouseX(), ip.GetMouseY()});
+        ParticleSystem* particles = (ParticleSystem*)ps->GetComponent("ParticleSystem");
+        for(int i = 0; i<5; i++){
+            particles->Emit(m_Particle);
+        }
 
+    }
     UpdateArray(dt);
 
 }
@@ -59,6 +74,11 @@ void TitleState::Start()
     StartArray();
     started = true;
 
+    m_Particle.SizeBegin = 4.0f, m_Particle.SizeVariation = 0.3f, m_Particle.SizeEnd = 1.0f;
+	m_Particle.LifeTime = 1.0f;
+	m_Particle.Velocity = { 0.0f, 0.0f };
+	m_Particle.VelocityVariation = { 3.0f, 1.0f };
+	m_Particle.Position = { 0.0f, 0.0f };
 }
 
 void TitleState::Resume(){}
