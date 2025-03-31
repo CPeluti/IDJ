@@ -39,12 +39,15 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
         associated.AddComponent(playerController);
     }
 
+
     // Lifebar *l = new Lifebar(associated,(int)hp, {associated.box.GetSize().x, (float)10},{0,(int)associated.box.GetSize().y/4});
     // l->setAmount(hp);
 
     associated.AddComponent(sr);
     associated.AddComponent(animator);
     associated.AddComponent(collider);
+    associated.AddComponent(hs);
+
     // associated.AddComponent(l);
 
 
@@ -76,6 +79,7 @@ void Character::Start()
     gunObj->AddComponent(gunComponent);
 
     this->gun = s.AddObject(gunObj);
+
 }
 // void Character::Damage(int amount){
 //     hp -= amount;
@@ -171,16 +175,16 @@ void Character::OnEvent(Event& e){
 }
 
 bool Character::OnCollision(OnCollisionEvent& evt){
-    GameObject& go = evt.GetGameObject();
-    Bullet *b = (Bullet *)go.GetComponent("Bullet");
-    Zombie *z = (Zombie *)go.GetComponent("Zombie");
-    if (b != nullptr && ((Character::player == this && b->targetsPlayer) || (Character::player != this)))
-    {
-        // Damage(b->GetDamage());
-    }
-    if (z != nullptr && !z->isDead && (Character::player == this))
-    {
-        // Damage(z->GetDamage());
-    }
+    // GameObject& go = evt.GetGameObject();
+    // Bullet *b = (Bullet *)go.GetComponent("Bullet");
+    // Zombie *z = (Zombie *)go.GetComponent("Zombie");
+    // if (b != nullptr && ((Character::player == this && b->targetsPlayer) || (Character::player != this)))
+    // {
+    //     associated.subject.notify(OnDamageTakenEvent(associated, 100))
+    // }
+    // if (z != nullptr && !z->isDead && (Character::player == this))
+    // {
+    //     // Damage(z->GetDamage());
+    // }
     return true;
 }

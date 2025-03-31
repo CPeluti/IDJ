@@ -8,6 +8,8 @@
 Bullet::Bullet(GameObject &associated, float angle, float speed, int damage, float maxDistance, bool targetsPlayer) : Component(associated)
 {
     this->associated.subject.addObserver(this);
+    ParticleSystem* ps = new ParticleSystem(associated); 
+    associated.AddComponent(ps);
     SpriteRenderer *sr = new SpriteRenderer(associated, "resources/img/Bullet.png", 1, 1);
     associated.AddComponent(sr);
     Collider *collider = new Collider(associated);
@@ -22,6 +24,14 @@ Bullet::Bullet(GameObject &associated, float angle, float speed, int damage, flo
     // this->speed = {speed, speed}
 }
 
+void Bullet::Start(){
+    m_Particle.SizeBegin = 4.0f, m_Particle.SizeVariation = 0.3f, m_Particle.SizeEnd = 1.0f;
+	m_Particle.LifeTime = 1.0f;
+	m_Particle.Velocity = { 0.0f, 0.0f };
+	m_Particle.VelocityVariation = { 3.0f, 1.0f };
+	m_Particle.Position = { 0.0f, 0.0f };
+}
+
 void Bullet::Update(float dt)
 {
 
@@ -33,6 +43,13 @@ void Bullet::Update(float dt)
     associated.box.RawMove(newPos);
 
     distanceLeft -= Vec2::Distance(newPos, oldPos);
+    ParticleSystem* particles = (ParticleSystem*)associated.GetComponent("ParticleSystem");
+    if(particles){
+        m_Particle.Position = associated.box.center();  
+        for(int i = 0; i<1; i++){
+            particles->Emit(m_Particle);
+        }
+    }
 
     if (distanceLeft <= 0)
     {
@@ -61,10 +78,9 @@ void Bullet::OnEvent(Event& evt){
 bool Bullet::OnCollision(OnCollisionEvent& evt)
 {
     GameObject& go = evt.GetGameObject();
-
-    if (go.GetComponent("Zombie") != nullptr || (go.GetComponent("Character") != nullptr))
-    {
-        this->associated.RequestDelete();
-    }
+    OnDamageTakenEvent e = OnDamageTakenEvent(this->associated, this->damage);
+    if(go.GetComponent("HealthSystem")) go.subject.notify(e);
+    if(!go.GetComponent("Bullet")) this->associated.RequestDelete();
+    
     return true;
 }
