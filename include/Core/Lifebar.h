@@ -1,9 +1,9 @@
 #pragma once
 #define INCLUDE_SDL_IMAGE
 #include "SDL_include.h"
-#include <Component.h>
-#include <Vec2.h>
-#include <Observer.h>
+#include "Component.h"
+#include "Vec2.h"
+#include "Observer.h"
 class Lifebar : public Component, public Observer{
     public:
         Lifebar(GameObject &associated, float total, Vec2 size, Vec2 offset);

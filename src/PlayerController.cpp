@@ -1,6 +1,6 @@
-#include "PlayerController.h"
-#include "InputManager.h"
-#include "Character.h"
+#include "Core/PlayerController.h"
+#include "Core/InputManager.h"
+#include "Core/Character.h"
 
 PlayerController::PlayerController(GameObject& associated): Component(associated){}
 

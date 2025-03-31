@@ -2,8 +2,9 @@
 #include <string>
 #include <vector>
 #include "Rect.h"
-// class Component;
 #include "Component.h"
+#include "Subject.h"
+// class Component;
 
 class GameObject
 {
@@ -19,9 +20,10 @@ public:
     Component *GetComponent(std::string type);
     void Start();
     Rect box;
-    void NotifyCollision(GameObject& other);
+    // void NotifyCollision(GameObject& other);
     int z;
     double angleDeg;
+    Subject subject;
 private:
     bool started;
     std::vector<Component *> components;

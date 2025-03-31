@@ -1,5 +1,5 @@
-#include "SpriteRenderer.h"
-#include "Component.h"
+#include "Core/SpriteRenderer.h"
+#include "Core/Component.h"
 #include <iostream>
 SpriteRenderer::SpriteRenderer(GameObject &associated) : Component(associated)
 {

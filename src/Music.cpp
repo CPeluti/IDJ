@@ -1,9 +1,9 @@
 #define INCLUDE_SDL_MIXER
 #include <memory>
 #include <string>
-#include "SDL_include.h"
-#include "Music.h"
-#include "Resources.h"
+#include "Core/SDL_include.h"
+#include "Core/Music.h"
+#include "Core/Resources.h"
 Music::Music (){
     music = nullptr;
 }

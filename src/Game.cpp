@@ -3,10 +3,10 @@
 #define INCLUDE_SDL_TTF
 #include <string>
 #include <iostream>
-#include "SDL_include.h"
-#include "Game.h"
-#include "Resources.h"
-#include "InputManager.h"
+#include "Core/SDL_include.h"
+#include "Core/Game.h"
+#include "Core/Resources.h"
+#include "Core/InputManager.h"
 #include <cstdlib>
 #include <ctime>
 #define NK_SDL_RENDERER_IMPLEMENTATION
@@ -18,8 +18,8 @@
 #define NK_INCLUDE_VERTEX_BUFFER_OUTPUT
 #define NK_INCLUDE_FONT_BAKING
 #define NK_INCLUDE_DEFAULT_FONT
-#include "nuklear.h"
-#include "nuklear_sdl_renderer.h"
+#include "Core/nuklear.h"
+#include "Core/nuklear_sdl_renderer.h"
 
 Game *Game::instance = nullptr;
 
@@ -148,6 +148,7 @@ float Game::GetDeltaTime(){
 void Game::Run()
 {
     nk_colorf bg;
+    nk_style* s  = &ctx->style;
     InputManager& inputManager = InputManager::GetInstance();
     if(storedState != nullptr){
         stateStack.emplace(storedState);
@@ -169,18 +170,14 @@ void Game::Run()
             GetCurrentState().Start();
             storedState = nullptr;
         }
-
-        if (nk_begin(ctx, "Demo", nk_rect(50, 50, 230, 250),
-            NK_WINDOW_BORDER|NK_WINDOW_MOVABLE|NK_WINDOW_SCALABLE|
-            NK_WINDOW_MINIMIZABLE|NK_WINDOW_TITLE))
+        nk_style_push_color(ctx, &s->window.background, nk_rgba(0,0,0,0));
+        nk_style_push_style_item(ctx, &s->window.fixed_background, nk_style_item_color(nk_rgba(0,0,0,0)));
+        if (nk_begin(ctx, "Demo", nk_rect(50, 50, 230, 250), false))
         {
             enum {EASY, HARD};
             static int op = EASY;
             static int property = 20;
             nk_layout_row_static(ctx, 30, 80, 1);
-            if(nk_window_is_hovered(ctx)){
-                SDL_Log("teste\n");
-            }
             if (nk_button_label(ctx, "button"))
                 fprintf(stdout, "button pressed\n");
             nk_layout_row_dynamic(ctx, 30, 2);
@@ -204,6 +201,9 @@ void Game::Run()
             }
         }
         nk_end(ctx);
+
+        nk_style_pop_color(ctx);
+        nk_style_pop_style_item(ctx);
 
         CalculateDeltaTime();
         inputManager.Update();
