@@ -28,7 +28,7 @@ void ParticleSystem::Render(){
         float current = particle.LifeTimeRemaining/particle.LifeTime;
         float size = Vec2::lerp(particle.SizeBegin, particle.SizeEnd, current);
         m_Sprite->SetScale(size,size);
-        m_Sprite->Render(associated.box.center() + particle.Position, associated.box.GetSize() + Vec2(size,size), particle.Rotation);
+        m_Sprite->Render(particle.Position, associated.box.GetSize() + Vec2(size,size), particle.Rotation);
     }
 }
 
@@ -41,7 +41,7 @@ void ParticleSystem::Emit(const ParticleData& particleData){
 
     float r = Random::Float();
 
-    particle.Position = particleData.Position;
+    particle.Position = associated.box.center();
     particle.Rotation = Random::Float() * 2.0f * M_PI;
 
     particle.Velocity = particleData.Velocity;

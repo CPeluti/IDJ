@@ -28,3 +28,10 @@ class OnDamageTakenEvent : public Event {
         float m_Amount;
 };
 
+class OnDeathEvent : public Event {
+    public:
+        OnDeathEvent() {}
+
+        EVENT_TYPE(OnDeathEvent);
+
+};
