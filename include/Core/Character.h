@@ -1,42 +1,43 @@
 #include "GameObject.h"
 #include "Subject.h"
+#include "Entity.h"
 #include <memory>
 #include <queue>
 #include "Timer.h"
-class Character : public Component, public Observer
+class Character : public Component, public Observer, public Entity
 {
 public:
     class Command
     {
-        public:
-            enum CommandType
-            {
-                MOVE,
-                SHOOT
-            };
-            Command(CommandType type, Vec2 pos);
-            CommandType type;
-            Vec2 pos;
+    public:
+        enum CommandType
+        {
+            MOVE,
+            SHOOT
+        };
+        Command(CommandType type, Vec2 pos);
+        CommandType type;
+        Vec2 pos;
     };
     Character(GameObject &associated, std::string sprite, bool isPlayer = false);
     ~Character();
     void Start();
     void Update(float dt);
     void Render();
-    inline void Issue(Command task) {taskQueue.push(task);}
-    
-    // void Damage(int amount);
-    
-    // void OnNotify(Component& component);
-    void OnEvent(Event& evt);
-    
-    inline Vec2 GetPos() const {return associated.box.center();}
-    inline int getHP() const {return hp;}
-    inline int getProjectileNumber() const {return extraProjectiles;}
+    inline void Issue(Command task) { taskQueue.push(task); }
 
-    inline void SetFlip(bool value) {flip = value;}
-    
-    inline bool Is(std::string type){return type == "Character";}
+    // void Damage(int amount);
+
+    // void OnNotify(Component& component);
+    void OnEvent(Event &evt);
+
+    inline Vec2 GetPos() const { return associated.box.center(); }
+    inline int getHP() const { return hp; }
+    inline int getProjectileNumber() const { return extraProjectiles; }
+
+    inline void SetFlip(bool value) { flip = value; }
+
+    inline bool Is(std::string type) { return type == "Character"; }
     // COMPONENT_IS("Character");
 
 public:
@@ -44,8 +45,8 @@ public:
     static Character *player;
 
 private:
-    bool OnCollision(OnCollisionEvent& evt);
-    
+    bool OnCollision(OnCollisionEvent &evt);
+
 private:
     bool flip;
     Subject subject;
