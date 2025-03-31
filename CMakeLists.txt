@@ -18,6 +18,7 @@ option(MYGAME_VENDORED "Use vendored libraries" OFF)
 # target_include_directories(JOGO PRIVATE ./include)
 
 include_directories(include)
+# add_subdirectory(include)
 add_definitions(${NUKLEAR_CXX_FLAGS})
 file(GLOB SOURCES "src/*.cpp")
 

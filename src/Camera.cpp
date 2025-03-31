@@ -1,6 +1,6 @@
-#include "Camera.h"
-#include "InputManager.h"
-#include "Game.h"
+#include "Core/Camera.h"
+#include "Core/InputManager.h"
+#include "Core/Game.h"
 #include <iostream>
 Vec2 Camera::pos = {0,0};
 Vec2 Camera::speed = {0,0};

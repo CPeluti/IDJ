@@ -1,8 +1,8 @@
-#include "Text.h"
-#include "Resources.h"
-#include "Component.h"
-#include "Camera.h"
-#include "Game.h"
+#include "Core/Text.h"
+#include "Core/Resources.h"
+#include "Core/Component.h"
+#include "Core/Camera.h"
+#include "Core/Game.h"
 
 Text::Text (
     GameObject& associated,

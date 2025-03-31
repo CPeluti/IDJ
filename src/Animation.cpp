@@ -1,4 +1,4 @@
-#include "Animation.h"
+#include "Core/Animation.h"
 
 Animation::Animation(int frameStart, int frameEnd, float frameTime, SDL_RendererFlip flip) {
     this->frameStart = frameStart;
