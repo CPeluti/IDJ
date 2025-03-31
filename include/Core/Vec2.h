@@ -24,6 +24,7 @@ class Vec2{
         static Vec2 DivideByScalar(Vec2 a,int b);
         static Vec2 DivideByScalar(Vec2 a,float b);
         static float Distance(Vec2 a,Vec2 b);
+        static float lerp(float a,float b, float current);
 };
 
 
