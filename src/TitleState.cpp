@@ -55,6 +55,7 @@ void TitleState::Update(float dt)
         //TODO: rever questão do sistema de particula estar contido em um gameObject
         ps->box.Move({ip.GetMouseX(), ip.GetMouseY()});
         ParticleSystem* particles = (ParticleSystem*)ps->GetComponent("ParticleSystem");
+        
         for(int i = 0; i<5; i++){
             particles->Emit(m_Particle);
         }
