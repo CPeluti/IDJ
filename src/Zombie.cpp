@@ -1,15 +1,16 @@
-#include "Zombie.h"
-#include "GameObject.h"
-#include "Animation.h"
-#include "SpriteRenderer.h"
-#include "Bullet.h"
-#include "Animator.h"
-#include "Character.h"
-#include "InputManager.h"
-#include "Game.h"
-#include "Camera.h"
-#include "Lifebar.h"
-#include "Collider.h"
+#include "Core/Zombie.h"
+#include "Core/GameObject.h"
+#include "Core/Animation.h"
+#include "Core/SpriteRenderer.h"
+#include "Core/Bullet.h"
+#include "Core/Animator.h"
+#include "Core/Character.h"
+#include "Core/InputManager.h"
+#include "Core/Game.h"
+#include "Core/Camera.h"
+#include "Core/Lifebar.h"
+#include "Core/HealthSystem.h"
+#include "Core/Collider.h"
 #include <iostream>
 
 int Zombie::zombieCounter = 0;
@@ -24,6 +25,8 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
                                          hitTimer(0.5),
                                          deathTimer(5)
 {
+    this->associated.subject.addObserver(this);
+
     SpriteRenderer *srZombie = new SpriteRenderer(associated, "resources/img/Enemy.png", 3, 2);
     associated.AddComponent(srZombie);
     Collider *collider = new Collider(associated);
@@ -37,9 +40,12 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
     animator->AddAnimation("r_hit", new Animation(4, 4, 0, SDL_FLIP_HORIZONTAL));
     associated.AddComponent(animator);
 
-    Lifebar *l = new Lifebar(associated,(int)hitpoints, {associated.box.GetSize().x, (float)10},{0,(int)associated.box.GetSize().y/4});
-    l->setAmount(hitpoints);
-    associated.AddComponent(l);
+    HealthSystem *healthSystem = new HealthSystem(associated, hitpoints);
+    associated.AddComponent(healthSystem);
+
+    // Lifebar *l = new Lifebar(associated,(int)hitpoints, {associated.box.GetSize().x, (float)10},{0,(int)associated.box.GetSize().y/4});
+    // l->setAmount(hitpoints);
+    // associated.AddComponent(l);
 
     associated.box.Move({600, 450});
 
@@ -47,29 +53,30 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
     zombieCounter++;
 }
 
-void Zombie::Damage(int dmg)
+bool Zombie::OnDamageTaken(OnDamageTakenEvent &evt)
 {
     Animator *animator = (Animator *)associated.GetComponent("Animator");
-    Lifebar *l = (Lifebar *)associated.GetComponent("Lifebar");
-
-    hitpoints -= dmg;
-    l->setAmount(hitpoints);
+    // Lifebar *l = (Lifebar *)associated.GetComponent("Lifebar");
+    // l->setAmount(hitpoints);
 
     damageSound.Play(1);
     hit = true;
-    
+
     hitTimer.Restart();
-    if(flip) animator->SetAnimation("r_hit");
-    else animator->SetAnimation("hit");
-    if (hitpoints <= 0 && !isDead)
+    if (flip)
+        animator->SetAnimation("r_hit");
+    else
+        animator->SetAnimation("hit");
+    if (((HealthSystem *)associated.GetComponent("HealthSystem"))->GetHp() <= 0 && !isDead)
     {
         this->associated.RemoveComponent(this->associated.GetComponent("Collider"));
-        this->associated.RemoveComponent(l);
+        // this->associated.RemoveComponent(l);
         isDead = true;
         deathTimer.Restart();
         deathSound.Play(1);
         animator->SetAnimation("dead");
     }
+    return true;
 }
 
 bool checkClickInsideBox(int x, int y, float boxX, float boxY, float boxW, float boxH)
@@ -106,20 +113,26 @@ void Zombie::Update(float dt)
             Vec2 currentPos = this->associated.box.center();
             this->associated.box.Move(currentPos + distance.normalized() * dt * 200);
             flip = distance.x < 0;
-            if(flip){
+            if (flip)
+            {
                 animator->SetAnimation("r_walking");
-            } else {
+            }
+            else
+            {
                 animator->SetAnimation("walking");
             }
         }
         if (hit && hitTimer.Expired() && !isDead)
         {
-            if(flip){
+            if (flip)
+            {
                 animator->SetAnimation("r_walking");
-            } else {
+            }
+            else
+            {
                 animator->SetAnimation("walking");
             }
-            
+
             hit = false;
         }
     }
@@ -137,11 +150,20 @@ int Zombie::GetDamage()
     return damage;
 }
 
-void Zombie::NotifyCollision(GameObject &other)
+void Zombie::OnEvent(Event &evt)
 {
-    Bullet *b = (Bullet *)other.GetComponent("Bullet");
-    if (b != nullptr && !this->isDead)
-    {
-        this->Damage(b->GetDamage());
-    }
+    EventDispatcher dispatcher(evt);
+
+    dispatcher.Dispatch<OnCollisionEvent>(BIND_EVENT_FN(Zombie::OnCollision));
+    dispatcher.Dispatch<OnDamageTakenEvent>(BIND_EVENT_FN(Zombie::OnDamageTaken));
+}
+
+bool Zombie::OnCollision(OnCollisionEvent &evt)
+{
+    GameObject &go = evt.GetGameObject();
+    OnDamageTakenEvent e = OnDamageTakenEvent(this->associated, this->damage);
+    if (go.GetComponent("HealthSystem"))
+        go.subject.notify(e);
+
+    return true;
 }

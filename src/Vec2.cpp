@@ -1,4 +1,4 @@
-#include "Vec2.h"
+#include "Core/Vec2.h"
 #include <cmath>
 #include <math.h>
 Vec2 Vec2::Zero = Vec2();
@@ -104,6 +104,10 @@ float Vec2::Angle(Vec2 a, Vec2 b){
 Vec2 Vec2::Rotate(Vec2 a, float angle){
     float rad = angle *M_PI/180;
     return Vec2(a.x*cos(rad) - a.y*sin(rad), a.x*sin(rad) + a.y*cos(rad));
+}
+
+float Vec2::lerp(float a, float b, float t){
+    return (1.0f-t)*b+t*a;
 }
 // Vec2 operator=(const Vec2& a){
 //     return Vec2(a.x, a.y);

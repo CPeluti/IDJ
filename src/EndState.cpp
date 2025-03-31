@@ -1,11 +1,11 @@
-#include "EndState.h"
-#include "GameData.h"
-#include "Game.h"
-#include "Camera.h"
-#include "GameObject.h"
-#include "SpriteRenderer.h"
-#include "InputManager.h"
-#include "TitleState.h"
+#include "Core/EndState.h"
+#include "Core/GameData.h"
+#include "Core/Game.h"
+#include "Core/Camera.h"
+#include "Core/GameObject.h"
+#include "Core/SpriteRenderer.h"
+#include "Core/InputManager.h"
+#include "Core/TitleState.h"
 
 EndState::EndState(){
     if(GameData::playerWon){
