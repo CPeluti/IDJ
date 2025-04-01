@@ -18,7 +18,7 @@ class OnDamageTakenEvent : public Event {
     public:
         OnDamageTakenEvent(GameObject& dealer, float amount): m_Dealer(dealer), m_Amount(amount){}
 
-        EVENT_TYPE(OnDamageTakenEvent);
+        EVENT_TYPE(OnDamageTaken);
 
         inline GameObject& GetDealer() const { return m_Dealer; }
         inline float GetAmount() const { return m_Amount; }
@@ -32,6 +32,6 @@ class OnDeathEvent : public Event {
     public:
         OnDeathEvent() {}
 
-        EVENT_TYPE(OnDeathEvent);
+        EVENT_TYPE(OnDeath);
 
 };

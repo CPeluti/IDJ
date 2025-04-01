@@ -9,8 +9,8 @@ WaveSpawner::WaveSpawner(GameObject &associated) : Component(associated), zombie
 {
     for (int i = 0; i < 2; i++)
     {
-        Wave *w = new Wave(1, 1, 1);
-        w->cooldown.Restart();
+        Wave *w = new Wave(1, 0, 1);
+        // w->cooldown.Restart();
         waves.push_back(w);
     }
 }
@@ -22,20 +22,23 @@ void WaveSpawner::Update(float dt)
         return;
     }
     waves[currentWave]->cooldown.Update(dt);
-    if (zombieCounter < waves[currentWave]->zombies && npcCounter < waves[currentWave]->npcs)
-    {
-        if (waves[currentWave]->cooldown.Expired())
-        {
-            float randomAngle = rand() % 36000 / 100.0;
-            Vec2 windowSize = Game::GetInstance().GetWindowSize();
-            Vec2 distance = {windowSize.x / 2, .0};
 
+    if (waves[currentWave]->cooldown.Expired())
+    {
+        
+        float randomAngle = rand() % 36000 / 100.0;
+        Vec2 windowSize = Game::GetInstance().GetWindowSize();
+        Vec2 distance = {windowSize.x / 2, .0};
+        if (zombieCounter < waves[currentWave]->zombies)
+        {
             GameObject *go = new GameObject();
             Zombie *z = new Zombie(*go);
             go->AddComponent(z);
             Game::GetInstance().GetCurrentState().AddObject(go);
             go->box.Move(Camera::pos + windowSize / 2 + Vec2::Rotate({distance}, randomAngle));
-
+            zombieCounter++;
+        }
+        if(npcCounter < waves[currentWave]->npcs){
             randomAngle = rand() % 36000 / 100.0;
             GameObject* cgo = new GameObject();
             Character* c = new Character(*cgo, "resources/img/NPC.png");
@@ -44,15 +47,14 @@ void WaveSpawner::Update(float dt)
             cgo->AddComponent(a);
             Game::GetInstance().GetCurrentState().AddObject(cgo);
             cgo->box.Move(Camera::pos + windowSize / 2 + Vec2::Rotate({distance}, randomAngle));
-
-
-
-
-            // if(zombieCounter)
             npcCounter++;
-            zombieCounter++;
-            waves[currentWave]->cooldown.Restart();
         }
+
+
+
+
+        // if(zombieCounter)
+        waves[currentWave]->cooldown.Restart();
     }
     else
     {
