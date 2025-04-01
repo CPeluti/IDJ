@@ -7,8 +7,10 @@
 #include "Core/Game.h"
 #include "Core/Resources.h"
 #include "Core/InputManager.h"
+#include "Core/Log.h"
 #include <cstdlib>
 #include <ctime>
+
 #define NK_SDL_RENDERER_IMPLEMENTATION
 #define NK_IMPLEMENTATION
 #define NK_INCLUDE_FIXED_TYPES
@@ -29,59 +31,61 @@ Game::Game(std::string title, int width, int height): stateStack()
     srand(time(NULL));
     if (this->instance == nullptr)
     {
-            this->instance = this;
-            if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER)){
-                SDL_Log("Failed to start SDL");
-                SDL_Log(SDL_GetError());
-            }
-            if(IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF)){
-                SDL_Log("Failed to start SDL_Image");
-                SDL_Log(SDL_GetError());
-            }
-            if(Mix_Init(MIX_INIT_OGG | MIX_INIT_MP3)){
-                SDL_Log("Failed to start SDL_Mixer");
-                SDL_Log(SDL_GetError());
-            }
-            if(Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024)){
-                SDL_Log("Failed open mix audio");
-                SDL_Log(SDL_GetError());
-            }
-            if(TTF_Init()){
-                SDL_Log("Failed to init ttf");
-                SDL_Log(SDL_GetError());
-            }
-            Mix_AllocateChannels(32);
-            this->window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
-            this->renderer = SDL_CreateRenderer(this->window, -1, (SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE));
-            this->storedState = nullptr;
-            this->ctx = nk_sdl_init(window, renderer);
-
-            {
-                struct nk_font_atlas *atlas;
-                struct nk_font_config config = nk_font_config(0);
-                struct nk_font *font;
+        Log::Init();
         
-                /* set up the font atlas and add desired font; note that font sizes are
-                 * multiplied by font_scale to produce better results at higher DPIs */
-                nk_sdl_font_stash_begin(&atlas);
-                font = nk_font_atlas_add_default(atlas, 13 * font_scale, &config);
-                /*font = nk_font_atlas_add_from_file(atlas, "../../../extra_font/DroidSans.ttf", 14 * font_scale, &config);*/
-                /*font = nk_font_atlas_add_from_file(atlas, "../../../extra_font/Roboto-Regular.ttf", 16 * font_scale, &config);*/
-                /*font = nk_font_atlas_add_from_file(atlas, "../../../extra_font/kenvector_future_thin.ttf", 13 * font_scale, &config);*/
-                /*font = nk_font_atlas_add_from_file(atlas, "../../../extra_font/ProggyClean.ttf", 12 * font_scale, &config);*/
-                /*font = nk_font_atlas_add_from_file(atlas, "../../../extra_font/ProggyTiny.ttf", 10 * font_scale, &config);*/
-                /*font = nk_font_atlas_add_from_file(atlas, "../../../extra_font/Cousine-Regular.ttf", 13 * font_scale, &config);*/
-                nk_sdl_font_stash_end();
-        
-                /* this hack makes the font appear to be scaled down to the desired
-                 * size and is only necessary when font_scale > 1 */
-                font->handle.height /= font_scale;
-                /*nk_style_load_all_cursors(ctx, atlas->cursors);*/
-                nk_style_set_font(ctx, &font->handle);
-            }
+        this->instance = this;
+        if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER)){
+            SDL_Log("Failed to start SDL");
+            SDL_Log(SDL_GetError());
+        }
+        if(IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG | IMG_INIT_TIF)){
+            SDL_Log("Failed to start SDL_Image");
+            SDL_Log(SDL_GetError());
+        }
+        if(Mix_Init(MIX_INIT_OGG | MIX_INIT_MP3)){
+            SDL_Log("Failed to start SDL_Mixer");
+            SDL_Log(SDL_GetError());
+        }
+        if(Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024)){
+            SDL_Log("Failed open mix audio");
+            SDL_Log(SDL_GetError());
+        }
+        if(TTF_Init()){
+            SDL_Log("Failed to init ttf");
+            SDL_Log(SDL_GetError());
+        }
+        Mix_AllocateChannels(32);
+        this->window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
+        this->renderer = SDL_CreateRenderer(this->window, -1, (SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE));
+        this->storedState = nullptr;
+        this->ctx = nk_sdl_init(window, renderer);
 
-            frameStart = SDL_GetTicks();
-            dt = 0;
+        {
+            struct nk_font_atlas *atlas;
+            struct nk_font_config config = nk_font_config(0);
+            struct nk_font *font;
+    
+            /* set up the font atlas and add desired font; note that font sizes are
+                * multiplied by font_scale to produce better results at higher DPIs */
+            nk_sdl_font_stash_begin(&atlas);
+            font = nk_font_atlas_add_default(atlas, 13 * font_scale, &config);
+            /*font = nk_font_atlas_add_from_file(atlas, "../../../extra_font/DroidSans.ttf", 14 * font_scale, &config);*/
+            /*font = nk_font_atlas_add_from_file(atlas, "../../../extra_font/Roboto-Regular.ttf", 16 * font_scale, &config);*/
+            /*font = nk_font_atlas_add_from_file(atlas, "../../../extra_font/kenvector_future_thin.ttf", 13 * font_scale, &config);*/
+            /*font = nk_font_atlas_add_from_file(atlas, "../../../extra_font/ProggyClean.ttf", 12 * font_scale, &config);*/
+            /*font = nk_font_atlas_add_from_file(atlas, "../../../extra_font/ProggyTiny.ttf", 10 * font_scale, &config);*/
+            /*font = nk_font_atlas_add_from_file(atlas, "../../../extra_font/Cousine-Regular.ttf", 13 * font_scale, &config);*/
+            nk_sdl_font_stash_end();
+    
+            /* this hack makes the font appear to be scaled down to the desired
+                * size and is only necessary when font_scale > 1 */
+            font->handle.height /= font_scale;
+            /*nk_style_load_all_cursors(ctx, atlas->cursors);*/
+            nk_style_set_font(ctx, &font->handle);
+        }
+
+        frameStart = SDL_GetTicks();
+        dt = 0;
     }
 }
 Game::~Game()
