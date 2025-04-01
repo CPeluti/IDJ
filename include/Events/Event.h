@@ -5,13 +5,15 @@
 
 #define BIND_EVENT_FN(fn) [this](auto&&... args) -> decltype(auto) { return this->fn(std::forward<decltype(args)>(args)...); }
 
-#define EVENT_TYPE(type)    static EventType GetStaticType() { return EventType::OnCollision; }\
+#define EVENT_TYPE(type)    static EventType GetStaticType() { return EventType::type; }\
                             virtual EventType GetEventType() const override { return GetStaticType(); }\
                             virtual const char* GetName() const override { return #type; }
 
 enum class EventType {
     None = 0,
-    OnCollision
+    OnCollision,
+    OnDamageTaken,
+    OnDeath
 };
 
 class Event {
