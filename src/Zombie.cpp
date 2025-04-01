@@ -11,6 +11,7 @@
 #include "Core/Lifebar.h"
 #include "Core/HealthSystem.h"
 #include "Core/Collider.h"
+#include "Core/Log.h"
 #include <iostream>
 
 int Zombie::zombieCounter = 0;
@@ -162,6 +163,7 @@ bool Zombie::OnCollision(OnCollisionEvent &evt)
 {
     GameObject &go = evt.GetGameObject();
     OnDamageTakenEvent e = OnDamageTakenEvent(this->associated, this->damage);
+
     if (go.GetComponent("HealthSystem"))
         go.subject.notify(e);
 

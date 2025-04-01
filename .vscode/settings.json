@@ -78,7 +78,22 @@
       "shared_mutex": "cpp",
       "sstream": "cpp",
       "stop_token": "cpp",
-      "thread": "cpp"
+      "thread": "cpp",
+      "forward_list": "cpp",
+      "ios": "cpp",
+      "locale": "cpp",
+      "xiosbase": "cpp",
+      "xlocbuf": "cpp",
+      "xlocmes": "cpp",
+      "xlocmon": "cpp",
+      "xlocnum": "cpp",
+      "xloctime": "cpp",
+      "xtree": "cpp",
+      "codecvt": "cpp",
+      "complex": "cpp",
+      "expected": "cpp",
+      "regex": "cpp",
+      "source_location": "cpp"
     },
     "clangd.arguments": [
       "--log=verbose",
