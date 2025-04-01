@@ -23,6 +23,12 @@ class OnDamageTakenEvent : public Event {
         inline GameObject& GetDealer() const { return m_Dealer; }
         inline float GetAmount() const { return m_Amount; }
 
+        std::string ToString() const override {
+            std::stringstream ss;
+            ss << "teste de dano: " << m_Amount;
+            return ss.str();
+        }
+
     protected:
         GameObject& m_Dealer;
         float m_Amount;

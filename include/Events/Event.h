@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sstream>
 #include <string>
 #include <functional>
 
@@ -43,3 +44,7 @@ public:
 private:
     Event& m_Event;
 };
+
+inline std::string format_as(const Event& e){
+    return e.ToString();
+}
