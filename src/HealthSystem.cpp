@@ -1,4 +1,6 @@
 #include "Core/HealthSystem.h"
+#define INCLUDE_SDL
+#include "Core/SDL_include.h"
 
 HealthSystem::HealthSystem(GameObject& associated, float hp):Component(associated), hp(hp){
     associated.subject.addObserver(this);
@@ -12,7 +14,7 @@ float HealthSystem::TakeDamage(float damage){
 void HealthSystem::OnEvent(Event& evt){
     EventDispatcher dispatcher(evt);
 
-    dispatcher.Dispatch<OnDamageTakenEvent>(BIND_EVENT_FN(OnDamageTaken));
+    dispatcher.Dispatch<OnDamageTakenEvent>(BIND_EVENT_FN(HealthSystem::OnDamageTaken));
 } 
 
 bool HealthSystem::OnDamageTaken(OnDamageTakenEvent& evt){

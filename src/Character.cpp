@@ -23,7 +23,7 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
                                                                    hp(500),
                                                                    isDead(false),
                                                                    deathTimer(5),
-                                                                   extraProjectiles(3)
+                                                                   extraProjectiles(0)
 {
     this->associated.subject.addObserver(this);
 
