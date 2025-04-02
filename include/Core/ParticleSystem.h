@@ -2,6 +2,12 @@
 #include "Component.h"
 #include "Sprite.h"
 #include "GameObject.h"
+#include <functional>
+
+struct Modifier{
+    std::function<float(float)> functionX;
+    std::function<float(float)> functionY;
+};
 
 struct ParticleData {
 
@@ -9,6 +15,9 @@ struct ParticleData {
     Vec2 Velocity, VelocityVariation;
     float SizeBegin, SizeEnd, SizeVariation;
     float LifeTime = 1.0f;
+
+    Modifier VelocityFunction;
+
 };
 
 class ParticleSystem : public Component {
@@ -34,6 +43,7 @@ class ParticleSystem : public Component {
             float LifeTimeRemaining = 0.0f;
 
             bool Active = false;
+            Modifier velocityFunction;
         };
 
         std::vector<Particle> m_ParticlePool;

@@ -109,21 +109,17 @@ void StageState::Update(float dt)
         Collider *colliderA = (Collider *)objectArray[i]->GetComponent("Collider");
         if (colliderA != nullptr)
         {
-            for (int j = 0; j < (int)this->objectArray.size(); j++)
+            for (int j = i+1; j < (int)this->objectArray.size(); j++)
             {
-                if (j != i && checked.find({i, j}) == checked.end() && checked.find({j, i}) == checked.end())
+                Collider *colliderB = (Collider *)objectArray[j]->GetComponent("Collider");
+                if (colliderB != nullptr)
                 {
-                    checked.insert({i, j});
-                    Collider *colliderB = (Collider *)objectArray[j]->GetComponent("Collider");
-                    if (colliderB != nullptr)
+                    if (Collision::IsColliding(colliderA->box, colliderB->box, objectArray[i]->angleDeg, objectArray[j]->angleDeg))
                     {
-                        if (Collision::IsColliding(colliderA->box, colliderB->box, objectArray[i]->angleDeg, objectArray[j]->angleDeg))
-                        {
-                            OnCollisionEvent a(*objectArray[i]);
-                            OnCollisionEvent b(*objectArray[j]);
-                            objectArray[i]->subject.notify(b);
-                            objectArray[j]->subject.notify(a);
-                        }
+                        OnCollisionEvent a(*objectArray[i]);
+                        OnCollisionEvent b(*objectArray[j]);
+                        objectArray[i]->subject.notify(b);
+                        objectArray[j]->subject.notify(a);
                     }
                 }
             }

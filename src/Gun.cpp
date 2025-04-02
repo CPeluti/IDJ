@@ -17,7 +17,7 @@ Gun::Gun(GameObject &associated, std::weak_ptr<GameObject> character) : Componen
                                                                         character(character),
                                                                         angle(0),
                                                                         bulletOutput(0, 0),
-                                                                        projectileAmount(3)
+                                                                        projectileAmount(1)
 {
     SpriteRenderer *sr = new SpriteRenderer(associated, "resources/img/Gun.png", 3, 2);
     Animator *animator = new Animator(associated);
