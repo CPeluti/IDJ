@@ -8,8 +8,8 @@
 Bullet::Bullet(GameObject &associated, float angle, float speed, int damage, float maxDistance, bool targetsPlayer) : Component(associated)
 {
     this->associated.subject.addObserver(this);
-    ParticleSystem* ps = new ParticleSystem(associated); 
-    associated.AddComponent(ps);
+    // ParticleSystem* ps = new ParticleSystem(associated); 
+    // associated.AddComponent(ps);
     SpriteRenderer *sr = new SpriteRenderer(associated, "resources/img/Bullet.png", 1, 1);
     associated.AddComponent(sr);
     Collider *collider = new Collider(associated);
