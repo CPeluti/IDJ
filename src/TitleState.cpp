@@ -9,6 +9,7 @@
 #include <iostream>
 #include <set>
 #include <algorithm>
+#include <cmath>
 
 TitleState::TitleState()
 {
@@ -56,7 +57,7 @@ void TitleState::Update(float dt)
         ps->box.Move({ip.GetMouseX(), ip.GetMouseY()});
         ParticleSystem* particles = (ParticleSystem*)ps->GetComponent("ParticleSystem");
         
-        for(int i = 0; i<5; i++){
+        for(int i = 0; i<1; i++){
             particles->Emit(m_Particle);
         }
 
@@ -77,9 +78,16 @@ void TitleState::Start()
 
     m_Particle.SizeBegin = 4.0f, m_Particle.SizeVariation = 0.3f, m_Particle.SizeEnd = 1.0f;
 	m_Particle.LifeTime = 1.0f;
-	m_Particle.Velocity = { 0.0f, 0.0f };
-	m_Particle.VelocityVariation = { 3.0f, 1.0f };
+	m_Particle.Velocity = { 10.0f, 10.0f };
+	m_Particle.VelocityVariation = { 0.0f, 0.0f };
 	m_Particle.Position = { 0.0f, 0.0f };
+
+    Modifier teste;
+    teste.functionX = [](float x){return std::sin(8*x);};
+    teste.functionY = [](float x){return 1;};
+
+    m_Particle.VelocityFunction = teste;
+
 }
 
 void TitleState::Resume(){}
