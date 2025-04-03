@@ -30,7 +30,7 @@ class ParticleSystem : public Component {
         inline void Play() {m_Emit = true;};
         inline void Stop() {m_Emit = false;};
         inline void SetAmount(int amount) {m_Amount = amount;}
-        inline void SetExplosiveness(bool explosiveness) {m_Explosiveness = explosiveness;}
+        inline void SetExplosiveness(float explosiveness) {m_Explosiveness = explosiveness;}
         inline void SetOneshot(bool oneshot) {m_Oneshot = oneshot;}
         inline bool Is(std::string type) {return type == "ParticleSystem";}
 
@@ -56,7 +56,7 @@ class ParticleSystem : public Component {
         Sprite* m_Sprite;
         int m_Amount = 1;
         int m_EmittedAmount = 0;
-        bool m_Explosiveness = false;
+        float m_Explosiveness = 0;
         bool m_Oneshot = false;
         bool m_Emit = false;
         ParticleData m_Particle;

@@ -10,16 +10,16 @@ ParticleSystem::ParticleSystem(GameObject& associated, ParticleData pd): Compone
 
 
 void ParticleSystem::Update(float dt){
-    m_EmitTimer.SetAmount(1.0f/m_Amount);
-    if(m_Emit && (m_Amount - m_EmittedAmount > 0)){
-        if(m_Explosiveness){
-            for(int i = 0; i<m_Amount; i++){
-                Emit(m_Particle);
-            }
-        }else if(m_EmitTimer.Expired()){
+    if(m_Explosiveness>0){
+        m_EmitTimer.SetAmount(m_Particle.LifeTime*m_Explosiveness);
+    } else {
+        m_EmitTimer.SetAmount(m_Particle.LifeTime/m_Amount);
+    }
+    if(m_Emit && (m_Amount - m_EmittedAmount > 0) && m_EmitTimer.Expired()){
+        for(int i = 0; i<=m_Amount*m_Explosiveness; i++){
             Emit(m_Particle);
-            m_EmitTimer.Restart();
         }
+        m_EmitTimer.Restart();
     }
     for(auto& particle : m_ParticlePool){
         if(!particle.Active) continue;
@@ -53,8 +53,13 @@ void ParticleSystem::Render(){
 }
 
 void ParticleSystem::Start(){
-    m_EmitTimer.SetAmount(1/m_Amount);
-    m_EmitTimer.SetTime(1/m_Amount);
+    if(m_Explosiveness > 0){
+        m_EmitTimer.SetAmount(m_Particle.LifeTime*m_Explosiveness);
+        m_EmitTimer.SetTime(m_Particle.LifeTime*m_Explosiveness);
+    } else {
+        m_EmitTimer.SetAmount(m_Particle.LifeTime/m_Amount);
+        m_EmitTimer.SetTime(m_Particle.LifeTime/m_Amount);
+    }
 }
 
 void ParticleSystem::Emit(const ParticleData& particleData){
