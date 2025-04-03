@@ -11,8 +11,12 @@ ParticleSystem::ParticleSystem(GameObject& associated, ParticleData pd): Compone
 
 void ParticleSystem::Update(float dt){
     m_EmitTimer.SetAmount(1.0f/m_Amount);
-    if(m_Emit){
-        if((m_Amount - m_EmittedAmount > 0) && m_EmitTimer.Expired()){
+    if(m_Emit && (m_Amount - m_EmittedAmount > 0)){
+        if(m_Explosiveness){
+            for(int i = 0; i<m_Amount; i++){
+                Emit(m_Particle);
+            }
+        }else if(m_EmitTimer.Expired()){
             Emit(m_Particle);
             m_EmitTimer.Restart();
         }
