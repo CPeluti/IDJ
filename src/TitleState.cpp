@@ -31,9 +31,10 @@ TitleState::TitleState()
         started = true;
         m_Particle.SizeBegin = 4.0f, m_Particle.SizeVariation = 0.3f, m_Particle.SizeEnd = 1.0f;
         m_Particle.LifeTime = 1.0f;
-        m_Particle.Velocity = { 0.0f, 10.0f };
-        m_Particle.VelocityVariation = { 0.0f, 0.0f };
+        m_Particle.Velocity = { 0.0f, 0.0f };
+        m_Particle.VelocityVariation = { 10.0f, 10.0f };
         m_Particle.Position = { 0.0f, 0.0f };
+        m_Particle.VelocityFunction = {[](float x){return sin(8*x);},[](float x){return 1;}};
     }
     GameObject* particles = new GameObject();
     ParticleSystem* ps = new ParticleSystem(*particles, m_Particle);
@@ -65,6 +66,8 @@ void TitleState::Update(float dt)
         //TODO: rever questão do sistema de particula estar contido em um gameObject
         ps->box.Move({ip.GetMouseX(), ip.GetMouseY()});
         ParticleSystem* particles = (ParticleSystem*)ps->GetComponent("ParticleSystem");
+        particles->SetExplosiveness(true);
+        particles->SetOneshot(true);
         
         particles->Play();
 
@@ -83,7 +86,7 @@ void TitleState::Start()
     StartArray();
     if(auto ps = particlesSystem.lock()){
         ParticleSystem* particles = (ParticleSystem*)ps->GetComponent("ParticleSystem");
-        particles->SetAmount(2);
+        particles->SetAmount(30);
     }
 }
 
