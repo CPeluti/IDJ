@@ -1,0 +1,17 @@
+sources += files(
+    'AIController.cpp', 
+    'Bullet.cpp', 
+    'Character.cpp',
+    'EndState.cpp',
+    'Entity.cpp',
+    'GameData.cpp',
+    'Gun.cpp',
+    'HealthSystem.cpp',
+    'Lifebar.cpp',
+    'PlayerController.cpp',
+    'StageState.cpp',
+    'TitleState.cpp',
+    'Wave.cpp',
+    'WaveSpawner.cpp',
+    'Zombie.cpp',
+)
