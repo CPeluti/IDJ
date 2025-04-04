@@ -2,7 +2,7 @@
 #define MAX_MEMORY 16384
 #include "Core/SDL_include.h"
 #include "Core/Game.h"
-#include "Core/TitleState.h"
+#include "Game/TitleState.h"
 #include <iostream>
 int main(int argv, char** args){
     SDL_Log("Starting game"); 

@@ -20,7 +20,7 @@ option(MYGAME_VENDORED "Use vendored libraries" OFF)
 
 include_directories(include)
 # add_subdirectory(include)
-file(GLOB SOURCES "src/*.cpp")
+file(GLOB SOURCES "src/*/*.cpp")
 
 
 if(NOT TARGET spdlog)
