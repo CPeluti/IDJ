@@ -15,7 +15,7 @@ class Lifebar : public Component, public Observer{
         void setMax(float max);
         void onNotify(const Component& component, Event event);
     private:
-        SDL_Rect lifebar;
+        SDL_FRect lifebar;
         Vec2 size;
         float total;
         float current;

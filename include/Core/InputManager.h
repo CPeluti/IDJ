@@ -35,8 +35,8 @@ class InputManager{
 
         bool quitRequested;
         int updateCounter;
-        int mouseX;
-        int mouseY;
+        float mouseX;
+        float mouseY;
         bool mouseState [6];
         int mouseUpdate [6];
         std::unordered_map<int, bool> keyState;

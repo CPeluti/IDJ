@@ -16,6 +16,7 @@
 #include <iostream>
 #include <set>
 #include <algorithm>
+#define SDL_QuitRequested() (SDL_PumpEvents(), (SDL_PeepEvents(NULL,0,SDL_PEEKEVENT,SDL_EVENT_QUIT,SDL_EVENT_QUIT) > 0))
 
 
 bool y_sort(std::shared_ptr<GameObject> i, std::shared_ptr<GameObject> j)

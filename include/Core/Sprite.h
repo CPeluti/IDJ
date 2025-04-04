@@ -19,14 +19,14 @@ class Sprite{
         bool cameraFollower;
         void SetScale(float scaleX, float scaleY);
         Vec2 GetScale();
-        void SetFlip(SDL_RendererFlip flip);
+        void SetFlip(SDL_FlipMode flip);
     private:
         int frameCountW;
         int frameCountH;
         SDL_Texture* texture;
-        int width;
-        int height;
-        SDL_Rect clipRect;
-        SDL_RendererFlip flip;
+        float width;
+        float height;
+        SDL_FRect clipRect;
+        SDL_FlipMode flip;
         Vec2 scale;
 };

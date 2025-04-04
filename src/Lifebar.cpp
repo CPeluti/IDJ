@@ -27,7 +27,7 @@ void Lifebar::Render()
 {
     lifebar.x -= Camera::pos.x;
     lifebar.y -= Camera::pos.y;
-    SDL_Rect barToFill = {lifebar.x, lifebar.y, (int)(lifebar.w), (int)(lifebar.h)};
+    SDL_FRect barToFill = {lifebar.x, lifebar.y, (int)(lifebar.w), (int)(lifebar.h)};
     barToFill.x = lifebar.x + (lifebar.w / 2) - (barToFill.w / 2);
     barToFill.y = lifebar.y + (lifebar.h / 2) - (barToFill.h / 2);
     barToFill.w = barToFill.w * current / total;

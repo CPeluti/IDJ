@@ -1,6 +1,6 @@
 #include "Core/Animation.h"
 
-Animation::Animation(int frameStart, int frameEnd, float frameTime, SDL_RendererFlip flip) {
+Animation::Animation(int frameStart, int frameEnd, float frameTime, SDL_FlipMode flip) {
     this->frameStart = frameStart;
     this->frameEnd = frameEnd;
     this->frameTime = frameTime;

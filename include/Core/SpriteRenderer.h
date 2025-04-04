@@ -17,7 +17,7 @@ public:
     bool Is(std::string type);
     void SetCameraFollower(bool state);
     void SetScale(float scaleX, float scaleY);
-    void SetFrame(int frame, SDL_RendererFlip flip);
+    void SetFrame(int frame, SDL_FlipMode flip);
 private:
     Sprite sprite;
 };

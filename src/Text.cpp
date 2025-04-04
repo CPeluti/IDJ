@@ -43,10 +43,10 @@ void Text::Update(float dt){
 }
 void Text::Render(){
     if(appear){
-        SDL_Rect clipRect = {0,0,(int)associated.box.GetSize().x, (int)associated.box.GetSize().y};
+        SDL_FRect clipRect = {0,0,associated.box.GetSize().x, associated.box.GetSize().y};
         Vec2 pos = associated.box.GetPos() - Camera::pos;
-        SDL_Rect dstRect = {(int)pos.x, (int)pos.y, (int)associated.box.GetSize().x, (int)associated.box.GetSize().y};
-        SDL_RenderCopyEx(Game::GetInstance().GetRenderer(), texture, &clipRect, &dstRect, this->associated.angleDeg, nullptr, SDL_FLIP_NONE);
+        SDL_FRect dstRect = {pos.x, pos.y, associated.box.GetSize().x, associated.box.GetSize().y};
+        SDL_RenderTextureRotated(Game::GetInstance().GetRenderer(), texture, &clipRect, &dstRect, this->associated.angleDeg, nullptr, SDL_FLIP_NONE);
     }
 }
 bool Text::Is(std::string type){
@@ -81,18 +81,18 @@ void Text::RemakeTexture(){
     switch (style)
     {
         case SOLID:
-            surface = TTF_RenderText_Solid(font, text.c_str(), color);
+            surface = TTF_RenderText_Solid(font, text.c_str(), text.size(), color);
             break;
         case SHADED:
-            surface = TTF_RenderText_Shaded(font, text.c_str(), color, {0,0,0});
+            surface = TTF_RenderText_Shaded(font, text.c_str(), text.size(), color, {0,0,0});
             break;
         case BLENDED:
-            surface = TTF_RenderText_Blended(font, text.c_str(), color);
+            surface = TTF_RenderText_Blended(font, text.c_str(), text.size(), color);
             break;
     }
     texture = SDL_CreateTextureFromSurface(Game::GetInstance().GetRenderer(), surface);
     if(texture != NULL){
         associated.box.SetSize({surface->w, surface->h});
     }
-    SDL_FreeSurface(surface);
+    SDL_DestroySurface(surface);
 }

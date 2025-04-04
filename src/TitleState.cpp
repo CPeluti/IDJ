@@ -10,6 +10,7 @@
 #include <set>
 #include <algorithm>
 #include <cmath>
+#define SDL_QuitRequested() (SDL_PumpEvents(), (SDL_PeepEvents(NULL,0,SDL_PEEKEVENT,SDL_EVENT_QUIT,SDL_EVENT_QUIT) > 0))
 
 TitleState::TitleState()
 {

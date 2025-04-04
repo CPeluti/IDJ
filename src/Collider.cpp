@@ -28,27 +28,27 @@ void Collider::Update(float dt){
 void Collider::Render() {
 #ifdef DEBUG
 	Vec2 center( box.center() );
-	SDL_Point points[5];
+	SDL_FPoint points[5];
 
 	Vec2 point = Vec2::Rotate((Vec2(box.GetPos().x, box.GetPos().y) - center),( associated.angleDeg ))
 					+ center - Camera::pos;
-	points[0] = {(int)point.x, (int)point.y};
-	points[4] = {(int)point.x, (int)point.y};
+	points[0] = {point.x, point.y};
+	points[4] = {point.x, point.y};
 	
 	point = Vec2::Rotate((Vec2(box.GetPos().x + box.GetSize().x, box.GetPos().y) - center),( associated.angleDeg ))
 					+ center - Camera::pos;
-	points[1] = {(int)point.x, (int)point.y};
+	points[1] = {point.x, point.y};
 	
 	point = Vec2::Rotate((Vec2(box.GetPos().x + box.GetSize().x, box.GetPos().y + box.GetSize().y) - center),( associated.angleDeg) )
 					+ center - Camera::pos;
-	points[2] = {(int)point.x, (int)point.y};
+	points[2] = {point.x, point.y};
 	
 	point = Vec2::Rotate((Vec2(box.GetPos().x, box.GetPos().y + box.GetSize().y) - center),( associated.angleDeg ) )
 					+ center - Camera::pos;
-	points[3] = {(int)point.x, (int)point.y};
+	points[3] = {point.x, point.y};
 
 	SDL_SetRenderDrawColor(Game::GetInstance().GetRenderer(), 255, 0, 0, SDL_ALPHA_OPAQUE);
-	SDL_RenderDrawLines(Game::GetInstance().GetRenderer(), points, 5);
+	SDL_RenderLines(Game::GetInstance().GetRenderer(), points, 5);
 #endif // DEBUG
 }
 

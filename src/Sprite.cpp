@@ -33,7 +33,7 @@ Sprite::~Sprite()
 void Sprite::Open(std::string file)
 {
     texture = Resources::GetImage(file);
-    SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+    SDL_GetTextureSize(texture, &width, &height);
     SetClip({0, 0}, {width, height});
 }
 void Sprite::SetClip(Vec2 pos, Vec2 size)
@@ -59,13 +59,13 @@ void Sprite::SetFrameCount(int frameCountW, int frameCountH)
 }
 void Sprite::Render(Vec2 pos, Vec2 size, float angle)
 {
-    SDL_Rect dstRect = {(int)pos.x,(int)pos.y, (int)(clipRect.w * scale.x), (int)(clipRect.h * scale.y)};
+    SDL_FRect dstRect = {(int)pos.x,(int)pos.y, (int)(clipRect.w * scale.x), (int)(clipRect.h * scale.y)};
     if(!cameraFollower){
         dstRect.y -= Camera::pos.y;
         dstRect.x -= Camera::pos.x;   
     }
     // std::cout << "x: " << x << std::endl << " y: " << y << std::endl << " w: " << w << std::endl << " h: " << h << std::endl;
-    SDL_RenderCopyEx(Game::GetInstance().GetRenderer(), texture, &clipRect, &dstRect, angle, nullptr, flip);
+    SDL_RenderTextureRotated(Game::GetInstance().GetRenderer(), texture, &clipRect, &dstRect, angle, nullptr, flip);
 }
 int Sprite::GetWidth()
 {
@@ -84,6 +84,6 @@ void Sprite::SetScale(float scaleX, float scaleY){
     scale = {scaleX?scaleX:scale.x,scaleY?scaleY:scale.y};
 }
 
-void Sprite::SetFlip(SDL_RendererFlip flip){
+void Sprite::SetFlip(SDL_FlipMode flip){
     this->flip = flip;
 }

@@ -36,7 +36,7 @@ void SpriteRenderer::Render()
     sprite.Render(associated.box.GetPos(), associated.box.GetSize(), associated.angleDeg);
 }
 
-void SpriteRenderer::SetFrame(int frame, SDL_RendererFlip flip)
+void SpriteRenderer::SetFrame(int frame, SDL_FlipMode flip)
 {
     sprite.SetFrame(frame);
     sprite.SetFlip(flip);

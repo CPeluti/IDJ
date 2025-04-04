@@ -6,6 +6,7 @@
 #include "Core/SpriteRenderer.h"
 #include "Core/InputManager.h"
 #include "Core/TitleState.h"
+#define SDL_QuitRequested() (SDL_PumpEvents(), (SDL_PeepEvents(NULL,0,SDL_PEEKEVENT,SDL_EVENT_QUIT,SDL_EVENT_QUIT) > 0))
 
 EndState::EndState(){
     if(GameData::playerWon){

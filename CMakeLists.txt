@@ -1,10 +1,11 @@
 cmake_minimum_required(VERSION 4.0)
-set( CMAKE_PREFIX_PATH "C:/SDL2-2.32.2" )
+set( CMAKE_PREFIX_PATH "C:/libs/SDL3-3.2.10" )
 set( CMAKE_INSTALL_PREFIX "C:/Users/peluti/projetos/IDJ" )
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 set(CMAKE_CXX_COMPILER "C:\\msys64\\ucrt64\\bin\\g++.exe")
-set(NUKLEAR_CXX_FLAGS "")
+# set(SDL3_GPU_LIBRARY_PATH "C:/SDL3-2.32.2/lib/libSDL3_gpu.dll.a")
+# set(SDL3_GPU_INCLUDE_PATH "C:/Development/Library/include/SDL3_gpu")
 project(JOGO)
 
 
@@ -19,7 +20,6 @@ option(MYGAME_VENDORED "Use vendored libraries" OFF)
 
 include_directories(include)
 # add_subdirectory(include)
-add_definitions(${NUKLEAR_CXX_FLAGS})
 file(GLOB SOURCES "src/*.cpp")
 
 
@@ -30,51 +30,50 @@ endif()
 if(MYGAME_VENDORED)
     add_subdirectory(vendor/sdl EXCLUDE_FROM_ALL)
 else()
-    # 1. Look for a SDL2 package, 2. look for the SDL2 component and 3. fail if none can be found
-    find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
-    find_package(SDL2_image REQUIRED CONFIG REQUIRED COMPONENTS SDL2_image)
-    find_package(SDL2_mixer REQUIRED CONFIG REQUIRED COMPONENTS SDL2_mixer)
-    find_package(SDL2_ttf REQUIRED CONFIG REQUIRED COMPONENTS SDL2_ttf)
+    # 1. Look for a SDL3 package, 2. look for the SDL3 component and 3. fail if none can be found
+    find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3)
+    find_package(SDL3_image REQUIRED CONFIG REQUIRED COMPONENTS SDL3_image)
+    find_package(SDL3_mixer REQUIRED)
+    find_package(SDL3_ttf REQUIRED CONFIG REQUIRED COMPONENTS SDL3_ttf)
 
-    # 1. Look for a SDL2 package, 2. Look for the SDL2maincomponent and 3. DO NOT fail when SDL2main is not available
-    find_package(SDL2 REQUIRED CONFIG COMPONENTS SDL2main)
+    # 1. Look for a SDL3 package, 2. Look for the SDL3maincomponent and 3. DO NOT fail when SDL3main is not available
 endif()
 
 add_executable(${PROJECT_NAME} WIN32 ${SOURCES})
 
-# SDL2::SDL2main may or may not be available. It is e.g. required by Windows GUI applications
-if(TARGET SDL2::SDL2main)
-    # It has an implicit dependency on SDL2 functions, so it MUST be added before SDL2::SDL2 (or SDL2::SDL2-static)
-    target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2main)
+# SDL3::SDL3main may or may not be available. It is e.g. required by Windows GUI applications
+if(TARGET SDL3::SDL3main)
+    # It has an implicit dependency on SDL3 functions, so it MUST be added before SDL3::SDL3 (or SDL3::SDL3-static)
+    target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3main)
 endif()
 
-if(TARGET SDL2_image::SDL2_image)
-    # It has an implicit dependency on SDL2 functions, so it MUST be added before SDL2::SDL2 (or SDL2::SDL2-static)
-    target_link_libraries(${PROJECT_NAME} PRIVATE SDL2_image::SDL2_image)
+if(TARGET SDL3_image::SDL3_image)
+    # It has an implicit dependency on SDL3 functions, so it MUST be added before SDL3::SDL3 (or SDL3::SDL3-static)
+    target_link_libraries(${PROJECT_NAME} PRIVATE SDL3_image::SDL3_image)
 endif()
 
 
-if(TARGET SDL2_mixer::SDL2_mixer)
-    # It has an implicit dependency on SDL2 functions, so it MUST be added before SDL2::SDL2 (or SDL2::SDL2-static)
-    target_link_libraries(${PROJECT_NAME} PRIVATE SDL2_mixer::SDL2_mixer)
+if(TARGET SDL3_mixer::SDL3_mixer)
+    # It has an implicit dependency on SDL3 functions, so it MUST be added before SDL3::SDL3 (or SDL3::SDL3-static)
+    target_link_libraries(${PROJECT_NAME} PRIVATE SDL3_mixer::SDL3_mixer)
 endif()
 
-if(TARGET SDL2_ttf::SDL2_ttf)
-    # It has an implicit dependency on SDL2 functions, so it MUST be added before SDL2::SDL2 (or SDL2::SDL2-static)
-    target_link_libraries(${PROJECT_NAME} PRIVATE SDL2_ttf::SDL2_ttf)
+if(TARGET SDL3_ttf::SDL3_ttf)
+    # It has an implicit dependency on SDL3 functions, so it MUST be added before SDL3::SDL3 (or SDL3::SDL3-static)
+    target_link_libraries(${PROJECT_NAME} PRIVATE SDL3_ttf::SDL3_ttf)
 endif()
 
-# Link to the actual SDL2 library. SDL2::SDL2 is the shared SDL library, SDL2::SDL2-static is the static SDL libarary.
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
+# Link to the actual SDL3 library. SDL3::SDL3 is the shared SDL library, SDL3::SDL3-static is the static SDL libarary.
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3)
 target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
 install(TARGETS ${PROJECT_NAME})
 install(DIRECTORY resources DESTINATION bin)
 install(
     FILES
-    lib/SDL2.dll
-    lib/SDL2_image.dll
-    lib/SDL2_mixer.dll
-    lib/SDL2_ttf.dll
+    lib/SDL3.dll
+    lib/SDL3_image.dll
+    lib/SDL3_mixer.dll
+    lib/SDL3_ttf.dll
     DESTINATION
     bin
 )

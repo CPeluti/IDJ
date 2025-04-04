@@ -4,7 +4,6 @@
 #include "Core/InputManager.h"
 #include "Core/Game.h"
 #include "Core/Camera.h"
-#include "Core/nuklear_sdl_renderer.h"
 InputManager& InputManager::GetInstance(){
     static InputManager inputManager;
     return inputManager;
@@ -17,38 +16,34 @@ void InputManager::Update(){
     SDL_GetMouseState(&this->mouseX, &this->mouseY);
     updateCounter = SDL_GetTicks();
     SDL_Event event;
-    nk_input_begin(Game::GetInstance().GetContext());
     while(SDL_PollEvent(&event)){
         switch (event.type)
         {
-        case SDL_KEYDOWN:
+        case SDL_EVENT_KEY_DOWN:
             if(!event.key.repeat){
-                keyState[event.key.keysym.scancode] = true;
-                keyUpdate[event.key.keysym.scancode] = updateCounter;
+                keyState[event.key.scancode] = true;
+                keyUpdate[event.key.scancode] = updateCounter;
             }
             break;
-        case SDL_KEYUP:
-            keyState[event.key.keysym.scancode] = false;
-            keyUpdate[event.key.keysym.scancode] = updateCounter;
+        case SDL_EVENT_KEY_UP:
+            keyState[event.key.scancode] = false;
+            keyUpdate[event.key.scancode] = updateCounter;
             break;
-        case SDL_MOUSEBUTTONDOWN:
+        case SDL_EVENT_MOUSE_BUTTON_DOWN:
             mouseState[event.button.button] = true;
             mouseUpdate[event.button.button] = updateCounter;
             break;
-        case SDL_MOUSEBUTTONUP:
+        case SDL_EVENT_MOUSE_BUTTON_UP:
             mouseState[event.button.button] = false;
             mouseUpdate[event.button.button] = updateCounter;
             break;
-        case SDL_QUIT:
+        case SDL_EVENT_QUIT:
             quitRequested = true;
             break;
         default:
             break;
         }
-        nk_sdl_handle_event(&event);
     }
-    nk_sdl_handle_grab(); /* optional grabbing behavior */
-    nk_input_end(Game::GetInstance().GetContext());
 
 }
 
