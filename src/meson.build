@@ -45,5 +45,5 @@ game_files = [
     'Game/Zombie.cpp',
 ]
 
-core_lib = library('core', sources: core_files, include_directories: includes, dependencies: deps, install: true, install_dir: install_directory)
-game_lib = library('game', sources: game_files, include_directories: includes, dependencies: deps, link_with: [core_lib], install: true, install_dir: install_directory)
+core_lib = shared_library('core', sources: core_files, include_directories: includes, dependencies: deps, install: true, install_dir: install_directory)
+game_lib = shared_library('game', sources: game_files, include_directories: includes, dependencies: deps, link_with: [core_lib], install: true, install_dir: install_directory)
