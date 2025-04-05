@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 4.0)
-set( CMAKE_PREFIX_PATH "C:/SDL2-2.32.2" )
+set( CMAKE_PREFIX_PATH "C:/libs/SDL2-2.32.2" )
 set( CMAKE_INSTALL_PREFIX "C:/Users/peluti/projetos/IDJ" )
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
@@ -20,7 +20,7 @@ option(MYGAME_VENDORED "Use vendored libraries" OFF)
 include_directories(include)
 # add_subdirectory(include)
 add_definitions(${NUKLEAR_CXX_FLAGS})
-file(GLOB SOURCES "src/*.cpp")
+file(GLOB SOURCES "src/*/*.cpp")
 
 
 if(NOT TARGET spdlog)
