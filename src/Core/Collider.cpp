@@ -6,7 +6,7 @@
 #include "Core/Camera.h"
 #include "Core/Game.h"
 
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 #endif // DEBUG
 
 Collider::Collider(GameObject& associated, Vec2 scale, Vec2 offset): 

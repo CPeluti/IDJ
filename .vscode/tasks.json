@@ -5,22 +5,22 @@
     "version": "2.0.0",
     "tasks": [
        {
-        "label": "debug",
+        "label": "install-debug",
         "type": "shell",
-        "command":"make",
-        "args": ["debug", "-j8"],
+        "command":"meson",
+        "args": ["install", "-C", "builddir"],
         "group": "build",
         "dependsOn": [
-            "clean"
+            "setup-debug"
         ],
         "presentation": {
             "reveal": "silent",
         }
        },{
-        "label": "clean",
+        "label": "setup-debug",
         "type": "shell",
-        "command":"make",
-        "args": ["clean"],
+        "command":"meson",
+        "args": ["setup", "builddir", "--reconfigure", "--buildtype", "debug"],
         "group": "build",
         "presentation": {
             "reveal": "silent",

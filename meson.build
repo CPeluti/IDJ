@@ -2,6 +2,11 @@ project('jogo', 'cpp')
 
 cmake = import('cmake')
 
+buildtype = get_option('buildtype')
+if buildtype == 'debug'
+  add_project_arguments([ '-DDEBUG' ], language: 'cpp')
+endif
+
 install_directory = meson.source_root()+'/bin'
 
 includes = [include_directories('include')]
