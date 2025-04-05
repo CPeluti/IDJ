@@ -76,7 +76,6 @@ void GameObject::RemoveComponent(Component *cpt)
 Component *GameObject::GetComponent(std::string type)
 {
     if(type == "Animator"){
-        std::cout << "teste";
     }
     for (int i = 0; i < (int)this->components.size(); i++)
     {

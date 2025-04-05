@@ -1,24 +1,23 @@
 project('jogo', 'cpp')
-sources = files()
+
+cmake = import('cmake')
+
+install_directory = meson.source_root()+'/bin'
+
+includes = [include_directories('include')]
+spdlog = include_directories('vendor/spdlog/include')
+includes += spdlog
+
+sdl3 = dependency('SDL3') 
+sdl3_image = dependency('SDL3_image')
+sdl3_mixer = dependency('SDL3_mixer') 
+sdl3_ttf = dependency('SDL3_ttf')
+
+deps = [sdl3, sdl3_image, sdl3_mixer, sdl3_ttf]
 
 subdir('src')
 
-incdir = include_directories('include')
+executable('JOGO', 'src/main.cpp', include_directories: includes, link_with : [core_lib, game_lib], dependencies : deps, install_dir: install_directory, install : true)
 
-sdl = 'C:/libs/SDL3-3.2.10/cmake'
-
-sdl3_dep = dependency('SDL3',cmake_module_path:sdl, required: true)
-sdl3_image_dep = dependency('SDL3_image', cmake_module_path:sdl, required: true)
-sdl3_mixer_dep = dependency('SDL3_mixer', cmake_module_path:sdl, required: true)
-sdl3_ttf_dep = dependency('SDL3_ttf', cmake_module_path:sdl, required: true)
-
-executable( 'jogo',
-            sources, 
-            include_directories : incdir,
-            dependencies: [
-                sdl3_dep,
-                sdl3_image_dep,
-                sdl3_mixer_dep,
-                sdl3_ttf_dep
-            ]
-)
+install_data(['lib/SDL3.dll','lib/SDL3_image.dll','lib/SDL3_mixer.dll','lib/SDL3_ttf.dll'], install_dir: install_directory)
+install_subdir('resources', install_dir: install_directory)

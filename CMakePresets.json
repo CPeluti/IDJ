@@ -9,7 +9,10 @@
             "binaryDir": "${workspaceFolder}/build",
             "installDir": "${workspaceFolder}",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_INSTALL_PREFIX": "${workspaceFolder}",
+                "CMAKE_PREFIX_PATH":"C:/libs/SDL3-3.2.10"
+
             }
         },
         {
@@ -20,7 +23,9 @@
             "binaryDir": "${workspaceFolder}/build",
             "installDir": "${workspaceFolder}",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_INSTALL_PREFIX": "${workspaceFolder}",
+                "CMAKE_PREFIX_PATH":"C:/libs/SDL3-3.2.10"
             }
         }
     ]

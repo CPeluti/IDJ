@@ -1,21 +1,10 @@
 cmake_minimum_required(VERSION 4.0)
-set( CMAKE_PREFIX_PATH "C:/libs/SDL3-3.2.10" )
-set( CMAKE_INSTALL_PREFIX "C:/Users/peluti/projetos/IDJ" )
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
-set(CMAKE_CXX_COMPILER "C:\\msys64\\ucrt64\\bin\\g++.exe")
-# set(SDL3_GPU_LIBRARY_PATH "C:/SDL3-2.32.2/lib/libSDL3_gpu.dll.a")
-# set(SDL3_GPU_INCLUDE_PATH "C:/Development/Library/include/SDL3_gpu")
 project(JOGO)
 
 
 option(MYGAME_VENDORED "Use vendored libraries" OFF)
-# list(APPEND CMAKE_PREFIX_PATH "C:/setupsdl")
-
-# file(GLOB HEADERS "./include/*.h")
-# file(GLOB libs "./include/^(?!main).*.cpp")
-
-
 # target_include_directories(JOGO PRIVATE ./include)
 
 include_directories(include)
@@ -32,9 +21,9 @@ if(MYGAME_VENDORED)
 else()
     # 1. Look for a SDL3 package, 2. look for the SDL3 component and 3. fail if none can be found
     find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3)
-    find_package(SDL3_image REQUIRED CONFIG REQUIRED COMPONENTS SDL3_image)
+    find_package(SDL3_image REQUIRED)
     find_package(SDL3_mixer REQUIRED)
-    find_package(SDL3_ttf REQUIRED CONFIG REQUIRED COMPONENTS SDL3_ttf)
+    find_package(SDL3_ttf REQUIRED)
 
     # 1. Look for a SDL3 package, 2. Look for the SDL3maincomponent and 3. DO NOT fail when SDL3main is not available
 endif()

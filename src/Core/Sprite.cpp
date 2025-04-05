@@ -59,7 +59,7 @@ void Sprite::SetFrameCount(int frameCountW, int frameCountH)
 }
 void Sprite::Render(Vec2 pos, Vec2 size, float angle)
 {
-    SDL_FRect dstRect = {(int)pos.x,(int)pos.y, (int)(clipRect.w * scale.x), (int)(clipRect.h * scale.y)};
+    SDL_FRect dstRect = {pos.x,pos.y, (clipRect.w * scale.x), (clipRect.h * scale.y)};
     if(!cameraFollower){
         dstRect.y -= Camera::pos.y;
         dstRect.x -= Camera::pos.x;   

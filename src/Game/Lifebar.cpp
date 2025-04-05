@@ -28,7 +28,7 @@ void Lifebar::Render()
 {
     lifebar.x -= Camera::pos.x;
     lifebar.y -= Camera::pos.y;
-    SDL_FRect barToFill = {lifebar.x, lifebar.y, (int)(lifebar.w), (int)(lifebar.h)};
+    SDL_FRect barToFill = {lifebar.x, lifebar.y, (lifebar.w), (lifebar.h)};
     barToFill.x = lifebar.x + (lifebar.w / 2) - (barToFill.w / 2);
     barToFill.y = lifebar.y + (lifebar.h / 2) - (barToFill.h / 2);
     barToFill.w = barToFill.w * current / total;
@@ -52,10 +52,11 @@ void Lifebar::setMax(float max)
 void Lifebar::Start()
 {
     lifebar = {
-        (int)(this->associated.box.GetPos().x - offset.x),
-        (int)(this->associated.box.GetPos().y - offset.y),
-        (int)size.x,
-        (int)size.y};
+        (this->associated.box.GetPos().x - offset.x),
+        (this->associated.box.GetPos().y - offset.y),
+        size.x,
+        size.y
+    };
 }
 
 // void Lifebar::onNotify(const Component& component, Observer::Event event){
