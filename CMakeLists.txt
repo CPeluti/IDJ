@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 4.0)
-set( CMAKE_PREFIX_PATH "C:/libs/SDL2-2.32.2" )
-set( CMAKE_INSTALL_PREFIX "C:/Users/peluti/projetos/IDJ" )
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
-set(CMAKE_CXX_COMPILER "C:\\msys64\\ucrt64\\bin\\g++.exe")
-set(NUKLEAR_CXX_FLAGS "")
 project(JOGO)
 
 
@@ -20,7 +16,7 @@ option(MYGAME_VENDORED "Use vendored libraries" OFF)
 include_directories(include)
 # add_subdirectory(include)
 add_definitions(${NUKLEAR_CXX_FLAGS})
-file(GLOB SOURCES "src/*/*.cpp")
+file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 
 if(NOT TARGET spdlog)
@@ -33,12 +29,10 @@ else()
     # 1. Look for a SDL2 package, 2. look for the SDL2 component and 3. fail if none can be found
     find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
     find_package(SDL2_image REQUIRED CONFIG REQUIRED COMPONENTS SDL2_image)
-    find_package(SDL2_gpu REQUIRED CONFIG REQUIRED COMPONENTS SDL2_gpu)
+    find_package(SDL2_gpu REQUIRED)
     find_package(SDL2_mixer REQUIRED CONFIG REQUIRED COMPONENTS SDL2_mixer)
     find_package(SDL2_ttf REQUIRED CONFIG REQUIRED COMPONENTS SDL2_ttf)
 
-    # 1. Look for a SDL2 package, 2. Look for the SDL2maincomponent and 3. DO NOT fail when SDL2main is not available
-    find_package(SDL2 REQUIRED CONFIG COMPONENTS SDL2main)
 endif()
 
 add_executable(${PROJECT_NAME} WIN32 ${SOURCES})
@@ -81,6 +75,7 @@ install(
     lib/SDL2_image.dll
     lib/SDL2_mixer.dll
     lib/SDL2_ttf.dll
+    lib/SDL2_gpu.dll
     DESTINATION
     bin
 )
