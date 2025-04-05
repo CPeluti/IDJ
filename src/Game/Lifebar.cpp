@@ -33,10 +33,10 @@ void Lifebar::Render()
     barToFill.y = lifebar.y + (lifebar.h / 2) - (barToFill.h / 2);
     barToFill.w = barToFill.w * current / total;
 
-    SDL_SetRenderDrawColor(Game::GetInstance().GetRenderer(), 0, 0, 0, 255);
-    SDL_RenderFillRect(Game::GetInstance().GetRenderer(), &lifebar);
-    SDL_SetRenderDrawColor(Game::GetInstance().GetRenderer(), 255, 0, 0, 255);
-    SDL_RenderFillRect(Game::GetInstance().GetRenderer(), &barToFill);
+    // SDL_SetRenderDrawColor(Game::GetInstance().GetRenderer(), 0, 0, 0, 255);
+    GPU_RectangleFilled(Game::GetInstance().GetGPUTarget(), lifebar.x, lifebar.y, lifebar.x+lifebar.w, lifebar.y+lifebar.h, {0,0,0,255});
+    // SDL_SetRenderDrawColor(Game::GetInstance().GetRenderer(), 255, 0, 0, 255);
+    GPU_RectangleFilled(Game::GetInstance().GetGPUTarget(), barToFill.x, barToFill.y, barToFill.x+barToFill.w, barToFill.y+barToFill.h, {255,0,0,255});
 }
 
 void Lifebar::setAmount(float amount)
