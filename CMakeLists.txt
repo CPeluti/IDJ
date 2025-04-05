@@ -33,6 +33,7 @@ else()
     # 1. Look for a SDL2 package, 2. look for the SDL2 component and 3. fail if none can be found
     find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
     find_package(SDL2_image REQUIRED CONFIG REQUIRED COMPONENTS SDL2_image)
+    find_package(SDL2_gpu REQUIRED CONFIG REQUIRED COMPONENTS SDL2_gpu)
     find_package(SDL2_mixer REQUIRED CONFIG REQUIRED COMPONENTS SDL2_mixer)
     find_package(SDL2_ttf REQUIRED CONFIG REQUIRED COMPONENTS SDL2_ttf)
 
@@ -62,6 +63,11 @@ endif()
 if(TARGET SDL2_ttf::SDL2_ttf)
     # It has an implicit dependency on SDL2 functions, so it MUST be added before SDL2::SDL2 (or SDL2::SDL2-static)
     target_link_libraries(${PROJECT_NAME} PRIVATE SDL2_ttf::SDL2_ttf)
+endif()
+
+if(TARGET SDL2_gpu::SDL2_gpu)
+    # It has an implicit dependency on SDL2 functions, so it MUST be added before SDL2::SDL2 (or SDL2::SDL2-static)
+    target_link_libraries(${PROJECT_NAME} PRIVATE SDL2_gpu::SDL2_gpu)
 endif()
 
 # Link to the actual SDL2 library. SDL2::SDL2 is the shared SDL library, SDL2::SDL2-static is the static SDL libarary.
