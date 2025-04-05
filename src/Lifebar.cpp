@@ -9,7 +9,6 @@
 
 Lifebar::Lifebar(GameObject &associated, float max, Vec2 size, Vec2 offset) : Component(associated), total(max), size(size), offset(offset)
 {
-    this->associated.subject.addObserver(this);
 }
 
 bool Lifebar::Is(std::string type)
@@ -25,6 +24,9 @@ void Lifebar::Update(float dt)
 
 void Lifebar::Render()
 {
+    std::cout << m_enableLifebar << std::endl;
+    if (!m_enableLifebar)
+        return;
     lifebar.x -= Camera::pos.x;
     lifebar.y -= Camera::pos.y;
     SDL_Rect barToFill = {lifebar.x, lifebar.y, (int)(lifebar.w), (int)(lifebar.h)};
