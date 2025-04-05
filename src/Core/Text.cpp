@@ -28,7 +28,7 @@ Text::Text (
 }
 Text::~Text(){
     if(texture != nullptr){
-        SDL_DestroyTexture(texture);
+        GPU_FreeImage(texture);
         texture = nullptr;
     }
 }
@@ -43,10 +43,10 @@ void Text::Update(float dt){
 }
 void Text::Render(){
     if(appear){
-        SDL_Rect clipRect = {0,0,(int)associated.box.GetSize().x, (int)associated.box.GetSize().y};
+        GPU_Rect clipRect = {0,0,associated.box.GetSize().x, associated.box.GetSize().y};
         Vec2 pos = associated.box.GetPos() - Camera::pos;
-        SDL_Rect dstRect = {(int)pos.x, (int)pos.y, (int)associated.box.GetSize().x, (int)associated.box.GetSize().y};
-        SDL_RenderCopyEx(Game::GetInstance().GetRenderer(), texture, &clipRect, &dstRect, this->associated.angleDeg, nullptr, SDL_FLIP_NONE);
+        GPU_Rect dstRect = {pos.x, pos.y, associated.box.GetSize().x, associated.box.GetSize().y};
+        GPU_BlitRectX(texture, &clipRect,Game::GetInstance().GetGPUTarget(),  &dstRect , this->associated.angleDeg, texture->w/2, texture->h/2, SDL_FLIP_NONE);
     }
 }
 bool Text::Is(std::string type){
@@ -74,7 +74,7 @@ void Text::SetFontSize(int fontSize){
 }
 void Text::RemakeTexture(){
     if(texture != nullptr){
-        SDL_DestroyTexture(texture);
+        GPU_FreeImage(texture);
         texture = nullptr;
     }
     SDL_Surface* surface;
@@ -90,7 +90,7 @@ void Text::RemakeTexture(){
             surface = TTF_RenderText_Blended(font, text.c_str(), color);
             break;
     }
-    texture = SDL_CreateTextureFromSurface(Game::GetInstance().GetRenderer(), surface);
+    texture = GPU_CopyImageFromSurface(surface);
     if(texture != NULL){
         associated.box.SetSize({surface->w, surface->h});
     }

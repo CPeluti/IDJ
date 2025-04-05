@@ -1,4 +1,5 @@
 #define INCLUDE_SDL_TTF
+#include "SDL_gpu.h"
 #include "SDL_Include.h"
 #include "GameObject.h"
 #include "Component.h"
@@ -28,7 +29,7 @@ class Text : public Component{
     private:
         
         TTF_Font* font;
-        SDL_Texture* texture;
+        GPU_Image* texture;
         std::string text;
         TextStyle style;
         std::string fontFile;
