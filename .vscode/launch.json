@@ -28,7 +28,12 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "debug"
+            "preLaunchTask": "debug",
+            "logging": {
+                "engineLogging": true,
+                "trace": true,
+                "traceResponse": true
+            }
         }
     ]
 }
