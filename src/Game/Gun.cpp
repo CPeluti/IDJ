@@ -2,6 +2,7 @@
 #include "Core/Animator.h"
 #include "Core/InputManager.h"
 #include "Core/Game.h"
+#include "Core/Log.h"
 #include <iostream>
 #include <cmath>
 
@@ -68,7 +69,6 @@ void Gun::Update(float dt)
             charComponent->SetFlip(true);
         }
         associated.box.RawMove(centroChar);
-
         Vec2 pos = {OFFSET, 0};
         Vec2 currentPos = associated.box.GetPos();
 

@@ -1,6 +1,7 @@
 #include "Core/Camera.h"
 #include "Core/InputManager.h"
 #include "Core/Game.h"
+#include "Core/Log.h"
 #include <iostream>
 Vec2 Camera::pos = {0,0};
 Vec2 Camera::speed = {0,0};
@@ -24,7 +25,7 @@ void Camera::Update(float dt){
     if(focus != nullptr){
         Vec2 size = game.GetWindowSize();
 
-        Vec2 pos = focus->box.GetPos(); 
+        Vec2 pos = focus->box.GetPos();
         Camera::pos.x = pos.x-(size.x/2);
         Camera::pos.y = pos.y-(size.y/2);
     } else {
