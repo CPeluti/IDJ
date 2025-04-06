@@ -23,10 +23,7 @@
       "binaryDir": "${workspaceFolder}/build",
       "installDir": "${workspaceFolder}",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug",
-        "CMAKE_PREFIX_PATH": "C:/libs/SDL2-2.32.2",
-        "CMAKE_INSTALL_PREFIX": "${workspaceFolder}/bin",
-        "CMAKE_CXX_COMPILER": "C:\\msys64\\ucrt64\\bin\\g++.exe"
+        "CMAKE_BUILD_TYPE": "Debug"
       }
     }
   ]
