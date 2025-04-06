@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 4.0)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
+set(CMAKE_PREFIX_PATH "C:/libs/SDL2-2.32.2")
+set(CMAKE_INSTALL_PREFIX "C:/Users/peluti/projetos/IDJ/bin")
+set(CMAKE_CXX_COMPILER "C:/msys64/ucrt64/bin/g++.exe")
 project(JOGO)
 
 
@@ -35,7 +38,7 @@ else()
 
 endif()
 
-add_executable(${PROJECT_NAME} WIN32 ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES})
 
 # SDL2::SDL2main may or may not be available. It is e.g. required by Windows GUI applications
 if(TARGET SDL2::SDL2main)
