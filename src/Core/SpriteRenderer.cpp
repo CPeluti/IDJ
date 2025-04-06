@@ -1,5 +1,6 @@
 #include "Core/SpriteRenderer.h"
 #include "Core/Component.h"
+#include "Core/Log.h"
 #include <iostream>
 SpriteRenderer::SpriteRenderer(GameObject &associated) : Component(associated)
 {
@@ -52,7 +53,6 @@ void SpriteRenderer::SetScale(float scaleX, float scaleY){
     sprite.SetScale(scaleX,scaleY);
 
     associated.box.SetSize({sprite.GetWidth(),sprite.GetHeight()});
-
     Vec2 size = associated.box.GetSize()/2;
 
 

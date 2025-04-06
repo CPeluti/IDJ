@@ -90,10 +90,8 @@ nk_context* Game::GetContext(){
 }
 
 Vec2 Game::GetWindowSize(){
-    int x=0;
-    int y=0;
-    // SDL_GetWindowSize(window, &x, &y);
-    return Vec2(x,y); 
+
+    return Vec2(m_gpuTarget->w,m_gpuTarget->h); 
 }
 
 Game &Game::GetInstance()

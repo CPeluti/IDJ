@@ -9,6 +9,7 @@
 #include "Core/Game.h"
 #include "Core/Resources.h"
 #include "Core/Camera.h"
+#include "Core/Log.h"
 Sprite::Sprite()
 {
     frameCountH = 1;
@@ -37,8 +38,9 @@ Sprite::~Sprite()
 void Sprite::Open(std::string file)
 {
     texture = Resources::GetImage(file);
-    width = texture->w;
-    height = texture->h;
+    this->width = texture->w;
+    this->height = texture->h;
+    LOG_INFO(width);
     SetClip({0, 0}, {width, height});
 }
 void Sprite::SetClip(Vec2 pos, Vec2 size)
@@ -70,7 +72,7 @@ void Sprite::Render(Vec2 pos, Vec2 size, float angle)
         dstRect.x -= Camera::pos.x;   
     }
     // std::cout << "x: " << x << std::endl << " y: " << y << std::endl << " w: " << w << std::endl << " h: " << h << std::endl;
-    GPU_BlitRectX(texture, &clipRect, Game::GetInstance().GetGPUTarget(), &dstRect, angle, texture->w/2, texture->h/2, flip);
+    GPU_BlitRectX(texture, &clipRect, Game::GetInstance().GetGPUTarget(), &dstRect, angle, clipRect.x+(clipRect.w/2), clipRect.y+(clipRect.h/2), flip);
 }
 int Sprite::GetWidth()
 {
