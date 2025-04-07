@@ -34,7 +34,9 @@ void SpriteRenderer::Update(float dt){}
 
 void SpriteRenderer::Render()
 {
+    m_shader.Apply();
     sprite.Render(associated.box.GetPos(), associated.box.GetSize(), associated.angleDeg);
+    m_shader.Remove();
 }
 
 void SpriteRenderer::SetFrame(int frame, SDL_RendererFlip flip)
