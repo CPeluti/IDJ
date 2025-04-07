@@ -1,9 +1,10 @@
 #pragma once
-#include "SDL_gpu.h"
+#include "SDL2/SDL_gpu.h"
 #define INCLUDE_SDL_IMAGE
 #include <string>
 #include "SDL_include.h"
 #include "Vec2.h"
+#include "Shader.h"
 class Sprite{
     public:
         Sprite();
