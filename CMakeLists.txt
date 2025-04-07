@@ -20,7 +20,6 @@ include_directories(include)
 # add_subdirectory(include)
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
-
 if(NOT TARGET spdlog)
     # Stand-alone build
     add_subdirectory(vendor/spdlog)
@@ -37,7 +36,7 @@ else()
 
 endif()
 
-add_executable(${PROJECT_NAME} WIN32 ${SOURCES})
+add_executable(${PROJECT_NAME} WIN32 ${SOURCES} ${IMGUI})
 
 # SDL2::SDL2main may or may not be available. It is e.g. required by Windows GUI applications
 if(TARGET SDL2::SDL2main)
@@ -67,6 +66,18 @@ if(TARGET SDL2_gpu::SDL2_gpu)
 endif()
 
 # Link to the actual SDL2 library. SDL2::SDL2 is the shared SDL library, SDL2::SDL2-static is the static SDL libarary.
+target_include_directories(${PROJECT_NAME} PRIVATE vendor/imgui vendor/imgui/backends)
+target_sources(${PROJECT_NAME} PRIVATE 
+    vendor/imgui/imgui.cpp
+    vendor/imgui/imgui_draw.cpp
+    vendor/imgui/imgui_tables.cpp
+    vendor/imgui/imgui_widgets.cpp
+    vendor/imgui/imgui_demo.cpp
+    vendor/imgui/backends/imgui_impl_sdl2.cpp  # Backend para GLFW
+    vendor/imgui/backends/imgui_impl_opengl3.cpp  # Backend para OpenGL3
+)
+
+
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
 target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
 install(TARGETS ${PROJECT_NAME})
