@@ -3,6 +3,10 @@
 #include <cstdlib>
 #include <ctime>
 
+#include "imgui.h"
+#include "backends/imgui_impl_opengl3.h"
+#include "backends/imgui_impl_sdl2.h"
+
 #include "SDL2/SDL_gpu.h"
 #define INCLUDE_SDL_IMAGE
 #define INCLUDE_SDL_MIXER
@@ -12,6 +16,8 @@
 #include "Core/Resources.h"
 #include "Core/InputManager.h"
 #include "Core/Log.h"
+
+
 
 void update_marching_ants_shader(float t, int time_loc)
 {
@@ -56,12 +62,24 @@ Game::Game(std::string title, int width, int height): stateStack()
             SDL_Log(SDL_GetError());
         }
         Mix_AllocateChannels(32);
-        // this->window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
         this->m_gpuTarget = GPU_Init(width, height, GPU_DEFAULT_INIT_FLAGS);
-        // this->renderer = SDL_CreateRenderer(this->window, -1, (SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE));
         this->storedState = nullptr;
         frameStart = SDL_GetTicks();
         dt = 0;
+        // Setup Dear ImGui context
+
+        SDL_GLContext& gl_context = m_gpuTarget->context->context;
+        SDL_Window* window = SDL_GetWindowFromID(m_gpuTarget->context->windowID);
+
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO();
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+        // Setup Platform/Renderer backends
+        ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
+        ImGui_ImplOpenGL3_Init("#version 460");
+            // Setup style
     }
 }
 Game::~Game()
@@ -75,6 +93,9 @@ Game::~Game()
     Resources::ClearSounds();
     // SDL_DestroyRenderer(this->renderer);
     // SDL_DestroyWindow(this->window);
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
+    ImGui::DestroyContext();
     GPU_FreeTarget(m_gpuTarget);
     Mix_CloseAudio();
     Mix_Quit();
@@ -125,21 +146,9 @@ float Game::GetDeltaTime(){
 
 void Game::Run()
 {
-    // Uint32 color_shader;
-    // GPU_Image* image = GPU_LoadImage("resources/img/NPC.png");
-    // GPU_ShaderBlock color_block = load_shader_program(&color_shader, "resources/shaders/common.vert", "resources/shaders/color.frag");
-    // int color_loc = GPU_GetUniformLocation(color_shader, "myColor");
+    ImGui::StyleColorsClassic();
 
-    // Uint32 mask_shader;
-    // GPU_ShaderBlock mask_block = load_shader_program(&mask_shader, "resources/shaders/common.vert", "resources/shaders/alpha_mask.frag");
-    // GPU_Image* mask_image = GPU_LoadImage("resources/img/NPC.png");
-    // prepare_mask_shader(mask_shader, image, mask_image);
-    
-    // Uint32 marching_ants_shader;
-    // GPU_ShaderBlock marching_ants_block = load_shader_program(&marching_ants_shader, "resources/shaders/common.vert", "resources/shaders/marching_ants.frag");
-    // prepare_marching_ants_shader(marching_ants_shader, m_gpuTarget, image);
-    // int marching_ants_time_loc = GPU_GetUniformLocation(marching_ants_shader, "time");
-
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
     InputManager& inputManager = InputManager::GetInstance();
     float t;
     if(storedState != nullptr){
@@ -150,6 +159,10 @@ void Game::Run()
     GPU_ActivateShaderProgram(0, NULL);
     while (!GetCurrentState().QuitRequested() && !stateStack.empty())
     {
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplSDL2_NewFrame();
+        ImGui::NewFrame();
+        ImGui::ShowDemoWindow(); // Show demo window! :)
         if(GetCurrentState().PopRequested()){
             stateStack.pop();
             if(!stateStack.empty()){
@@ -167,13 +180,14 @@ void Game::Run()
         t = SDL_GetTicks()/1000.0f;
         GetCurrentState().Update(dt);
         GetCurrentState().Render();
-        // update_color_shader((1+sin(t))/2, (1+sin(t+1))/2, (1+sin(t+2))/2, 1.0f, color_loc);
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         GPU_Flip(this->m_gpuTarget);
-        // SDL_Delay(33);
         SDL_Delay(16);
     }
     Resources::ClearImages();
     Resources::ClearMusics();
     Resources::ClearSounds();
+    
     return;
 }
