@@ -18,7 +18,6 @@ option(MYGAME_VENDORED "Use vendored libraries" OFF)
 
 include_directories(include)
 # add_subdirectory(include)
-add_definitions(${NUKLEAR_CXX_FLAGS})
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 
