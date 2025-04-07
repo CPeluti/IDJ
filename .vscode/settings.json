@@ -96,7 +96,8 @@
       "source_location": "cpp",
       "*.inc": "cpp",
       "coroutine": "cpp",
-      "filesystem": "cpp"
+      "filesystem": "cpp",
+      "unordered_set": "cpp"
     },
     "clangd.arguments": [
       "--log=verbose",
