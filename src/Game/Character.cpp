@@ -44,7 +44,7 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
         Character::npcCounter++;
     } else {
         Shader* shader = sr->GetShader();
-        shader->Load("resources/shaders/common.vert", "resources/shaders/color.frag");
+        shader->Load("resources/shaders/common.vert", "resources/shaders/teste.frag");
         int color_loc = shader->GetLocation("myColor");
         float t = SDL_GetTicks()/1000.0f;
         update_color_shader((1+sin(t))/2, (1+sin(t+1))/2, (1+sin(t+2))/2, 1.0f, color_loc);
