@@ -4,6 +4,7 @@
 #include "Core/InputManager.h"
 #include "Core/Game.h"
 #include "Core/Camera.h"
+#include "backends/imgui_impl_sdl2.h"
 InputManager& InputManager::GetInstance(){
     static InputManager inputManager;
     return inputManager;
@@ -17,6 +18,7 @@ void InputManager::Update(){
     updateCounter = SDL_GetTicks();
     SDL_Event event;
     while(SDL_PollEvent(&event)){
+        ImGui_ImplSDL2_ProcessEvent(&event); 
         switch (event.type)
         {
         case SDL_KEYDOWN:
