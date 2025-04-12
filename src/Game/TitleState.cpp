@@ -70,7 +70,7 @@ void TitleState::Update(float dt)
         particles->SetExplosiveness(0.5);
         particles->SetOneshot(false);
         
-        particles->Play();
+        // particles->Play();
 
     }
     UpdateArray(dt);
