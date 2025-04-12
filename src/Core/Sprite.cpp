@@ -1,10 +1,15 @@
-#define INCLUDE_SDL_IMAGE
 #include <string>
-#include "Core/SDL_include.h"
 #include <iostream>
+
+#include "SDL_gpu.h"
+
+#define INCLUDE_SDL_IMAGE
+#include "Core/SDL_include.h"
+
 #include "Core/Game.h"
 #include "Core/Resources.h"
 #include "Core/Camera.h"
+#include "Core/Log.h"
 Sprite::Sprite()
 {
     frameCountH = 1;
@@ -33,7 +38,9 @@ Sprite::~Sprite()
 void Sprite::Open(std::string file)
 {
     texture = Resources::GetImage(file);
-    SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+    this->width = texture->w;
+    this->height = texture->h;
+    LOG_INFO(width);
     SetClip({0, 0}, {width, height});
 }
 void Sprite::SetClip(Vec2 pos, Vec2 size)
@@ -59,13 +66,13 @@ void Sprite::SetFrameCount(int frameCountW, int frameCountH)
 }
 void Sprite::Render(Vec2 pos, Vec2 size, float angle)
 {
-    SDL_Rect dstRect = {(int)pos.x,(int)pos.y, (int)(clipRect.w * scale.x), (int)(clipRect.h * scale.y)};
+    GPU_Rect dstRect = {pos.x,pos.y, (clipRect.w * scale.x), (clipRect.h * scale.y)};
     if(!cameraFollower){
         dstRect.y -= Camera::pos.y;
         dstRect.x -= Camera::pos.x;   
     }
     // std::cout << "x: " << x << std::endl << " y: " << y << std::endl << " w: " << w << std::endl << " h: " << h << std::endl;
-    SDL_RenderCopyEx(Game::GetInstance().GetRenderer(), texture, &clipRect, &dstRect, angle, nullptr, flip);
+    GPU_BlitRectX(texture, &clipRect, Game::GetInstance().GetGPUTarget(), &dstRect, angle, clipRect.x+(clipRect.w/2), clipRect.y+(clipRect.h/2), flip);
 }
 int Sprite::GetWidth()
 {

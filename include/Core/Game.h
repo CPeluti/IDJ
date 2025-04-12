@@ -18,7 +18,7 @@ class Game {
         ~Game();
         
         static Game& GetInstance();
-        SDL_Renderer* GetRenderer();
+        GPU_Target* GetGPUTarget();
         State& GetCurrentState();
         
         void Push(State* state);
@@ -38,7 +38,7 @@ class Game {
         static Game* instance;
         nk_context* ctx;
         State* storedState;
-        SDL_Window* window;
+        GPU_Target* m_gpuTarget;
         SDL_Renderer* renderer;
         std::stack<std::unique_ptr<State>> stateStack;
         
