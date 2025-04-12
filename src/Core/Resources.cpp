@@ -1,3 +1,4 @@
+#include "SDL2/SDL_gpu.h"
 #define INCLUDE_SDL_IMAGE
 #define INCLUDE_SDL_MIXER
 #define INCLUDE_SDL_TTF
@@ -7,16 +8,16 @@
 #include <iostream>
 
 
-std::unordered_map<std::string, SDL_Texture*> Resources::imageTable;
+std::unordered_map<std::string, GPU_Image*> Resources::imageTable;
 std::unordered_map<std::string, Mix_Music*> Resources::musicTable;
 std::unordered_map<std::string, Mix_Chunk*> Resources::soundTable;
 std::unordered_map<std::string, TTF_Font*> Resources::fontTable;
 
-SDL_Texture* Resources::GetImage(std::string file){
+GPU_Image* Resources::GetImage(std::string file){
     
     if(imageTable.find(file) == imageTable.end()){
         try{
-            SDL_Texture* texture = IMG_LoadTexture(Game::GetInstance().GetRenderer(), file.c_str());
+            GPU_Image* texture = GPU_LoadImage(file.c_str());
             imageTable[file] = texture;
             return texture;
         } catch (std::string e){
@@ -29,7 +30,7 @@ SDL_Texture* Resources::GetImage(std::string file){
 void Resources::ClearImages(){
     for(auto const &entry : imageTable){
         try {
-            SDL_DestroyTexture(entry.second);
+            GPU_FreeImage(entry.second);
         } catch (std::string e){
             std::cout << "Failed to delete texture: " << e << std::endl; 
         }

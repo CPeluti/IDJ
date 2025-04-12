@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 4.0)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
-set(CMAKE_CXX_COMPILER "C:\\msys64\\ucrt64\\bin\\g++.exe")
-set(NUKLEAR_CXX_FLAGS "")
+set(CMAKE_PREFIX_PATH "C:/libs/SDL2-2.32.2")
+set(CMAKE_INSTALL_PREFIX "C:/Users/peluti/projetos/IDJ/bin")
+set(CMAKE_CXX_COMPILER "C:/msys64/ucrt64/bin/g++.exe")
 project(JOGO)
 
 
@@ -17,9 +18,7 @@ option(MYGAME_VENDORED "Use vendored libraries" OFF)
 
 include_directories(include)
 # add_subdirectory(include)
-add_definitions(${NUKLEAR_CXX_FLAGS})
-file(GLOB SOURCES "src/*/*.cpp")
-
+file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 if(NOT TARGET spdlog)
     # Stand-alone build
@@ -31,15 +30,13 @@ else()
     # 1. Look for a SDL2 package, 2. look for the SDL2 component and 3. fail if none can be found
     find_package(SDL2 REQUIRED CONFIG REQUIRED COMPONENTS SDL2)
     find_package(SDL2_image REQUIRED CONFIG REQUIRED COMPONENTS SDL2_image)
-    find_package(SDL2_gpu REQUIRED CONFIG REQUIRED COMPONENTS SDL2_gpu)
+    find_package(SDL2_gpu REQUIRED)
     find_package(SDL2_mixer REQUIRED CONFIG REQUIRED COMPONENTS SDL2_mixer)
     find_package(SDL2_ttf REQUIRED CONFIG REQUIRED COMPONENTS SDL2_ttf)
 
-    # 1. Look for a SDL2 package, 2. Look for the SDL2maincomponent and 3. DO NOT fail when SDL2main is not available
-    find_package(SDL2 REQUIRED CONFIG COMPONENTS SDL2main)
 endif()
 
-add_executable(${PROJECT_NAME} WIN32 ${SOURCES})
+add_executable(${PROJECT_NAME} WIN32 ${SOURCES} ${IMGUI})
 
 # SDL2::SDL2main may or may not be available. It is e.g. required by Windows GUI applications
 if(TARGET SDL2::SDL2main)
@@ -69,6 +66,18 @@ if(TARGET SDL2_gpu::SDL2_gpu)
 endif()
 
 # Link to the actual SDL2 library. SDL2::SDL2 is the shared SDL library, SDL2::SDL2-static is the static SDL libarary.
+target_include_directories(${PROJECT_NAME} PRIVATE vendor/imgui vendor/imgui/backends)
+target_sources(${PROJECT_NAME} PRIVATE 
+    vendor/imgui/imgui.cpp
+    vendor/imgui/imgui_draw.cpp
+    vendor/imgui/imgui_tables.cpp
+    vendor/imgui/imgui_widgets.cpp
+    vendor/imgui/imgui_demo.cpp
+    vendor/imgui/backends/imgui_impl_sdl2.cpp  # Backend para GLFW
+    vendor/imgui/backends/imgui_impl_opengl3.cpp  # Backend para OpenGL3
+)
+
+
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
 target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
 install(TARGETS ${PROJECT_NAME})
@@ -79,6 +88,7 @@ install(
     lib/SDL2_image.dll
     lib/SDL2_mixer.dll
     lib/SDL2_ttf.dll
+    lib/SDL2_gpu.dll
     DESTINATION
     bin
 )

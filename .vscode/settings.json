@@ -94,10 +94,15 @@
       "expected": "cpp",
       "regex": "cpp",
       "source_location": "cpp",
-      "*.inc": "cpp"
+      "*.inc": "cpp",
+      "coroutine": "cpp",
+      "filesystem": "cpp",
+      "unordered_set": "cpp"
     },
     "clangd.arguments": [
       "--log=verbose",
       "--query-driver=C:/msys64/ucrt64/bin/g++.exe" // Point to your g++
-    ]
+    ],
+    "C_Cpp.default.compileCommands": "c:\\Users\\peluti\\projetos\\IDJ\\builddir/compile_commands.json",
+    "C_Cpp.default.configurationProvider": "mesonbuild.mesonbuild"
 }
