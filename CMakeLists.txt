@@ -1,6 +1,4 @@
 cmake_minimum_required(VERSION 4.0)
-set( CMAKE_PREFIX_PATH "C:/libs/SDL2-2.32.2" )
-set( CMAKE_INSTALL_PREFIX "C:/Users/peluti/projetos/IDJ" )
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 set(CMAKE_CXX_COMPILER "C:\\msys64\\ucrt64\\bin\\g++.exe")
