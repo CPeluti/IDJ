@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "SDL_gpu.h"
 #define INCLUDE_SDL
 #define INCLUDE_SDL_MIXER
 #define INCLUDE_SDL_TTF
@@ -8,7 +9,7 @@
 
 class Resources{
     public:
-        static SDL_Texture* GetImage(std::string file);
+        static GPU_Image* GetImage(std::string file);
         static void ClearImages();
         static Mix_Music* GetMusic(std::string file);
         static void ClearMusics();
@@ -18,7 +19,7 @@ class Resources{
         static void ClearFonts();
 
     private:
-        static std::unordered_map<std::string, SDL_Texture*> imageTable;
+        static std::unordered_map<std::string, GPU_Image*> imageTable;
         static std::unordered_map<std::string, Mix_Music*> musicTable;
         static std::unordered_map<std::string, Mix_Chunk*> soundTable;
         static std::unordered_map<std::string, TTF_Font*> fontTable;
