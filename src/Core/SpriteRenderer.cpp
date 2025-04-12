@@ -1,5 +1,6 @@
 #include "Core/SpriteRenderer.h"
 #include "Core/Component.h"
+#include "Core/Log.h"
 #include <iostream>
 SpriteRenderer::SpriteRenderer(GameObject &associated) : Component(associated)
 {
@@ -33,7 +34,9 @@ void SpriteRenderer::Update(float dt){}
 
 void SpriteRenderer::Render()
 {
+    m_shader.Apply();
     sprite.Render(associated.box.GetPos(), associated.box.GetSize(), associated.angleDeg);
+    m_shader.Remove();
 }
 
 void SpriteRenderer::SetFrame(int frame, SDL_RendererFlip flip)
@@ -52,7 +55,6 @@ void SpriteRenderer::SetScale(float scaleX, float scaleY){
     sprite.SetScale(scaleX,scaleY);
 
     associated.box.SetSize({sprite.GetWidth(),sprite.GetHeight()});
-
     Vec2 size = associated.box.GetSize()/2;
 
 

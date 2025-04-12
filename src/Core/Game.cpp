@@ -1,27 +1,34 @@
+#include <string>
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+
+#include "imgui.h"
+#include "backends/imgui_impl_opengl3.h"
+#include "backends/imgui_impl_sdl2.h"
+
+#include "SDL2/SDL_gpu.h"
 #define INCLUDE_SDL_IMAGE
 #define INCLUDE_SDL_MIXER
 #define INCLUDE_SDL_TTF
-#include <string>
-#include <iostream>
 #include "Core/SDL_include.h"
 #include "Core/Game.h"
 #include "Core/Resources.h"
 #include "Core/InputManager.h"
 #include "Core/Log.h"
-#include <cstdlib>
-#include <ctime>
 
-#define NK_SDL_RENDERER_IMPLEMENTATION
-#define NK_IMPLEMENTATION
-#define NK_INCLUDE_FIXED_TYPES
-#define NK_INCLUDE_STANDARD_IO
-#define NK_INCLUDE_STANDARD_VARARGS
-#define NK_INCLUDE_DEFAULT_ALLOCATOR
-#define NK_INCLUDE_VERTEX_BUFFER_OUTPUT
-#define NK_INCLUDE_FONT_BAKING
-#define NK_INCLUDE_DEFAULT_FONT
-#include "Core/nuklear.h"
-#include "Core/nuklear_sdl_renderer.h"
+
+
+void update_marching_ants_shader(float t, int time_loc)
+{
+    GPU_SetUniformf(time_loc, t);
+}
+
+
+void free_shader(Uint32 p)
+{
+    GPU_FreeShaderProgram(p);
+}
 
 Game *Game::instance = nullptr;
 
@@ -31,8 +38,8 @@ Game::Game(std::string title, int width, int height): stateStack()
     srand(time(NULL));
     if (this->instance == nullptr)
     {
+        GPU_SetDebugLevel(GPU_DEBUG_LEVEL_MAX);
         Log::Init();
-        
         this->instance = this;
         if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER)){
             SDL_Log("Failed to start SDL");
@@ -55,37 +62,24 @@ Game::Game(std::string title, int width, int height): stateStack()
             SDL_Log(SDL_GetError());
         }
         Mix_AllocateChannels(32);
-        this->window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 0);
-        this->renderer = SDL_CreateRenderer(this->window, -1, (SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED | SDL_RENDERER_TARGETTEXTURE));
+        this->m_gpuTarget = GPU_Init(width, height, GPU_DEFAULT_INIT_FLAGS);
         this->storedState = nullptr;
-        this->ctx = nk_sdl_init(window, renderer);
-
-        {
-            struct nk_font_atlas *atlas;
-            struct nk_font_config config = nk_font_config(0);
-            struct nk_font *font;
-    
-            /* set up the font atlas and add desired font; note that font sizes are
-                * multiplied by font_scale to produce better results at higher DPIs */
-            nk_sdl_font_stash_begin(&atlas);
-            font = nk_font_atlas_add_default(atlas, 13 * font_scale, &config);
-            /*font = nk_font_atlas_add_from_file(atlas, "../../../extra_font/DroidSans.ttf", 14 * font_scale, &config);*/
-            /*font = nk_font_atlas_add_from_file(atlas, "../../../extra_font/Roboto-Regular.ttf", 16 * font_scale, &config);*/
-            /*font = nk_font_atlas_add_from_file(atlas, "../../../extra_font/kenvector_future_thin.ttf", 13 * font_scale, &config);*/
-            /*font = nk_font_atlas_add_from_file(atlas, "../../../extra_font/ProggyClean.ttf", 12 * font_scale, &config);*/
-            /*font = nk_font_atlas_add_from_file(atlas, "../../../extra_font/ProggyTiny.ttf", 10 * font_scale, &config);*/
-            /*font = nk_font_atlas_add_from_file(atlas, "../../../extra_font/Cousine-Regular.ttf", 13 * font_scale, &config);*/
-            nk_sdl_font_stash_end();
-    
-            /* this hack makes the font appear to be scaled down to the desired
-                * size and is only necessary when font_scale > 1 */
-            font->handle.height /= font_scale;
-            /*nk_style_load_all_cursors(ctx, atlas->cursors);*/
-            nk_style_set_font(ctx, &font->handle);
-        }
-
         frameStart = SDL_GetTicks();
         dt = 0;
+        // Setup Dear ImGui context
+
+        SDL_GLContext& gl_context = m_gpuTarget->context->context;
+        SDL_Window* window = SDL_GetWindowFromID(m_gpuTarget->context->windowID);
+
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO();
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+        // Setup Platform/Renderer backends
+        ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
+        ImGui_ImplOpenGL3_Init("#version 460");
+            // Setup style
     }
 }
 Game::~Game()
@@ -93,13 +87,16 @@ Game::~Game()
     if(storedState != nullptr){
         delete storedState;
     }
-    nk_sdl_shutdown();
     stateStack = std::stack<std::unique_ptr<State>>();
     Resources::ClearImages();
     Resources::ClearMusics();
     Resources::ClearSounds();
-    SDL_DestroyRenderer(this->renderer);
-    SDL_DestroyWindow(this->window);
+    // SDL_DestroyRenderer(this->renderer);
+    // SDL_DestroyWindow(this->window);
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
+    ImGui::DestroyContext();
+    GPU_FreeTarget(m_gpuTarget);
     Mix_CloseAudio();
     Mix_Quit();
     IMG_Quit();
@@ -110,9 +107,9 @@ void Game::Push(State* state){
     storedState = state;
 }
 
-SDL_Renderer *Game::GetRenderer()
+GPU_Target *Game::GetGPUTarget()
 {
-    return this->renderer;
+    return this->m_gpuTarget;
 }
 State &Game::GetCurrentState()
 {
@@ -124,17 +121,15 @@ nk_context* Game::GetContext(){
 }
 
 Vec2 Game::GetWindowSize(){
-    int x;
-    int y;
-    SDL_GetWindowSize(window, &x, &y);
-    return Vec2(x,y); 
+
+    return Vec2(m_gpuTarget->w,m_gpuTarget->h); 
 }
 
 Game &Game::GetInstance()
 {
     if (Game::instance == nullptr)
     {
-        new Game("190085312", 1200, 900);
+        new Game("190085312", 1920, 1080);
     }
     return *Game::instance;
 }
@@ -151,15 +146,15 @@ float Game::GetDeltaTime(){
 
 void Game::Run()
 {
-    nk_colorf bg;
-    nk_style* s  = &ctx->style;
     InputManager& inputManager = InputManager::GetInstance();
+    float t;
     if(storedState != nullptr){
         stateStack.emplace(storedState);
         storedState = nullptr;
         GetCurrentState().Start();
     }
-    bg.r = 0.10f, bg.g = 0.18f, bg.b = 0.24f, bg.a = 1.0f;
+    GPU_ActivateShaderProgram(0, NULL);
+
     while (!GetCurrentState().QuitRequested() && !stateStack.empty())
     {
         if(GetCurrentState().PopRequested()){
@@ -174,53 +169,24 @@ void Game::Run()
             GetCurrentState().Start();
             storedState = nullptr;
         }
-        nk_style_push_color(ctx, &s->window.background, nk_rgba(0,0,0,0));
-        nk_style_push_style_item(ctx, &s->window.fixed_background, nk_style_item_color(nk_rgba(0,0,0,0)));
-        if (nk_begin(ctx, "Demo", nk_rect(50, 50, 230, 250), false))
-        {
-            enum {EASY, HARD};
-            static int op = EASY;
-            static int property = 20;
-            nk_layout_row_static(ctx, 30, 80, 1);
-            if (nk_button_label(ctx, "button"))
-                fprintf(stdout, "button pressed\n");
-            nk_layout_row_dynamic(ctx, 30, 2);
-            if (nk_option_label(ctx, "easy", op == EASY)) op = EASY;
-            if (nk_option_label(ctx, "hard", op == HARD)) op = HARD;
-            nk_layout_row_dynamic(ctx, 25, 1);
-            nk_property_int(ctx, "Compression:", 0, &property, 100, 10, 1);
-
-            nk_layout_row_dynamic(ctx, 20, 1);
-            nk_label(ctx, "background:", NK_TEXT_LEFT);
-            nk_layout_row_dynamic(ctx, 25, 1);
-            if (nk_combo_begin_color(ctx, nk_rgb_cf(bg), nk_vec2(nk_widget_width(ctx),400))) {
-                nk_layout_row_dynamic(ctx, 120, 1);
-                bg = nk_color_picker(ctx, bg, NK_RGBA);
-                nk_layout_row_dynamic(ctx, 25, 1);
-                bg.r = nk_propertyf(ctx, "#R:", 0, bg.r, 1.0f, 0.01f,0.005f);
-                bg.g = nk_propertyf(ctx, "#G:", 0, bg.g, 1.0f, 0.01f,0.005f);
-                bg.b = nk_propertyf(ctx, "#B:", 0, bg.b, 1.0f, 0.01f,0.005f);
-                bg.a = nk_propertyf(ctx, "#A:", 0, bg.a, 1.0f, 0.01f,0.005f);
-                nk_combo_end(ctx);
-            }
-        }
-        nk_end(ctx);
-
-        nk_style_pop_color(ctx);
-        nk_style_pop_style_item(ctx);
-
         CalculateDeltaTime();
         inputManager.Update();
+        t = SDL_GetTicks()/1000.0f;
         GetCurrentState().Update(dt);
         GetCurrentState().Render();
-        nk_sdl_render(NK_ANTI_ALIASING_ON);
-        SDL_RenderPresent(renderer);
-        SDL_SetRenderDrawColor(renderer, bg.r * 255, bg.g * 255, bg.b * 255, bg.a * 255);
-        // SDL_Delay(33);
+        GPU_FlushBlitBuffer();
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplSDL2_NewFrame();
+        ImGui::NewFrame();
+        ImGui::ShowDemoWindow();
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        GPU_Flip(this->m_gpuTarget);
         SDL_Delay(16);
     }
     Resources::ClearImages();
     Resources::ClearMusics();
     Resources::ClearSounds();
+    
     return;
 }
