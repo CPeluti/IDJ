@@ -4,7 +4,7 @@
 #include "Core/Game.h"
 #include "Game/TitleState.h"
 #include <iostream>
-int main(int argv, char** args){
+int main(int argc, char* argv[]){
     SDL_Log("Starting game"); 
     Game& game = Game::GetInstance();
     game.Push(new TitleState());

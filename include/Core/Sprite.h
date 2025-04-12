@@ -1,8 +1,10 @@
 #pragma once
+#include "SDL2/SDL_gpu.h"
 #define INCLUDE_SDL_IMAGE
 #include <string>
 #include "SDL_include.h"
 #include "Vec2.h"
+#include "Shader.h"
 class Sprite{
     public:
         Sprite();
@@ -23,10 +25,10 @@ class Sprite{
     private:
         int frameCountW;
         int frameCountH;
-        SDL_Texture* texture;
+        GPU_Image* texture;
         int width;
         int height;
-        SDL_Rect clipRect;
+        GPU_Rect clipRect;
         SDL_RendererFlip flip;
         Vec2 scale;
 };

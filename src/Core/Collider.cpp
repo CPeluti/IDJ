@@ -47,8 +47,10 @@ void Collider::Render() {
 					+ center - Camera::pos;
 	points[3] = {(int)point.x, (int)point.y};
 
-	SDL_SetRenderDrawColor(Game::GetInstance().GetRenderer(), 255, 0, 0, SDL_ALPHA_OPAQUE);
-	SDL_RenderDrawLines(Game::GetInstance().GetRenderer(), points, 5);
+	// SDL_SetRenderDrawColor(Game::GetInstance().GetRenderer(), 255, 0, 0, SDL_ALPHA_OPAQUE);
+	for(int i = 0; i<5; i++){
+		GPU_Line(Game::GetInstance().GetGPUTarget(), points[i].x, points[i].y,points[(i+1)%5].x, points[(i+1)%5].y, {255,0,0,255});
+	}
 #endif // DEBUG
 }
 

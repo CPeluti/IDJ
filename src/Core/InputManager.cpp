@@ -4,7 +4,7 @@
 #include "Core/InputManager.h"
 #include "Core/Game.h"
 #include "Core/Camera.h"
-#include "Core/nuklear_sdl_renderer.h"
+#include "backends/imgui_impl_sdl2.h"
 InputManager& InputManager::GetInstance(){
     static InputManager inputManager;
     return inputManager;
@@ -17,8 +17,8 @@ void InputManager::Update(){
     SDL_GetMouseState(&this->mouseX, &this->mouseY);
     updateCounter = SDL_GetTicks();
     SDL_Event event;
-    nk_input_begin(Game::GetInstance().GetContext());
     while(SDL_PollEvent(&event)){
+        ImGui_ImplSDL2_ProcessEvent(&event); 
         switch (event.type)
         {
         case SDL_KEYDOWN:
@@ -45,10 +45,7 @@ void InputManager::Update(){
         default:
             break;
         }
-        nk_sdl_handle_event(&event);
     }
-    nk_sdl_handle_grab(); /* optional grabbing behavior */
-    nk_input_end(Game::GetInstance().GetContext());
 
 }
 
