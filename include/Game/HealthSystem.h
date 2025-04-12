@@ -1,7 +1,7 @@
 #include "Core/Component.h"
 #include "Core/GameObject.h"
 #include "Events/BasicEvent.h"
-#include "GameObject.h"
+#include "Core/GameObject.h"
 #include "Lifebar.h"
 class HealthSystem : public Component, public Observer
 {

@@ -1,6 +1,7 @@
 #define INCLUDE_SDL
 #include "Core/SDL_include.h"
-#include "Core/Lifebar.h"
+#include "Game/Lifebar.h"
+#include "Game/HealthSystem.h"
 
 HealthSystem::HealthSystem(GameObject &associated, float hp) : Component(associated), hp(hp)
 {

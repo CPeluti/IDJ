@@ -1,9 +1,9 @@
 #pragma once
 #define INCLUDE_SDL_IMAGE
-#include "SDL_include.h"
-#include "Component.h"
-#include "Vec2.h"
-#include "Observer.h"
+#include "Core/SDL_include.h"
+#include "Core/Component.h"
+#include "Core/Vec2.h"
+#include "Core/Observer.h"
 class Lifebar : public Component
 {
 public:
