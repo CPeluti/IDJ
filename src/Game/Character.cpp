@@ -20,18 +20,16 @@ void update_color_shader(float r, float g, float b, float a, int color_loc)
     GPU_SetUniformfv(color_loc, 4, 1, fcolor);
 }
 
-
 Character *Character::player = nullptr;
 int Character::npcCounter = 0;
 Character::Character(GameObject &associated, std::string sprite, bool isPlayer) : Component(associated),
-                                                                   gun(),
-                                                                   taskQueue(),
-                                                                   speed{1, 1},
-                                                                   linearSpeed(300),
-                                                                   hp(500),
-                                                                   isDead(false),
-                                                                   deathTimer(5),
-                                                                   extraProjectiles(0)
+                                                                                  gun(),
+                                                                                  taskQueue(),
+                                                                                  Entity(300),
+                                                                                  hp(500),
+                                                                                  isDead(false),
+                                                                                  deathTimer(5),
+                                                                                  extraProjectiles(0)
 {
     this->associated.subject.addObserver(this);
 
@@ -40,18 +38,20 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
     Collider *collider = new Collider(associated);
     HealthSystem *hs = new HealthSystem(associated, hp);
 
-    if(!isPlayer){
+    if (!isPlayer)
+    {
         Character::npcCounter++;
-    } else {
-        Shader* shader = sr->GetShader();
+    }
+    else
+    {
+        Shader *shader = sr->GetShader();
         shader->Load("resources/shaders/common.vert", "resources/shaders/teste.frag");
         int color_loc = shader->GetLocation("myColor");
-        float t = SDL_GetTicks()/1000.0f;
-        update_color_shader((1+sin(t))/2, (1+sin(t+1))/2, (1+sin(t+2))/2, 1.0f, color_loc);
+        float t = SDL_GetTicks() / 1000.0f;
+        update_color_shader((1 + sin(t)) / 2, (1 + sin(t + 1)) / 2, (1 + sin(t + 2)) / 2, 1.0f, color_loc);
         PlayerController *playerController = new PlayerController(associated);
         associated.AddComponent(playerController);
     }
-
 
     // Lifebar *l = new Lifebar(associated,(int)hp, {associated.box.GetSize().x, (float)10},{0,(int)associated.box.GetSize().y/4});
     // l->setAmount(hp);
@@ -63,7 +63,6 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
 
     // associated.AddComponent(l);
 
-
     animator->AddAnimation("walking", new Animation(0, 5, 0.2));
     animator->AddAnimation("idle", new Animation(6, 9, 0.5));
     animator->AddAnimation("i_walking", new Animation(0, 5, 0.2, SDL_FLIP_HORIZONTAL));
@@ -71,14 +70,16 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
     animator->AddAnimation("dead", new Animation(10, 11, 0.5));
     animator->SetAnimation("idle");
     flip = false;
-
 }
 
 Character::~Character()
 {
-    if(Character::player != this){
+    if (Character::player != this)
+    {
         Character::npcCounter--;
-    } else {
+    }
+    else
+    {
         Character::player = nullptr;
     }
 }
@@ -92,7 +93,6 @@ void Character::Start()
     gunObj->AddComponent(gunComponent);
 
     this->gun = s.AddObject(gunObj);
-
 }
 // void Character::Damage(int amount){
 //     hp -= amount;
@@ -115,9 +115,10 @@ void Character::Start()
 //     }
 // }
 
-
 void Character::Update(float dt)
 {
+    Vec2 speed = {0, 0};
+    Character::player->UpdateEffects(dt);
     Animator *animator = ((Animator *)associated.GetComponent("Animator"));
     if (isDead)
     {
@@ -138,20 +139,20 @@ void Character::Update(float dt)
         Command c = taskQueue.front();
         switch (c.type)
         {
-            case c.MOVE:
-            {
-                speed = c.pos.normalized() * linearSpeed;
-            }
-            break;
+        case c.MOVE:
+        {
+            speed = c.pos.normalized() * m_movementSpeed;
+        }
+        break;
 
-            case c.SHOOT:
+        case c.SHOOT:
+        {
+            if (auto g = gun.lock())
             {
-                if (auto g = gun.lock())
-                {
-                    ((Gun *)g->GetComponent("Gun"))->Shoot(c.pos);
-                }
+                ((Gun *)g->GetComponent("Gun"))->Shoot(c.pos);
             }
-            break;
+        }
+        break;
         }
         taskQueue.pop();
         if (speed.x || speed.y)
@@ -159,40 +160,45 @@ void Character::Update(float dt)
             animator->SetAnimation(flip ? "walking" : "i_walking");
             Vec2 newSpeed = (speed * dt);
             Vec2 currentPos = associated.box.GetPos();
-            if(this == this->player){
+            if (this == this->player)
+            {
                 Vec2 charPos = this->associated.box.GetPos();
-                if(charPos.x < 640 && newSpeed.x < 0){
-                    newSpeed.x = 0;
-                } 
-                else if (charPos.x > 1920 -associated.box.GetSize().x && newSpeed.x > 0)
+                if (charPos.x < 640 && newSpeed.x < 0)
                 {
                     newSpeed.x = 0;
                 }
-                if(charPos.y < 512 && newSpeed.y < 0){
+                else if (charPos.x > 1920 - associated.box.GetSize().x && newSpeed.x > 0)
+                {
+                    newSpeed.x = 0;
+                }
+                if (charPos.y < 512 && newSpeed.y < 0)
+                {
                     newSpeed.y = 0;
-                } else if (charPos.y > 2048-associated.box.GetSize().y  && newSpeed.y > 0){
+                }
+                else if (charPos.y > 2048 - associated.box.GetSize().y && newSpeed.y > 0)
+                {
                     newSpeed.y = 0;
                 }
             }
             associated.box.RawMove(currentPos + newSpeed);
         }
     }
-    SpriteRenderer* sr = (SpriteRenderer*)this->associated.GetComponent("SpriteRenderer");
-
-
+    SpriteRenderer *sr = (SpriteRenderer *)this->associated.GetComponent("SpriteRenderer");
 }
 
-void Character::Render(){}
+void Character::Render() {}
 
 Character::Command::Command(CommandType type, Vec2 pos) : type(type), pos(pos) {}
 
-void Character::OnEvent(Event& e){
+void Character::OnEvent(Event &e)
+{
     EventDispatcher dispatcher(e);
 
     dispatcher.Dispatch<OnCollisionEvent>(BIND_EVENT_FN(Character::OnCollision));
 }
 
-bool Character::OnCollision(OnCollisionEvent& evt){
+bool Character::OnCollision(OnCollisionEvent &evt)
+{
     // GameObject& go = evt.GetGameObject();
     // Bullet *b = (Bullet *)go.GetComponent("Bullet");
     // Zombie *z = (Zombie *)go.GetComponent("Zombie");
