@@ -155,14 +155,6 @@ void Character::Update(float dt)
             }
         }
         break;
-        case c.SHOOT:
-        {
-            if (auto g = gun.lock())
-            {
-                ((Gun *)g->GetComponent("Gun"))->Shoot(c.pos);
-            }
-        }
-        break;
         }
         taskQueue.pop();
         if (speed.x || speed.y)
@@ -177,11 +169,7 @@ void Character::Update(float dt)
                     Vec2 charPos = this->associated.box.GetPos();
                     if (charPos.x < 640 && newSpeed.x < 0)
                     {
-                        if (charPos.x < 640 && newSpeed.x < 0)
-                        {
-                            newSpeed.x = 0;
-                        }
-                        else if (charPos.x > 1920 - associated.box.GetSize().x && newSpeed.x > 0)
+                        newSpeed.x = 0;
                     }
                     else if (charPos.x > 1920 - associated.box.GetSize().x && newSpeed.x > 0)
                     {
@@ -201,31 +189,31 @@ void Character::Update(float dt)
         }
         SpriteRenderer *sr = (SpriteRenderer *)this->associated.GetComponent("SpriteRenderer");
     }
+}
+void Character::Render() {}
 
-    void Character::Render() {}
+Character::Command::Command(CommandType type, Vec2 pos) : type(type), pos(pos) {}
 
-    Character::Command::Command(CommandType type, Vec2 pos) : type(type), pos(pos) {}
+void Character::OnEvent(Event &e)
+{
+    EventDispatcher dispatcher(e);
 
-    void Character::OnEvent(Event & e)
-    {
-        EventDispatcher dispatcher(e);
+    dispatcher.Dispatch<OnCollisionEvent>(BIND_EVENT_FN(Character::OnCollision));
+    dispatcher.Dispatch<OnDamageTakenEvent>(BIND_EVENT_FN(Character::OnDamageTaken));
+}
 
-        dispatcher.Dispatch<OnCollisionEvent>(BIND_EVENT_FN(Character::OnCollision));
-        dispatcher.Dispatch<OnDamageTakenEvent>(BIND_EVENT_FN(Character::OnDamageTaken));
-    }
-
-    bool Character::OnCollision(OnCollisionEvent & evt)
-    {
-        // GameObject& go = evt.GetGameObject();
-        // Bullet *b = (Bullet *)go.GetComponent("Bullet");
-        // Zombie *z = (Zombie *)go.GetComponent("Zombie");
-        // if (b != nullptr && ((Character::player == this && b->targetsPlayer) || (Character::player != this)))
-        // {
-        //     associated.subject.notify(OnDamageTakenEvent(associated, 100))
-        // }
-        // if (z != nullptr && !z->isDead && (Character::player == this))
-        // {
-        //     // Damage(z->GetDamage());
-        // }
-        return true;
-    }
+bool Character::OnCollision(OnCollisionEvent &evt)
+{
+    // GameObject& go = evt.GetGameObject();
+    // Bullet *b = (Bullet *)go.GetComponent("Bullet");
+    // Zombie *z = (Zombie *)go.GetComponent("Zombie");
+    // if (b != nullptr && ((Character::player == this && b->targetsPlayer) || (Character::player != this)))
+    // {
+    //     associated.subject.notify(OnDamageTakenEvent(associated, 100))
+    // }
+    // if (z != nullptr && !z->isDead && (Character::player == this))
+    // {
+    //     // Damage(z->GetDamage());
+    // }
+    return true;
+}
