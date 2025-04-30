@@ -129,7 +129,7 @@ Game &Game::GetInstance()
 {
     if (Game::instance == nullptr)
     {
-        new Game("190085312", 1200, 900);
+        new Game("190085312", 1920, 1080);
     }
     return *Game::instance;
 }
@@ -146,9 +146,6 @@ float Game::GetDeltaTime(){
 
 void Game::Run()
 {
-    ImGui::StyleColorsClassic();
-
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
     InputManager& inputManager = InputManager::GetInstance();
     float t;
     if(storedState != nullptr){
@@ -157,12 +154,9 @@ void Game::Run()
         GetCurrentState().Start();
     }
     GPU_ActivateShaderProgram(0, NULL);
+
     while (!GetCurrentState().QuitRequested() && !stateStack.empty())
     {
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplSDL2_NewFrame();
-        ImGui::NewFrame();
-        ImGui::ShowDemoWindow(); // Show demo window! :)
         if(GetCurrentState().PopRequested()){
             stateStack.pop();
             if(!stateStack.empty()){
@@ -180,6 +174,11 @@ void Game::Run()
         t = SDL_GetTicks()/1000.0f;
         GetCurrentState().Update(dt);
         GetCurrentState().Render();
+        GPU_FlushBlitBuffer();
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplSDL2_NewFrame();
+        ImGui::NewFrame();
+        ImGui::ShowDemoWindow();
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         GPU_Flip(this->m_gpuTarget);
