@@ -20,14 +20,12 @@ void update_color_shader(float r, float g, float b, float a, int color_loc)
     GPU_SetUniformfv(color_loc, 4, 1, fcolor);
 }
 
-
 Character *Character::player = nullptr;
 int Character::npcCounter = 0;
 Character::Character(GameObject &associated, std::string sprite, bool isPlayer) : Component(associated),
                                                                                   gun(),
                                                                                   taskQueue(),
-                                                                                  speed{1, 1},
-                                                                                  linearSpeed(300),
+                                                                                  Entity(300),
                                                                                   hp(500),
                                                                                   isDead(false),
                                                                                   deathTimer(5),
@@ -43,12 +41,14 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
     if (!isPlayer)
     {
         Character::npcCounter++;
-    } else {
-        Shader* shader = sr->GetShader();
+    }
+    else
+    {
+        Shader *shader = sr->GetShader();
         shader->Load("resources/shaders/common.vert", "resources/shaders/teste.frag");
         int color_loc = shader->GetLocation("myColor");
-        float t = SDL_GetTicks()/1000.0f;
-        update_color_shader((1+sin(t))/2, (1+sin(t+1))/2, (1+sin(t+2))/2, 1.0f, color_loc);
+        float t = SDL_GetTicks() / 1000.0f;
+        update_color_shader((1 + sin(t)) / 2, (1 + sin(t + 1)) / 2, (1 + sin(t + 2)) / 2, 1.0f, color_loc);
         PlayerController *playerController = new PlayerController(associated);
         associated.AddComponent(playerController);
     }
@@ -119,6 +119,8 @@ bool Character::OnDamageTaken(OnDamageTakenEvent &evt)
 }
 void Character::Update(float dt)
 {
+    Vec2 speed = {0, 0};
+    Character::player->UpdateEffects(dt);
     Animator *animator = ((Animator *)associated.GetComponent("Animator"));
     if (isDead)
     {
@@ -141,7 +143,7 @@ void Character::Update(float dt)
         {
         case c.MOVE:
         {
-            speed = c.pos.normalized() * linearSpeed;
+            speed = c.pos.normalized() * m_movementSpeed;
         }
         break;
 
@@ -162,33 +164,33 @@ void Character::Update(float dt)
             Vec2 currentPos = associated.box.GetPos();
             if (this == this->player)
             {
-                Vec2 charPos = this->associated.box.GetPos();
-                if (charPos.x < 640 && newSpeed.x < 0)
+                if (this == this->player)
                 {
-                    newSpeed.x = 0;
+                    Vec2 charPos = this->associated.box.GetPos();
+                    if (charPos.x < 640 && newSpeed.x < 0)
+                    {
+                        newSpeed.x = 0;
+                    }
+                    else if (charPos.x > 1920 - associated.box.GetSize().x && newSpeed.x > 0)
+                    {
+                        newSpeed.x = 0;
+                    }
+                    if (charPos.y < 512 && newSpeed.y < 0)
+                    {
+                        newSpeed.y = 0;
+                    }
+                    else if (charPos.y > 2048 - associated.box.GetSize().y && newSpeed.y > 0)
+                    {
+                        newSpeed.y = 0;
+                    }
                 }
-                else if (charPos.x > 1920 - associated.box.GetSize().x && newSpeed.x > 0)
-                {
-                    newSpeed.x = 0;
-                }
-                if (charPos.y < 512 && newSpeed.y < 0)
-                {
-                    newSpeed.y = 0;
-                }
-                else if (charPos.y > 2048 - associated.box.GetSize().y && newSpeed.y > 0)
-                {
-                    newSpeed.y = 0;
-                }
+                associated.box.RawMove(currentPos + newSpeed);
             }
-            associated.box.RawMove(currentPos + newSpeed);
         }
+        SpriteRenderer *sr = (SpriteRenderer *)this->associated.GetComponent("SpriteRenderer");
     }
-    SpriteRenderer* sr = (SpriteRenderer*)this->associated.GetComponent("SpriteRenderer");
-
-
 }
-
-void Character::Render(){}
+void Character::Render() {}
 
 Character::Command::Command(CommandType type, Vec2 pos) : type(type), pos(pos) {}
 

@@ -3,6 +3,7 @@
 #include "Game/Character.h"
 #include "Game/Lifebar.h"
 #include "Game/HealthSystem.h"
+#include "Game/SlowMotionEffect.h"
 
 #include "Core/GameObject.h"
 #include "Core/Animation.h"
@@ -162,6 +163,8 @@ void Zombie::OnEvent(Event &evt)
 
 bool Zombie::OnCollision(OnCollisionEvent &evt)
 {
+    Character::player->AddEffect(std::make_unique<SlowMotionEffect>(0.8f, 5.0f));
+
     GameObject &go = evt.GetGameObject();
     OnDamageTakenEvent e = OnDamageTakenEvent(this->associated, this->damage);
 
