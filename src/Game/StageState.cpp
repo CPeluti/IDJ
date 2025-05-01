@@ -11,7 +11,7 @@
 #include "Core/Collider.h"
 #include "Core/Camera.h"
 
-#include "../Core/Collision.cpp"
+#include "Core/Collision.h"
 
 
 #include "Game/StageState.h"
@@ -106,28 +106,30 @@ void StageState::Update(float dt)
             }
         }
     }
-    std::set<std::pair<int, int>> checked;
-    for (int i = 0; i < (int)this->objectArray.size(); i++)
-    {
-        Collider *colliderA = (Collider *)objectArray[i]->GetComponent("Collider");
-        if (colliderA != nullptr)
-        {
-            for (int j = i+1; j < (int)this->objectArray.size(); j++)
-            {
-                Collider *colliderB = (Collider *)objectArray[j]->GetComponent("Collider");
-                if (colliderB != nullptr)
-                {
-                    if (Collision::IsColliding(colliderA->box, colliderB->box, objectArray[i]->angleDeg, objectArray[j]->angleDeg))
-                    {
-                        OnCollisionEvent a(*objectArray[i]);
-                        OnCollisionEvent b(*objectArray[j]);
-                        objectArray[i]->subject.notify(b);
-                        objectArray[j]->subject.notify(a);
-                    }
-                }
-            }
-        }
-    }
+    // std::set<std::pair<int, int>> checked;
+    // for (int i = 0; i < (int)this->objectArray.size(); i++)
+    // {
+    //     Collider *colliderA = (Collider *)objectArray[i]->GetComponent("Collider");
+    //     if (colliderA != nullptr)
+    //     {
+    //         for (int j = i+1; j < (int)this->objectArray.size(); j++)
+    //         {
+    //             Collider *colliderB = (Collider *)objectArray[j]->GetComponent("Collider");
+    //             if (colliderB != nullptr)
+    //             {
+    //                 if (Collision::IsColliding(colliderA->box, colliderB->box, objectArray[i]->angleDeg, objectArray[j]->angleDeg))
+    //                 {
+    //                     OnCollisionEvent a(*objectArray[i]);
+    //                     OnCollisionEvent b(*objectArray[j]);
+    //                     objectArray[i]->subject.notify(b);
+    //                     objectArray[j]->subject.notify(a);
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+
+    this->checkCollisions();
     if (SDL_QuitRequested() || ip.QuitRequested())
     {
         quitRequested = true;
