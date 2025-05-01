@@ -37,7 +37,9 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
 
     SpriteRenderer *sr = new SpriteRenderer(associated, sprite, 3, 4);
     Animator *animator = new Animator(associated);
-    Collider *collider = new Collider(associated);
+    std::vector<std::string> layers;
+    layers.push_back("layer0");
+    Collider *collider = new Collider(associated, layers);
     HealthSystem *hs = new HealthSystem(associated, hp);
 
     if (!isPlayer)
