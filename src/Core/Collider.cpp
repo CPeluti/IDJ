@@ -1,5 +1,6 @@
 #include "Core/Collider.h"
 #include "Core/GameObject.h"
+#include "Core/Game.h"
 #include <math.h>
 
 #ifdef DEBUG
@@ -9,11 +10,22 @@
 #include <SDL2/SDL.h>
 #endif // DEBUG
 
-Collider::Collider(GameObject& associated, Vec2 scale, Vec2 offset): 
+Collider::Collider(GameObject& associated, std::vector<std::string> collisionLayers, Vec2 scale, Vec2 offset): 
     Component(associated), 
     scale(scale), 
-    offset(offset)
-{}
+    offset(offset),
+	m_collisionLayers(collisionLayers)
+{
+	for(auto& layer: m_collisionLayers){
+		Game::GetInstance().GetCurrentState().registerCollider(layer, this);
+	}
+}
+
+Collider::~Collider(){
+	for(auto& layer: m_collisionLayers){
+		Game::GetInstance().GetCurrentState().removeCollider(layer, this);
+	}
+}
 
 void Collider::Update(float dt){
     this->box = this->associated.box;

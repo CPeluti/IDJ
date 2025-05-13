@@ -1,6 +1,9 @@
 #pragma once
 #include "Sprite.h"
 #include "Music.h"
+#include "Collider.h"
+#include "Collision.h"
+#include "Log.h"
 #include <vector>
 #include <memory>
 // class GameObject;
@@ -24,7 +27,42 @@ class State{
         bool PopRequested();
         bool QuitRequested();
 
-        
+        inline void registerCollider(std::string layer_name, Collider* collider){
+            m_collisionLayers[layer_name].push_back(collider);
+        }
+
+        inline void removeCollider(std::string layer_name, Collider* collider){
+            for(int i = 0; i<m_collisionLayers[layer_name].size(); i++){
+                if(m_collisionLayers[layer_name][i] == collider){
+                    m_collisionLayers[layer_name].erase(m_collisionLayers[layer_name].begin()+i);
+                }
+            }
+        }
+
+        inline void checkCollisions(){
+            for(auto& el: m_collisionLayers){
+                for(int i = 0; i<(int)(el.second.size())-1; i++){
+                    Collider* colliderA = el.second[i];
+                    if(colliderA != nullptr){
+                        for(int j = i+1; j<el.second.size(); j++){
+                            Collider* colliderB = el.second[j];
+                            if(colliderB != nullptr){
+                                if (Collision::IsColliding(colliderA->box, colliderB->box, colliderA->getAngleDeg(), colliderB->getAngleDeg()))
+                                {
+                                    GameObject* gA = colliderA->getAssociated();
+                                    GameObject* gB = colliderB->getAssociated();
+                                    OnCollisionEvent a(*gA);
+                                    OnCollisionEvent b(*gB);
+                                    colliderA->getAssociated()->subject.notify(b);
+                                    colliderB->getAssociated()->subject.notify(a);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     protected: 
         void StartArray();
         virtual void UpdateArray(float dt);
@@ -35,4 +73,5 @@ class State{
         bool quitRequested;
 
         std::vector<std::shared_ptr<GameObject>> objectArray;
+        std::map<std::string, std::vector<Collider*>> m_collisionLayers;
 };
