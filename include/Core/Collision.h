@@ -1,3 +1,4 @@
+#pragma once
 #include "Core/Rect.h"
 #include "Core/Vec2.h"
 
