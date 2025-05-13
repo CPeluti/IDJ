@@ -32,7 +32,9 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
 
     SpriteRenderer *srZombie = new SpriteRenderer(associated, "resources/img/Enemy.png", 3, 2);
     associated.AddComponent(srZombie);
-    Collider *collider = new Collider(associated);
+    std::vector<std::string> layers;
+    layers.push_back("layer0");
+    Collider *collider = new Collider(associated, layers);
     associated.AddComponent(collider);
 
     Animator *animator = new Animator(associated);
