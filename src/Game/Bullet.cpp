@@ -4,6 +4,7 @@
 #include "Game/Bullet.h"
 
 #include <iostream>
+#include <vector>
 
 Bullet::Bullet(GameObject &associated, float angle, float speed, int damage, float maxDistance, bool targetsPlayer) : Component(associated)
 {
@@ -12,7 +13,9 @@ Bullet::Bullet(GameObject &associated, float angle, float speed, int damage, flo
     // associated.AddComponent(ps);
     SpriteRenderer *sr = new SpriteRenderer(associated, "resources/img/Bullet.png", 1, 1);
     associated.AddComponent(sr);
-    Collider *collider = new Collider(associated);
+    std::vector<std::string> layers;
+    layers.push_back("layer1");
+    Collider *collider = new Collider(associated, layers);
     associated.AddComponent(collider);
 
     this->targetsPlayer = targetsPlayer;
