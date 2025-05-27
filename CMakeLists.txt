@@ -1,23 +1,13 @@
 cmake_minimum_required(VERSION 4.0)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
-set( CMAKE_PREFIX_PATH "C:/SDL2-CMAKE" )
-set( CMAKE_INSTALL_PREFIX "C:/Users/acjpj/OneDrive\ -\ unb.br/12/IDJ/IDJ" )
-set(CMAKE_CXX_COMPILER "C:/msys64/ucrt64/bin/g++.exe")
 project(JOGO)
 
 
 option(MYGAME_VENDORED "Use vendored libraries" OFF)
-# list(APPEND CMAKE_PREFIX_PATH "C:/setupsdl")
-
-# file(GLOB HEADERS "./include/*.h")
-# file(GLOB libs "./include/^(?!main).*.cpp")
-
-
-# target_include_directories(JOGO PRIVATE ./include)
 
 include_directories(include)
-# add_subdirectory(include)
+
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 if(NOT TARGET spdlog)
