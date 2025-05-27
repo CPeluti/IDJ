@@ -33,7 +33,7 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
     associated.AddComponent(srZombie);
     Collider *collider = new Collider(associated, {"layer0"}, new OnCollisionEvent(associated));
     associated.AddComponent(collider);
-    Collider *interactionCollider = new Collider(associated, {"interaction0"}, new OnInteractionEvent(associated, InteractionType::Effect), {100, 100});
+    Collider *interactionCollider = new Collider(associated, {"interaction0"}, new OnInteractionEvent(associated, InteractionType::None), {100, 100});
     associated.AddComponent(interactionCollider);
 
     Animator *animator = new Animator(associated);
