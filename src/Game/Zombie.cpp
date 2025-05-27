@@ -3,7 +3,7 @@
 #include "Game/Character.h"
 #include "Game/Lifebar.h"
 #include "Game/HealthSystem.h"
-
+#include "Game/SlowMotionEffect.h"
 #include "Core/GameObject.h"
 #include "Core/Animation.h"
 #include "Core/SpriteRenderer.h"
@@ -31,8 +31,10 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
 
     SpriteRenderer *srZombie = new SpriteRenderer(associated, "resources/img/Enemy.png", 3, 2);
     associated.AddComponent(srZombie);
-    Collider *collider = new Collider(associated);
+    Collider *collider = new Collider(associated, {"layer0"}, new OnCollisionEvent(associated));
     associated.AddComponent(collider);
+    Collider *interactionCollider = new Collider(associated, {"interaction0"}, new OnInteractionEvent(associated, InteractionType::Effect), {100, 100});
+    associated.AddComponent(interactionCollider);
 
     Animator *animator = new Animator(associated);
     animator->AddAnimation("walking", new Animation(0, 3, 0.3));
@@ -52,6 +54,9 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
     associated.box.Move({600, 450});
 
     animator->SetAnimation("walking");
+
+    m_Effects.push_back(std::make_unique<SlowMotionEffect>(0.5, 2));
+
     zombieCounter++;
 }
 
@@ -158,6 +163,7 @@ void Zombie::OnEvent(Event &evt)
 
     dispatcher.Dispatch<OnCollisionEvent>(BIND_EVENT_FN(Zombie::OnCollision));
     dispatcher.Dispatch<OnDamageTakenEvent>(BIND_EVENT_FN(Zombie::OnDamageTaken));
+    dispatcher.Dispatch<OnInteractionEvent>(BIND_EVENT_FN(Zombie::OnInteraction));
 }
 
 bool Zombie::OnCollision(OnCollisionEvent &evt)
@@ -168,5 +174,30 @@ bool Zombie::OnCollision(OnCollisionEvent &evt)
     if (go.GetComponent("HealthSystem"))
         go.subject.notify(e);
 
+    return true;
+}
+
+bool Zombie::OnInteraction(OnInteractionEvent &evt)
+{
+    LOG_INFO("Zombie interaction event received");
+    GameObject &target = evt.GetGameObject();
+    switch (evt.GetInteractionType())
+    {
+    case InteractionType::Effect:
+    {
+        std::vector<std::weak_ptr<Effect>> effects;
+        for (auto &effect : this->m_Effects)
+        {
+            std::weak_ptr<Effect> newWeakEffect = effect;
+            effects.push_back(newWeakEffect);
+        }
+        OnEffectEvent e = OnEffectEvent(effects);
+        target.subject.notify(e);
+        break;
+    }
+
+    default:
+        break;
+    }
     return true;
 }

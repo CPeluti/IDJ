@@ -5,6 +5,7 @@
 #include "Core/SpriteRenderer.h"
 #include "Core/Animator.h"
 #include "Core/Collider.h"
+#include "Core/Log.h"
 
 #include "Game/Character.h"
 #include "Game/Bullet.h"
@@ -20,35 +21,40 @@ void update_color_shader(float r, float g, float b, float a, int color_loc)
     GPU_SetUniformfv(color_loc, 4, 1, fcolor);
 }
 
-
 Character *Character::player = nullptr;
 int Character::npcCounter = 0;
 Character::Character(GameObject &associated, std::string sprite, bool isPlayer) : Component(associated),
                                                                                   gun(),
                                                                                   taskQueue(),
-                                                                                  speed{1, 1},
-                                                                                  linearSpeed(300),
+                                                                                  Entity(300),
                                                                                   hp(500),
                                                                                   isDead(false),
                                                                                   deathTimer(5),
                                                                                   extraProjectiles(0)
+
 {
     this->associated.subject.addObserver(this);
 
     SpriteRenderer *sr = new SpriteRenderer(associated, sprite, 3, 4);
     Animator *animator = new Animator(associated);
-    Collider *collider = new Collider(associated);
+    std::vector<std::string> layers, interactionLayers;
+    layers.push_back("layer0");
+    interactionLayers.push_back("interaction0");
+    Collider *collider = new Collider(associated, layers, new OnCollisionEvent(associated));
+    Collider *interactionCollider = new Collider(associated, {"interaction0"}, new OnInteractionEvent(associated, InteractionType::None), {100, 100});
     HealthSystem *hs = new HealthSystem(associated, hp);
 
     if (!isPlayer)
     {
         Character::npcCounter++;
-    } else {
-        Shader* shader = sr->GetShader();
+    }
+    else
+    {
+        Shader *shader = sr->GetShader();
         shader->Load("resources/shaders/common.vert", "resources/shaders/teste.frag");
         int color_loc = shader->GetLocation("myColor");
-        float t = SDL_GetTicks()/1000.0f;
-        update_color_shader((1+sin(t))/2, (1+sin(t+1))/2, (1+sin(t+2))/2, 1.0f, color_loc);
+        float t = SDL_GetTicks() / 1000.0f;
+        update_color_shader((1 + sin(t)) / 2, (1 + sin(t + 1)) / 2, (1 + sin(t + 2)) / 2, 1.0f, color_loc);
         PlayerController *playerController = new PlayerController(associated);
         associated.AddComponent(playerController);
     }
@@ -59,6 +65,7 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
     associated.AddComponent(sr);
     associated.AddComponent(animator);
     associated.AddComponent(collider);
+    associated.AddComponent(interactionCollider);
     associated.AddComponent(hs);
 
     // associated.AddComponent(l);
@@ -119,6 +126,8 @@ bool Character::OnDamageTaken(OnDamageTakenEvent &evt)
 }
 void Character::Update(float dt)
 {
+    Vec2 speed = {0, 0};
+    Character::player->UpdateEffects(dt);
     Animator *animator = ((Animator *)associated.GetComponent("Animator"));
     if (isDead)
     {
@@ -141,7 +150,7 @@ void Character::Update(float dt)
         {
         case c.MOVE:
         {
-            speed = c.pos.normalized() * linearSpeed;
+            speed = c.pos.normalized() * m_movementSpeed;
         }
         break;
 
@@ -162,33 +171,33 @@ void Character::Update(float dt)
             Vec2 currentPos = associated.box.GetPos();
             if (this == this->player)
             {
-                Vec2 charPos = this->associated.box.GetPos();
-                if (charPos.x < 640 && newSpeed.x < 0)
+                if (this == this->player)
                 {
-                    newSpeed.x = 0;
+                    Vec2 charPos = this->associated.box.GetPos();
+                    if (charPos.x < 640 && newSpeed.x < 0)
+                    {
+                        newSpeed.x = 0;
+                    }
+                    else if (charPos.x > 1920 - associated.box.GetSize().x && newSpeed.x > 0)
+                    {
+                        newSpeed.x = 0;
+                    }
+                    if (charPos.y < 512 && newSpeed.y < 0)
+                    {
+                        newSpeed.y = 0;
+                    }
+                    else if (charPos.y > 2048 - associated.box.GetSize().y && newSpeed.y > 0)
+                    {
+                        newSpeed.y = 0;
+                    }
                 }
-                else if (charPos.x > 1920 - associated.box.GetSize().x && newSpeed.x > 0)
-                {
-                    newSpeed.x = 0;
-                }
-                if (charPos.y < 512 && newSpeed.y < 0)
-                {
-                    newSpeed.y = 0;
-                }
-                else if (charPos.y > 2048 - associated.box.GetSize().y && newSpeed.y > 0)
-                {
-                    newSpeed.y = 0;
-                }
+                associated.box.RawMove(currentPos + newSpeed);
             }
-            associated.box.RawMove(currentPos + newSpeed);
         }
+        SpriteRenderer *sr = (SpriteRenderer *)this->associated.GetComponent("SpriteRenderer");
     }
-    SpriteRenderer* sr = (SpriteRenderer*)this->associated.GetComponent("SpriteRenderer");
-
-
 }
-
-void Character::Render(){}
+void Character::Render() {}
 
 Character::Command::Command(CommandType type, Vec2 pos) : type(type), pos(pos) {}
 
@@ -198,6 +207,7 @@ void Character::OnEvent(Event &e)
 
     dispatcher.Dispatch<OnCollisionEvent>(BIND_EVENT_FN(Character::OnCollision));
     dispatcher.Dispatch<OnDamageTakenEvent>(BIND_EVENT_FN(Character::OnDamageTaken));
+    dispatcher.Dispatch<OnEffectEvent>(BIND_EVENT_FN(Character::OnEffect));
 }
 
 bool Character::OnCollision(OnCollisionEvent &evt)
@@ -213,5 +223,16 @@ bool Character::OnCollision(OnCollisionEvent &evt)
     // {
     //     // Damage(z->GetDamage());
     // }
+    return true;
+}
+
+bool Character::OnEffect(OnEffectEvent &evt)
+{
+    LOG_INFO("OnEffectEvent received in Character");
+    std::vector<std::weak_ptr<Effect>> effects = evt.GetEffects();
+    for (auto &effect : effects)
+    {
+        this->AddEffect(effect);
+    }
     return true;
 }
