@@ -37,12 +37,8 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
 
     SpriteRenderer *sr = new SpriteRenderer(associated, sprite, 3, 4);
     Animator *animator = new Animator(associated);
-    std::vector<std::string> layers, interactionLayers;
-    layers.push_back("layer0");
-    interactionLayers.push_back("interaction0");
-    Collider *collider = new Collider(associated, layers, new OnCollisionEvent(associated));
-    Collider *interactionCollider = new Collider(associated, {"interaction0"}, new OnInteractionEvent(associated, InteractionType::None), {100, 100});
-    HealthSystem *hs = new HealthSystem(associated, hp);
+
+        HealthSystem *hs = new HealthSystem(associated, hp);
 
     if (!isPlayer)
     {
@@ -64,8 +60,6 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
 
     associated.AddComponent(sr);
     associated.AddComponent(animator);
-    associated.AddComponent(collider);
-    associated.AddComponent(interactionCollider);
     associated.AddComponent(hs);
 
     // associated.AddComponent(l);
@@ -95,6 +89,13 @@ void Character::Start()
 {
     State &s = Game::GetInstance().GetCurrentState();
     GameObject *gunObj = new GameObject();
+    std::vector<std::string> layers, interactionLayers;
+    layers.push_back("layer0");
+    interactionLayers.push_back("interaction0");
+    Collider *collider = new Collider(associated, layers, new OnCollisionEvent(associated));
+    Collider *interactionEffectCollider = new Collider(associated, {"interaction0"}, new OnInteractionEvent(associated, InteractionType::Effect), {100, 100});
+    associated.AddComponent(collider);
+    associated.AddComponent(interactionEffectCollider);
     Gun *gunComponent = new Gun(*gunObj, s.GetObjectPtr(&associated));
 
     gunObj->AddComponent(gunComponent);
