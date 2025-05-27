@@ -17,7 +17,8 @@ enum class EventType
     OnCollision,
     OnDamageTaken,
     OnDeath,
-    OnInteraction
+    OnInteraction,
+    OnEffect,
 };
 
 class Event

@@ -49,6 +49,7 @@ public:
 private:
     bool OnCollision(OnCollisionEvent &evt);
     bool OnDamageTaken(OnDamageTakenEvent &evt);
+    bool OnEffect(OnEffectEvent &evt);
 
 private:
     bool flip;
@@ -56,7 +57,6 @@ private:
     std::weak_ptr<GameObject> gun;
     std::queue<Command> taskQueue;
     Vec2 speed;
-    float linearSpeed;
     float hp;
     bool isDead;
     Timer deathTimer;

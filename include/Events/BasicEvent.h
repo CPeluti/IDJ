@@ -1,8 +1,10 @@
 #pragma once
 
 #include "Event.h"
+#include <memory>
 
 class GameObject;
+class Effect;
 class OnCollisionEvent : public Event
 {
 public:
@@ -50,7 +52,8 @@ enum class InteractionType
 {
     PickUp,
     Effect,
-    Talk
+    Talk,
+    None = 0
 };
 
 class OnInteractionEvent : public Event
@@ -66,4 +69,17 @@ public:
 protected:
     GameObject &m_GameObject;
     InteractionType m_InteractionType;
+};
+
+class OnEffectEvent : public Event
+{
+public:
+    OnEffectEvent(std::vector<std::weak_ptr<Effect>> effects) : m_Effects(effects) {}
+
+    EVENT_TYPE(OnEffect);
+
+    inline std::vector<std::weak_ptr<Effect>> GetEffects() const { return m_Effects; }
+
+protected:
+    std::vector<std::weak_ptr<Effect>> m_Effects;
 };
