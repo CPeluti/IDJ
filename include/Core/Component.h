@@ -17,7 +17,13 @@ public:
     virtual void Start();
     virtual bool Is(std::string type) = 0;
     virtual void OnEvent (Event& evt) {};
+    inline GameObject* getAssociated(){
+        return &associated;
+    }
 
+    
+    double getAngleDeg();
+    void notifyEvent(Event& evt);
     // COMPONENT_IS("Component");
 
 protected:
