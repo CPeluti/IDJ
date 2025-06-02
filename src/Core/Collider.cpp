@@ -19,7 +19,6 @@ Collider::Collider(GameObject &associated, std::vector<std::string> collisionLay
 {
 	for (auto &layer : m_collisionLayers)
 	{
-		LOG_INFO("Registering collider in layer: " + layer);
 		Game::GetInstance().GetCurrentState().registerCollider(layer, this);
 	}
 }
