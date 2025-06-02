@@ -10,7 +10,7 @@ class Entity
 public:
   Entity();
   Entity(float speed);
-  inline virtual void AddEffect(std::unique_ptr<Effect> effect) { activeEffects.push_back(std::move(effect)); };
+  inline virtual void AddEffect(std::weak_ptr<Effect> effect) { activeEffects.push_back(std::move(effect)); };
   virtual void UpdateEffects(float dt);
   inline virtual void SetMovementSpeed(const float &newSpeed) { m_movementSpeed = newSpeed; };
   inline virtual float GetMovementSpeed() const { return m_movementSpeed; };
@@ -20,5 +20,6 @@ protected:
   int damage;
   bool isDead;
   Timer deathTimer;
-  std::vector<std::unique_ptr<Effect>> activeEffects;
+  std::vector<std::shared_ptr<Effect>> m_Effects;
+  std::vector<std::weak_ptr<Effect>> activeEffects;
 };

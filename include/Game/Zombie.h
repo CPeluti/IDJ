@@ -21,6 +21,7 @@ public:
 private:
     bool OnCollision(OnCollisionEvent &evt);
     bool OnDamageTaken(OnDamageTakenEvent &evt);
+    bool OnInteraction(OnInteractionEvent &evt);
 
 private:
     int hitpoints;

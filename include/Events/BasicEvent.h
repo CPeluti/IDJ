@@ -1,43 +1,85 @@
 #pragma once
 
 #include "Event.h"
+#include <memory>
 
 class GameObject;
-class OnCollisionEvent : public Event {
-    public:
-        OnCollisionEvent(GameObject& gameObject): m_GameObject(gameObject){}
+class Effect;
+class OnCollisionEvent : public Event
+{
+public:
+    OnCollisionEvent(GameObject &gameObject) : m_GameObject(gameObject) {}
 
-        EVENT_TYPE(OnCollision);
+    EVENT_TYPE(OnCollision);
 
-        inline GameObject& GetGameObject() const { return m_GameObject; }
-    protected:
-        GameObject& m_GameObject;
+    inline GameObject &GetGameObject() const { return m_GameObject; }
+
+protected:
+    GameObject &m_GameObject;
 };
 
-class OnDamageTakenEvent : public Event {
-    public:
-        OnDamageTakenEvent(GameObject& dealer, float amount): m_Dealer(dealer), m_Amount(amount){}
+class OnDamageTakenEvent : public Event
+{
+public:
+    OnDamageTakenEvent(GameObject &dealer, float amount) : m_Dealer(dealer), m_Amount(amount) {}
 
-        EVENT_TYPE(OnDamageTaken);
+    EVENT_TYPE(OnDamageTaken);
 
-        inline GameObject& GetDealer() const { return m_Dealer; }
-        inline float GetAmount() const { return m_Amount; }
+    inline GameObject &GetDealer() const { return m_Dealer; }
+    inline float GetAmount() const { return m_Amount; }
 
-        std::string ToString() const override {
-            std::stringstream ss;
-            ss << "teste de dano: " << m_Amount;
-            return ss.str();
-        }
+    std::string ToString() const override
+    {
+        std::stringstream ss;
+        ss << "teste de dano: " << m_Amount;
+        return ss.str();
+    }
 
-    protected:
-        GameObject& m_Dealer;
-        float m_Amount;
+protected:
+    GameObject &m_Dealer;
+    float m_Amount;
 };
 
-class OnDeathEvent : public Event {
-    public:
-        OnDeathEvent() {}
+class OnDeathEvent : public Event
+{
+public:
+    OnDeathEvent() {}
 
-        EVENT_TYPE(OnDeath);
+    EVENT_TYPE(OnDeath);
+};
 
+enum class InteractionType
+{
+    PickUp,
+    Effect,
+    Talk,
+    None = 0
+};
+
+class OnInteractionEvent : public Event
+{
+public:
+    OnInteractionEvent(GameObject &gameObject, InteractionType type) : m_GameObject(gameObject), m_InteractionType(type) {}
+
+    EVENT_TYPE(OnInteraction);
+
+    inline GameObject &GetGameObject() const { return m_GameObject; }
+    inline InteractionType GetInteractionType() const { return m_InteractionType; }
+
+protected:
+    GameObject &m_GameObject;
+    InteractionType m_InteractionType;
+};
+
+class OnEffectEvent : public Event
+{
+public:
+    OnEffectEvent(std::vector<std::weak_ptr<Effect>> effects) : m_Effects(effects) {}
+
+    EVENT_TYPE(OnEffect);
+
+    inline std::vector<std::weak_ptr<Effect>> GetEffects() const { return m_Effects; }
+
+protected:
+    std::vector<std::weak_ptr<Effect>> m_Effects;
 };
