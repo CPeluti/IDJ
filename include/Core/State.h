@@ -35,7 +35,6 @@ public:
             m_collisionLayers[layer_name] = std::vector<Collider *>();
         }
         m_collisionLayers[layer_name].push_back(collider);
-        LOG_INFO("COLLIDER SIZE: " + std::to_string(m_collisionLayers[layer_name].size()));
     }
 
     inline void removeCollider(std::string layer_name, Collider *collider)
@@ -56,9 +55,6 @@ public:
             for (int i = 0; i < (int)(el.second.size()); i++)
             {
                 Collider *colliderA = el.second[i];
-                LOG_INFO(colliderA != nullptr);
-                LOG_INFO(el.first);
-                LOG_INFO(el.second.size());
                 if (colliderA != nullptr)
                 {
                     for (int j = i + 1; j < el.second.size(); j++)
@@ -66,10 +62,8 @@ public:
                         Collider *colliderB = el.second[j];
                         if (colliderB != nullptr)
                         {
-                            LOG_INFO("Checking colliderB != nullptr");
                             if (Collision::IsColliding(colliderA->box, colliderB->box, colliderA->getAngleDeg(), colliderB->getAngleDeg()))
                             {
-                                LOG_INFO("Collision detected");
                                 colliderA->getAssociated()->subject.notify(*colliderB->GetEvent());
                                 colliderB->getAssociated()->subject.notify(*colliderA->GetEvent());
                             }

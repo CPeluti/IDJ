@@ -179,7 +179,6 @@ bool Zombie::OnCollision(OnCollisionEvent &evt)
 
 bool Zombie::OnInteraction(OnInteractionEvent &evt)
 {
-    LOG_INFO("Zombie interaction event received");
     GameObject &target = evt.GetGameObject();
     switch (evt.GetInteractionType())
     {
