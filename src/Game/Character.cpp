@@ -5,6 +5,7 @@
 #include "Core/SpriteRenderer.h"
 #include "Core/Animator.h"
 #include "Core/Collider.h"
+#include "Core/Log.h"
 
 #include "Game/Character.h"
 #include "Game/Bullet.h"
@@ -30,14 +31,13 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
                                                                                   isDead(false),
                                                                                   deathTimer(5),
                                                                                   extraProjectiles(0)
+
 {
     this->associated.subject.addObserver(this);
 
     SpriteRenderer *sr = new SpriteRenderer(associated, sprite, 3, 4);
     Animator *animator = new Animator(associated);
-    std::vector<std::string> layers;
-    layers.push_back("layer0");
-    Collider *collider = new Collider(associated, layers);
+
     HealthSystem *hs = new HealthSystem(associated, hp);
 
     if (!isPlayer)
@@ -60,7 +60,6 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
 
     associated.AddComponent(sr);
     associated.AddComponent(animator);
-    associated.AddComponent(collider);
     associated.AddComponent(hs);
 
     // associated.AddComponent(l);
@@ -90,6 +89,13 @@ void Character::Start()
 {
     State &s = Game::GetInstance().GetCurrentState();
     GameObject *gunObj = new GameObject();
+    std::vector<std::string> layers, interactionLayers;
+    layers.push_back("layer0");
+    interactionLayers.push_back("interaction0");
+    Collider *collider = new Collider(associated, layers, new OnCollisionEvent(associated));
+    Collider *interactionEffectCollider = new Collider(associated, {"interaction0"}, new OnInteractionEvent(associated, InteractionType::Effect), {100, 100});
+    associated.AddComponent(collider);
+    associated.AddComponent(interactionEffectCollider);
     Gun *gunComponent = new Gun(*gunObj, s.GetObjectPtr(&associated));
 
     gunObj->AddComponent(gunComponent);
@@ -202,6 +208,7 @@ void Character::OnEvent(Event &e)
 
     dispatcher.Dispatch<OnCollisionEvent>(BIND_EVENT_FN(Character::OnCollision));
     dispatcher.Dispatch<OnDamageTakenEvent>(BIND_EVENT_FN(Character::OnDamageTaken));
+    dispatcher.Dispatch<OnEffectEvent>(BIND_EVENT_FN(Character::OnEffect));
 }
 
 bool Character::OnCollision(OnCollisionEvent &evt)
@@ -217,5 +224,15 @@ bool Character::OnCollision(OnCollisionEvent &evt)
     // {
     //     // Damage(z->GetDamage());
     // }
+    return true;
+}
+
+bool Character::OnEffect(OnEffectEvent &evt)
+{
+    std::vector<std::weak_ptr<Effect>> effects = evt.GetEffects();
+    for (auto &effect : effects)
+    {
+        this->AddEffect(effect);
+    }
     return true;
 }

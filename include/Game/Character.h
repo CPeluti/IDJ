@@ -49,6 +49,7 @@ public:
 private:
     bool OnCollision(OnCollisionEvent &evt);
     bool OnDamageTaken(OnDamageTakenEvent &evt);
+    bool OnEffect(OnEffectEvent &evt);
 
 private:
     bool flip;
