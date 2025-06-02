@@ -38,7 +38,7 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
     SpriteRenderer *sr = new SpriteRenderer(associated, sprite, 3, 4);
     Animator *animator = new Animator(associated);
 
-        HealthSystem *hs = new HealthSystem(associated, hp);
+    HealthSystem *hs = new HealthSystem(associated, hp);
 
     if (!isPlayer)
     {
@@ -229,7 +229,6 @@ bool Character::OnCollision(OnCollisionEvent &evt)
 
 bool Character::OnEffect(OnEffectEvent &evt)
 {
-    LOG_INFO("OnEffectEvent received in Character");
     std::vector<std::weak_ptr<Effect>> effects = evt.GetEffects();
     for (auto &effect : effects)
     {
