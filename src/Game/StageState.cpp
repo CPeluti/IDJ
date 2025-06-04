@@ -10,9 +10,10 @@
 #include "Core/Game.h"
 #include "Core/Collider.h"
 #include "Core/Camera.h"
+#include "Core/Text.h"
+#include "Core/Log.h"
 
 #include "Core/Collision.h"
-
 
 #include "Game/StageState.h"
 #include "Game/TitleState.h"
@@ -20,6 +21,7 @@
 #include "Game/Character.h"
 #include "Game/EndState.h"
 #include "Game/GameData.h"
+#include "Game/TypingSystem.h"
 
 bool y_sort(std::shared_ptr<GameObject> i, std::shared_ptr<GameObject> j)
 {
@@ -63,15 +65,15 @@ StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
     WaveSpawner *ws = new WaveSpawner(*waveSpawner);
     waveSpawner->AddComponent(ws);
     spawner = this->AddObject(waveSpawner);
-
 }
 StageState::~StageState()
 {
+    SDL_StopTextInput();
     this->objectArray.clear();
 }
-void StageState::LoadAssets() {
+void StageState::LoadAssets()
+{
     backgroundMusic = Music("resources/audio/BGM.wav");
-
 }
 void StageState::Update(float dt)
 {
@@ -79,27 +81,39 @@ void StageState::Update(float dt)
 
     Camera::Update(dt);
 
+    TypingSystem &ts = TypingSystem::GetInstance();
+
+    if (ts.IsTypingMode())
+    {
+        ts.Update(dt);
+        // LOG_INFO("TEXTO: " + ts.GetText());
+    }
+
     if (ip.KeyPress(ESCAPE_KEY))
     {
         popRequested = true;
-        TitleState* stage = new TitleState();
+        TitleState *stage = new TitleState();
         Game::GetInstance().Push(stage);
     }
     UpdateArray(dt);
-    if(auto p = player.lock()){
-        if(p->IsDead()){
+    if (auto p = player.lock())
+    {
+        if (p->IsDead())
+        {
             popRequested = true;
             GameData::playerWon = false;
-            EndState* stage = new EndState();
+            EndState *stage = new EndState();
             Game::GetInstance().Push(stage);
             backgroundMusic.Stop();
             return;
         }
-        if(auto s = spawner.lock()){
-            if(s->IsDead() && !p->IsDead()){
+        if (auto s = spawner.lock())
+        {
+            if (s->IsDead() && !p->IsDead())
+            {
                 popRequested = true;
                 GameData::playerWon = true;
-                EndState* stage = new EndState();
+                EndState *stage = new EndState();
                 backgroundMusic.Stop();
                 Game::GetInstance().Push(stage);
                 return;
@@ -130,6 +144,15 @@ void StageState::Update(float dt)
     // }
 
     this->checkCollisions();
+
+    if (ts.IsTypingMode() && ts.HasSubmitted())
+    {
+        std::string finalText = ts.GetText();
+
+        ts.CleanText();
+        ts.ResetSubmission();
+    }
+
     if (SDL_QuitRequested() || ip.QuitRequested())
     {
         quitRequested = true;
@@ -139,7 +162,9 @@ void StageState::Update(float dt)
         if (objectArray[i]->IsDead())
         {
             objectArray.erase(objectArray.begin() + i);
-        } else {
+        }
+        else
+        {
             i++;
         }
     }
@@ -155,11 +180,20 @@ void StageState::Render()
 
 void StageState::Start()
 {
+    GameObject *textObject = new GameObject();
+    Text *textComponent = new Text(*textObject, "resources/font/neodgm.ttf", 30, Text::SOLID, " ", {255, 255, 255}, 0);
+    textObject->AddComponent(textComponent);
+    textObject->box.SetPos(Character::player->GetPos());
+    Game::GetInstance().GetCurrentState().AddObject(textObject);
+
+    TypingSystem &ts = TypingSystem::GetInstance();
+    ts.SetTextComponent(textComponent);
+
     LoadAssets();
     StartArray();
     started = true;
     backgroundMusic.Play();
 }
 
-void StageState::Resume(){}
-void StageState::Pause(){}
+void StageState::Resume() {}
+void StageState::Pause() {}
