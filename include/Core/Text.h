@@ -21,7 +21,8 @@ public:
         TextStyle style,
         std::string text,
         SDL_Color color,
-        int blink);
+        int blink,
+        bool cameraFollower = false);
     ~Text();
     void Update(float dt);
     void Render();
@@ -43,4 +44,5 @@ private:
     SDL_Color color;
     Timer blink;
     bool appear;
+    bool cameraFollower;
 };
