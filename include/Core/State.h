@@ -64,6 +64,8 @@ public:
                         {
                             if (Collision::IsColliding(colliderA->box, colliderB->box, colliderA->getAngleDeg(), colliderB->getAngleDeg()))
                             {
+                                // LOG_INFO(colliderA->GetEvent());
+                                // LOG_INFO(colliderB->GetEvent());
                                 colliderA->getAssociated()->subject.notify(*colliderB->GetEvent());
                                 colliderB->getAssociated()->subject.notify(*colliderA->GetEvent());
                             }

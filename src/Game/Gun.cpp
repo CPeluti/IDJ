@@ -9,6 +9,7 @@
 #include "Game/Gun.h"
 #include "Game/Character.h"
 #include "Game/Bullet.h"
+#include "Game/Spell.h"
 #define OFFSET 70
 Gun::Gun(GameObject &associated, std::weak_ptr<GameObject> character) : Component(associated),
                                                                         shotSound("resources/audio/Range.wav"),
@@ -115,19 +116,22 @@ void Gun::Shoot(Vec2 target)
             // int startingPoint = -((projectileAmount/2) * 10);
             for(int i = 0; i<projectiles; i++){
                 GameObject *bullet = new GameObject();
-                Bullet *bulletComponent = new Bullet(*bullet, angle, 350, 500, 400, Character::player != this->associated.GetComponent("Character"));
+                // Bullet *bulletComponent = new Bullet(*bullet, angle, 350, 500, 400, Character::player != this->associated.GetComponent("Character"));
                 Vec2 gunOffset = {associated.box.GetSize().x + OFFSET, .0};
                 Vec2 bulletOffset = Vec2::Rotate(gunOffset, angle);
-                bullet->box.Move(centro + bulletOffset);
+                Vec2 bulletInitialPos = centro + bulletOffset;
+
+                FireProjectileSpell* fSpell = new FireProjectileSpell(*bullet, bulletInitialPos);
+                bullet->AddComponent(fSpell);
+                // bullet->box.Move();
     
-                // bullet->box.Move(centro);
-    
-                bullet->AddComponent(bulletComponent);
+                // bullet->box.Move(bulletInitialPos);
+                // bullet->AddComponent(bulletComponent);
                 bullet->angleDeg = angle + 90;
                 Game::GetInstance().GetCurrentState().AddObject(bullet);
                 angle+=angleStep;
             }
-            associated.angleDeg = angle;
+            associated.angleDeg = startingAngle;
             shotSound.Play();
             cdTimer.Restart();
         }

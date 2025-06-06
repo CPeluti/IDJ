@@ -3,6 +3,7 @@
 #include <vector>
 #include "core/SpriteRenderer.h"
 #include "Core/ParticleSystem.h"
+#include "Core/Collider.h"
 
 #define SPELL_TYPE(type, element) static SpellType GetStaticType() { return SpellType::type; }\
                             virtual SpellType GetSpellType() const override { return GetStaticType(); }\
@@ -19,42 +20,107 @@ enum class SpellElement{
     fire,
     water
 };
+
 class Spell {
     public:
-        Spell(GameObject& associated, std::vector<std::string> modifiers, float baseDamage, SpriteRenderer baseSprite): associated(associated), modifiers(modifiers), baseDamage(baseDamage), baseSprite(baseSprite) {}
+        Spell(GameObject& associated, std::vector<std::string> modifiers, float baseDamage, std::string baseSprite):modifiers(modifiers), baseDamage(baseDamage), baseSprite(baseSprite) {}
+        ~Spell(){};
         virtual SpellType GetSpellType() const = 0;
         virtual SpellElement GetSpellElement() const = 0;
         virtual const char* GetName() const = 0;
         virtual const char* GetElement() const = 0;
         virtual std::string ToString() const {return GetName();}
-        virtual float getDamage() = 0;
-        static void castSpell(Vec2 pos);
+        virtual float GetDamage() = 0;
+        virtual void CastSpell(){};
 
     protected:
-        GameObject& associated;
         std::vector<std::string> modifiers;
         float baseDamage;
-        SpriteRenderer baseSprite;
+        std::string baseSprite;
+
 };
 
-class FireProjectileSpell : public Spell, public Component, public Observer{
+class Projectile {
     public:
-        FireProjectileSpell(GameObject &associated):Spell(associated, {}, 10, {associated, "resources/img/Bullet.png", 1, 1}),Component(associated){}
+        Projectile(float speed, float distanceLeft):m_speed(speed), m_distanceLeft(distanceLeft){}
+    protected:
+        inline void SpellTypeStrategy(GameObject& associated, float dt){
+            
+            Vec2 rotatedSpeed = Vec2::Rotate({.0, -m_speed}, associated.angleDeg);
+
+            Vec2 oldPos = associated.box.GetPos();
+            Vec2 newPos = {
+                oldPos.x + (rotatedSpeed.x * dt),
+                oldPos.y + (rotatedSpeed.y * dt)};
+
+            associated.box.RawMove(newPos);
+
+            m_distanceLeft -= Vec2::Distance(newPos, oldPos);
+
+            if (m_distanceLeft <= 0)
+            {
+                associated.RequestDelete();
+            }
+        }
+        float m_speed;
+        float m_distanceLeft;
+        float angle;
+    
+};
+
+
+
+class FireProjectileSpell : public Spell, public Projectile, public Component, public Observer{
+    public:
+        FireProjectileSpell(GameObject &associated, Vec2 initialPos):
+            Spell(associated, {}, 10, "resources/img/Bullet.png"),
+            Projectile(350,100),
+            Component(associated)
+        {
+
+            this->associated.subject.addObserver(this);
+            
+            SpriteRenderer *sr = new SpriteRenderer(associated, baseSprite, 1, 1);
+            this->associated.box.Move(initialPos);
+            this->associated.angleDeg = angle+90;
+            
+            this->associated.AddComponent(sr);
+
+            std::vector<std::string> layers;
+            layers.push_back("layer0");
+            Collider *collider = new Collider(associated, layers, new OnCollisionEvent(associated));
+            associated.AddComponent(collider);
+
+
+        }
+        ~FireProjectileSpell(){}
         SPELL_TYPE(projectile, fire);
-        inline float getDamage() {return this->baseDamage;}
-        void Update(float dt);
-        void Render();
-        void Start();
+        inline float GetDamage() {return this->baseDamage;}
+        inline void Update(float dt){
+            this->SpellTypeStrategy(this->associated, dt);
+        };
+        inline void Render(){};
+        inline void Start(){};
         inline bool Is(std::string type) {return type == "FireProjectileSpell";}
-        void OnEvent(Event& evt);
+        inline void OnEvent(Event& evt){
+            EventDispatcher dispatcher(evt);
+
+            dispatcher.Dispatch<OnCollisionEvent>(BIND_EVENT_FN(FireProjectileSpell::OnCollision));
+        };
         bool targetsPlayer = false;
     private:
-        bool OnCollision(OnCollisionEvent& evt);
+        inline bool OnCollision(OnCollisionEvent& evt){    
+            GameObject &go = evt.GetGameObject();
+            OnDamageTakenEvent e = OnDamageTakenEvent(this->associated, this->baseDamage);
+            if (go.GetComponent("HealthSystem"))
+                go.subject.notify(e);
+            if (!go.GetComponent("Bullet"))
+                this->associated.RequestDelete();
+
+            return true;
+        }
 
     private:
-        Vec2 speed;
-        float distanceLeft;
-        int damage;
-        std::weak_ptr<GameObject> particlesSystem;
+        std::weak_ptr<GameObject> m_particlesSystem;
         ParticleData m_Particle;
 };
