@@ -3,6 +3,7 @@
 #include "Core/Component.h"
 #include "Core/Camera.h"
 #include "Core/Game.h"
+#include <iostream>
 
 Text::Text(
     GameObject &associated,
@@ -11,7 +12,8 @@ Text::Text(
     TextStyle style,
     std::string text,
     SDL_Color color,
-    int blink) : Component(associated), blink(blink)
+    int blink,
+    bool cameraFollower) : Component(associated), blink(blink)
 {
     this->font = Resources::GetFont(fontFile, fontSize);
     this->texture = nullptr;
@@ -22,6 +24,7 @@ Text::Text(
     this->fontSize = fontSize;
     this->blink = Timer(blink);
     this->blink.Restart();
+    this->cameraFollower = cameraFollower;
     appear = true;
     RemakeTexture();
 }
@@ -50,8 +53,14 @@ void Text::Render()
     if (appear)
     {
         GPU_Rect clipRect = {0, 0, associated.box.GetSize().x, associated.box.GetSize().y};
-        Vec2 pos = associated.box.GetPos() - Camera::pos;
+        Vec2 pos = associated.box.GetPos();
+        std::cout << "Text pos: " << pos.x << ", " << pos.y << std::endl;
         GPU_Rect dstRect = {pos.x, pos.y, associated.box.GetSize().x, associated.box.GetSize().y};
+        if (!cameraFollower)
+        {
+            dstRect.y -= Camera::pos.y;
+            dstRect.x -= Camera::pos.x;
+        }
         GPU_BlitRectX(texture, &clipRect, Game::GetInstance().GetGPUTarget(), &dstRect, this->associated.angleDeg, texture->w / 2, texture->h / 2, SDL_FLIP_NONE);
     }
 }
