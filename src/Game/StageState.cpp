@@ -181,9 +181,9 @@ void StageState::Render()
 void StageState::Start()
 {
     GameObject *textObject = new GameObject();
-    Text *textComponent = new Text(*textObject, "resources/font/neodgm.ttf", 30, Text::SOLID, " ", {255, 255, 255}, 0);
+    Text *textComponent = new Text(*textObject, "resources/font/neodgm.ttf", 30, Text::SOLID, " ", {255, 255, 255}, 0, true);
     textObject->AddComponent(textComponent);
-    textObject->box.SetPos(Character::player->GetPos());
+    textObject->box.SetPos(Game::GetInstance().GetWindowSize() / 2 - Character::player->getAssociated()->box.GetSize());
     Game::GetInstance().GetCurrentState().AddObject(textObject);
 
     TypingSystem &ts = TypingSystem::GetInstance();
