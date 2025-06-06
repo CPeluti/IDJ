@@ -4,6 +4,7 @@
 #include "Core/SpriteRenderer.h"
 #include "Core/ParticleSystem.h"
 #include "Core/Collider.h"
+#include "Game/Effect.h"
 
 #define SPELL_TYPE(type, element)                                                        \
     static SpellType GetStaticType() { return SpellType::type; }                         \
@@ -47,8 +48,35 @@ class Projectile
 {
 public:
     Projectile(float speed, float distanceLeft) : m_speed(speed), m_distanceLeft(distanceLeft) {}
+    void AddEffect(ProjectileEffect &pe)
+    {
+        bool exists = false;
+        for (auto effect : spellEffects)
+        {
+            if (effect.GetName() == pe.GetName())
+            {
+                exists = true;
+                break;
+            }
+        }
+        if (!exists)
+        {
+            spellEffects.push_back(pe);
+        }
+    }
+    void RemoveEffect(std::string effectName)
+    {
+        for (auto it = spellEffects.begin(); it != spellEffects.end();)
+        {
+            if (it->GetName() == effectName)
+                auto erased = spellEffects.erase(it);
+            else
+                ++it;
+        }
+    }
 
 protected:
+    std::vector<ProjectileEffect> spellEffects;
     inline void SpellTypeStrategy(GameObject &associated, float dt)
     {
 
