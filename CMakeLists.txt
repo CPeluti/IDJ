@@ -1,6 +1,7 @@
-cmake_minimum_required(VERSION 4.0)
+cmake_minimum_required(VERSION 3.28)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
+set(SDL2_gpu_DIR "/usr/local/lib")
 project(JOGO)
 
 
@@ -54,18 +55,6 @@ if(TARGET SDL2_gpu::SDL2_gpu)
     # It has an implicit dependency on SDL2 functions, so it MUST be added before SDL2::SDL2 (or SDL2::SDL2-static)
     target_link_libraries(${PROJECT_NAME} PRIVATE SDL2_gpu::SDL2_gpu)
 endif()
-
-# Link to the actual SDL2 library. SDL2::SDL2 is the shared SDL library, SDL2::SDL2-static is the static SDL libarary.
-target_include_directories(${PROJECT_NAME} PRIVATE vendor/imgui vendor/imgui/backends)
-target_sources(${PROJECT_NAME} PRIVATE 
-    vendor/imgui/imgui.cpp
-    vendor/imgui/imgui_draw.cpp
-    vendor/imgui/imgui_tables.cpp
-    vendor/imgui/imgui_widgets.cpp
-    vendor/imgui/imgui_demo.cpp
-    vendor/imgui/backends/imgui_impl_sdl2.cpp  # Backend para GLFW
-    vendor/imgui/backends/imgui_impl_opengl3.cpp  # Backend para OpenGL3
-)
 
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
