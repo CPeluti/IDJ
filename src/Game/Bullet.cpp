@@ -14,7 +14,7 @@ Bullet::Bullet(GameObject &associated, float angle, float speed, int damage, flo
     SpriteRenderer *sr = new SpriteRenderer(associated, "resources/img/Bullet.png", 1, 1);
     associated.AddComponent(sr);
     std::vector<std::string> layers;
-    layers.push_back("layer1");
+    layers.push_back("layer0");
     Collider *collider = new Collider(associated, layers, new OnCollisionEvent(associated));
     associated.AddComponent(collider);
 
