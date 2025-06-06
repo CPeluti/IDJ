@@ -1,7 +1,12 @@
-cmake_minimum_required(VERSION 3.28)
+if (UNIX)
+    cmake_minimum_required(VERSION 3.28)
+    set(SDL2_gpu_DIR "/usr/local/lib")
+endif (UNIX)
+if (WIN32)
+    cmake_minimum_required(VERSION 4.0)
+endif (WIN32)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
-set(SDL2_gpu_DIR "/usr/local/lib")
 project(JOGO)
 
 

@@ -23,4 +23,6 @@ public:
   {
     return durationTimer.Expired();
   }
+
+  // todo adicionar destrutor do effect
 };
