@@ -1,4 +1,5 @@
 // class Projectile{};
+#pragma once
 #include <string>
 #include <vector>
 #include "Core/SpriteRenderer.h"
@@ -48,12 +49,16 @@ class Projectile
 {
 public:
     Projectile(float speed, float distanceLeft) : m_speed(speed), m_distanceLeft(distanceLeft) {}
-    void AddEffect(ProjectileEffect &pe)
+    void AddEffect(std::weak_ptr<ProjectileEffect> pe)
     {
         bool exists = false;
-        for (auto effect : spellEffects)
+        
+        for (auto it = spellEffects.begin(); it != spellEffects.end();)
         {
-            if (effect.GetName() == pe.GetName())
+            std::shared_ptr<ProjectileEffect> e = (*it).lock();
+            std::shared_ptr<ProjectileEffect> peLocked = (*it).lock();
+            
+            if (e->GetName() == peLocked->GetName())
             {
                 exists = true;
                 break;
@@ -68,7 +73,8 @@ public:
     {
         for (auto it = spellEffects.begin(); it != spellEffects.end();)
         {
-            if (it->GetName() == effectName)
+            std::shared_ptr<ProjectileEffect> e = (*it).lock();
+            if (e->GetName() == effectName)
                 auto erased = spellEffects.erase(it);
             else
                 ++it;
@@ -76,7 +82,7 @@ public:
     }
 
 protected:
-    std::vector<ProjectileEffect> spellEffects;
+    std::vector<std::weak_ptr<ProjectileEffect>> spellEffects;
     inline void SpellTypeStrategy(GameObject &associated, float dt)
     {
 
