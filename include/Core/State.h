@@ -28,6 +28,11 @@ public:
     bool PopRequested();
     bool QuitRequested();
 
+    void SetPopRequested(bool req)
+    {
+        popRequested = req;
+    }
+
     inline void registerCollider(std::string layer_name, Collider *collider)
     {
         if (m_collisionLayers.find(layer_name) == m_collisionLayers.end())
