@@ -10,7 +10,6 @@
 #include "Core/Game.h"
 #include "Core/Collider.h"
 #include "Core/Camera.h"
-#include "Core/Text.h"
 #include "Core/Log.h"
 
 #include "Core/Collision.h"
@@ -21,7 +20,6 @@
 #include "Game/Character.h"
 #include "Game/EndState.h"
 #include "Game/GameData.h"
-#include "Game/TypingSystem.h"
 
 bool y_sort(std::shared_ptr<GameObject> i, std::shared_ptr<GameObject> j)
 {
@@ -86,15 +84,8 @@ void StageState::Update(float dt)
     if (ts.IsTypingMode())
     {
         ts.Update(dt);
-        // LOG_INFO("TEXTO: " + ts.GetText());
     }
 
-    if (ip.KeyPress(ESCAPE_KEY))
-    {
-        popRequested = true;
-        TitleState *stage = new TitleState();
-        Game::GetInstance().Push(stage);
-    }
     UpdateArray(dt);
     if (auto p = player.lock())
     {
@@ -180,15 +171,6 @@ void StageState::Render()
 
 void StageState::Start()
 {
-    GameObject *textObject = new GameObject();
-    Text *textComponent = new Text(*textObject, "resources/font/neodgm.ttf", 30, Text::SOLID, " ", {255, 255, 255}, 0, true);
-    textObject->AddComponent(textComponent);
-    textObject->box.SetPos(Game::GetInstance().GetWindowSize() / 2 - Character::player->getAssociated()->box.GetSize());
-    Game::GetInstance().GetCurrentState().AddObject(textObject);
-
-    TypingSystem &ts = TypingSystem::GetInstance();
-    ts.SetTextComponent(textComponent);
-
     LoadAssets();
     StartArray();
     started = true;
