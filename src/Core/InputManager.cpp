@@ -4,6 +4,7 @@
 #include "Core/InputManager.h"
 #include "Core/Game.h"
 #include "Core/Camera.h"
+#include "Game/TitleState.h"
 #include "backends/imgui_impl_sdl2.h"
 
 #include "Game/TypingSystem.h"
@@ -55,9 +56,6 @@ void InputManager::Update()
                 mouseState[event.button.button] = false;
                 mouseUpdate[event.button.button] = updateCounter;
                 break;
-            case SDL_QUIT:
-                quitRequested = true;
-                break;
             default:
                 break;
             }
@@ -74,10 +72,16 @@ void InputManager::Update()
                 }
                 else
                 {
-                    ts.CleanText();
                     ts.ResetSubmission();
                     ts.SwitchTypingMode();
                 }
+            }
+            if (event.key.keysym.sym == SDLK_ESCAPE)
+            {
+                // popRequested = true;
+                Game::GetInstance().GetCurrentState().SetPopRequested(true);
+                TitleState *titleStage = new TitleState();
+                Game::GetInstance().Push(titleStage);
             }
             break;
         case SDL_QUIT:

@@ -6,6 +6,7 @@
 #include "Core/Animator.h"
 #include "Core/Collider.h"
 #include "Core/Log.h"
+#include "Core/Text.h"
 
 #include "Game/Character.h"
 #include "Game/Bullet.h"
@@ -14,6 +15,7 @@
 #include "Game/Gun.h"
 #include "Game/PlayerController.h"
 #include "Game/HealthSystem.h"
+#include "Game/TypingSystem.h"
 
 void update_color_shader(float r, float g, float b, float a, int color_loc)
 {
@@ -101,6 +103,18 @@ void Character::Start()
     gunObj->AddComponent(gunComponent);
 
     this->gun = s.AddObject(gunObj);
+
+    if (this == Character::player)
+    {
+        GameObject *textObject = new GameObject();
+        Text *textComponent = new Text(*textObject, "resources/font/neodgm.ttf", 30, Text::SOLID, " ", {255, 255, 255}, 0, true);
+        textObject->AddComponent(textComponent);
+        textObject->box.SetPos(Game::GetInstance().GetWindowSize() / 2 - Character::player->getAssociated()->box.GetSize());
+        Game::GetInstance().GetCurrentState().AddObject(textObject);
+
+        TypingSystem &ts = TypingSystem::GetInstance();
+        ts.SetTextComponent(textComponent);
+    }
 }
 bool Character::OnDamageTaken(OnDamageTakenEvent &evt)
 {
