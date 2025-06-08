@@ -6,7 +6,8 @@ TypingSystem::TypingSystem(Text *textComponent, bool enableCursor, bool isTyping
                                                                                         isTypingMode(isTypingMode),
                                                                                         cursorVisible(false),
                                                                                         submitted(false),
-                                                                                        cursorTimer(0.0f)
+                                                                                        cursorTimer(0.0f),
+                                                                                        text(" ")
 {
 }
 
@@ -17,7 +18,6 @@ void TypingSystem::HandleInput(const SDL_Event &event)
   case SDL_TEXTINPUT:
   {
     this->text += event.text.text;
-    LOG_INFO(std::string("Typed: ") + event.text.text);
   }
   break;
   case SDL_KEYDOWN:
@@ -42,7 +42,6 @@ void TypingSystem::HandleSubmit()
 {
   if (this->submitted)
   {
-    LOG_INFO("Text submitted: " + this->text);
     this->CleanText();
     this->ResetSubmission();
   }
