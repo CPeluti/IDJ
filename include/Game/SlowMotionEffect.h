@@ -11,7 +11,9 @@ private:
   Timer durationTimer;
 
 public:
-  SlowMotionEffect(float speedReduction, float duration) : durationTimer(duration) { this->speedReduction = speedReduction; };
+  SlowMotionEffect(float speedReduction, float duration) : durationTimer(duration) { this->speedReduction = speedReduction; }
+
+  EFFECT_TYPE(Slow);
 
   void Apply(Entity &entity, float dt)
   {
@@ -23,6 +25,5 @@ public:
   {
     return durationTimer.Expired();
   }
-
   // todo adicionar destrutor do effect
 };
