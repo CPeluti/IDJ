@@ -5,7 +5,6 @@
 #include "Core/Game.h"
 #include "Core/Camera.h"
 #include "Game/TitleState.h"
-#include "backends/imgui_impl_sdl2.h"
 
 #include "Game/TypingSystem.h"
 
@@ -34,7 +33,6 @@ void InputManager::Update()
         }
         else
         {
-            ImGui_ImplSDL2_ProcessEvent(&event);
             switch (event.type)
             {
             case SDL_KEYDOWN:
