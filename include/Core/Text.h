@@ -1,7 +1,7 @@
 #pragma once
 #define INCLUDE_SDL_TTF
 #include "SDL_gpu.h"
-#include "SDL_Include.h"
+#include "SDL_include.h"
 #include "GameObject.h"
 #include "Component.h"
 #include "Timer.h"

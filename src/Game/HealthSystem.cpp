@@ -15,7 +15,7 @@ HealthSystem::HealthSystem(GameObject &associated, float hp) : Component(associa
 float HealthSystem::TakeDamage(float damage)
 {
     hp -= damage;
-    m_lifebar->setAmount(damage);
+    m_lifebar->setAmount(hp);
     return damage;
 }
 

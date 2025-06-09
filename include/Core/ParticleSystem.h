@@ -1,3 +1,4 @@
+#pragma once
 #include "Vec2.h"
 #include "Component.h"
 #include "Sprite.h"
