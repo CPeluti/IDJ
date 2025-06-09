@@ -1,8 +1,10 @@
 #include "Core/TileSet.h"
+#include "Core/Rect.h"
 #include <iostream>
 
-TileSet::TileSet(int tileWidth, int tileHeight, std::string file): tileSet(file)
+TileSet::TileSet(int tileWidth, int tileHeight, std::string file, std::map<int,Rect> colliders): tileSet(file)
 {
+    this->m_colliders = colliders;
     this->tileWidth = tileWidth;
     this->tileHeight = tileHeight;
     // std::cout << "open" << std::endl;
