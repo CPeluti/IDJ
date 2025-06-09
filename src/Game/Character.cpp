@@ -39,6 +39,8 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
     Animator *animator = new Animator(associated);
 
     HealthSystem *hs = new HealthSystem(associated, hp);
+    // sr->SetScale(2, 2);
+    // associated.box.SetSize(associated.box.GetSize
 
     if (!isPlayer)
     {
