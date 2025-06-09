@@ -4,25 +4,27 @@
 #include "Core/InputManager.h"
 #include "Core/Game.h"
 #include "Core/Camera.h"
-#include "backends/imgui_impl_sdl2.h"
-InputManager& InputManager::GetInstance(){
+InputManager &InputManager::GetInstance()
+{
     static InputManager inputManager;
     return inputManager;
 }
 
-InputManager::InputManager():quitRequested(false), updateCounter(0), mouseX(0), mouseY(0), mouseState{false,false,false,false,false,false}, mouseUpdate{0}{}
+InputManager::InputManager() : quitRequested(false), updateCounter(0), mouseX(0), mouseY(0), mouseState{false, false, false, false, false, false}, mouseUpdate{0} {}
 
-void InputManager::Update(){
+void InputManager::Update()
+{
     quitRequested = false;
     SDL_GetMouseState(&this->mouseX, &this->mouseY);
     updateCounter = SDL_GetTicks();
     SDL_Event event;
-    while(SDL_PollEvent(&event)){
-        ImGui_ImplSDL2_ProcessEvent(&event); 
+    while (SDL_PollEvent(&event))
+    {
         switch (event.type)
         {
         case SDL_KEYDOWN:
-            if(!event.key.repeat){
+            if (!event.key.repeat)
+            {
                 keyState[event.key.keysym.scancode] = true;
                 keyUpdate[event.key.keysym.scancode] = updateCounter;
             }
@@ -46,50 +48,61 @@ void InputManager::Update(){
             break;
         }
     }
-
 }
 
-bool InputManager::KeyPress(int key){
-    if(keyState.find(key) != keyState.end()){
+bool InputManager::KeyPress(int key)
+{
+    if (keyState.find(key) != keyState.end())
+    {
         return keyState[key] && (updateCounter == keyUpdate[key]);
     }
     return false;
 }
 
-bool InputManager::KeyRelease(int key){
-    if(keyState.find(key) != keyState.end()){
+bool InputManager::KeyRelease(int key)
+{
+    if (keyState.find(key) != keyState.end())
+    {
         return !keyState[key] && (updateCounter == keyUpdate[key]);
     }
     return false;
 }
 
-bool InputManager::IsKeyDown(int key){
-    if(keyState.find(key) != keyState.end()){
+bool InputManager::IsKeyDown(int key)
+{
+    if (keyState.find(key) != keyState.end())
+    {
         return keyState[key];
     }
     return false;
 }
 
-bool InputManager::MousePress(int button){
+bool InputManager::MousePress(int button)
+{
     return mouseState[button] && (updateCounter == mouseUpdate[button]);
 }
 
-bool InputManager::MouseRelease(int button){
+bool InputManager::MouseRelease(int button)
+{
     return !mouseState[button] && (updateCounter == mouseUpdate[button]);
 }
 
-bool InputManager::IsMouseDown(int button){
+bool InputManager::IsMouseDown(int button)
+{
     return mouseState[button];
 }
 
-int InputManager::GetMouseX(){
-    return mouseX+Camera::pos.x;
+int InputManager::GetMouseX()
+{
+    return mouseX + Camera::pos.x;
 }
 
-int InputManager::GetMouseY(){
-    return mouseY+Camera::pos.y;
+int InputManager::GetMouseY()
+{
+    return mouseY + Camera::pos.y;
 }
 
-bool InputManager::QuitRequested(){
+bool InputManager::QuitRequested()
+{
     return quitRequested;
 }
