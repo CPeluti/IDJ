@@ -4,6 +4,10 @@
 #include "Core/InputManager.h"
 #include "Core/Game.h"
 #include "Core/Camera.h"
+#include "Game/TitleState.h"
+
+#include "Game/TypingSystem.h"
+
 InputManager &InputManager::GetInstance()
 {
     static InputManager inputManager;
@@ -17,29 +21,66 @@ void InputManager::Update()
     quitRequested = false;
     SDL_GetMouseState(&this->mouseX, &this->mouseY);
     updateCounter = SDL_GetTicks();
+
+    TypingSystem &ts = TypingSystem::GetInstance();
+
     SDL_Event event;
     while (SDL_PollEvent(&event))
     {
+        if (ts.IsTypingMode())
+        {
+            ts.HandleInput(event);
+        }
+        else
+        {
+            switch (event.type)
+            {
+            case SDL_KEYDOWN:
+                if (!event.key.repeat)
+                {
+                    keyState[event.key.keysym.scancode] = true;
+                    keyUpdate[event.key.keysym.scancode] = updateCounter;
+                }
+                break;
+            case SDL_KEYUP:
+                keyState[event.key.keysym.scancode] = false;
+                keyUpdate[event.key.keysym.scancode] = updateCounter;
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+                mouseState[event.button.button] = true;
+                mouseUpdate[event.button.button] = updateCounter;
+                break;
+            case SDL_MOUSEBUTTONUP:
+                mouseState[event.button.button] = false;
+                mouseUpdate[event.button.button] = updateCounter;
+                break;
+            default:
+                break;
+            }
+        }
+
         switch (event.type)
         {
         case SDL_KEYDOWN:
-            if (!event.key.repeat)
+            if (event.key.keysym.sym == SDLK_LSHIFT)
             {
-                keyState[event.key.keysym.scancode] = true;
-                keyUpdate[event.key.keysym.scancode] = updateCounter;
+                if (ts.IsTypingMode())
+                {
+                    ts.SwitchTypingMode();
+                }
+                else
+                {
+                    ts.ResetSubmission();
+                    ts.SwitchTypingMode();
+                }
             }
-            break;
-        case SDL_KEYUP:
-            keyState[event.key.keysym.scancode] = false;
-            keyUpdate[event.key.keysym.scancode] = updateCounter;
-            break;
-        case SDL_MOUSEBUTTONDOWN:
-            mouseState[event.button.button] = true;
-            mouseUpdate[event.button.button] = updateCounter;
-            break;
-        case SDL_MOUSEBUTTONUP:
-            mouseState[event.button.button] = false;
-            mouseUpdate[event.button.button] = updateCounter;
+            if (event.key.keysym.sym == SDLK_ESCAPE)
+            {
+                // popRequested = true;
+                Game::GetInstance().GetCurrentState().SetPopRequested(true);
+                TitleState *titleStage = new TitleState();
+                Game::GetInstance().Push(titleStage);
+            }
             break;
         case SDL_QUIT:
             quitRequested = true;
