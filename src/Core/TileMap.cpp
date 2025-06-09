@@ -32,6 +32,10 @@ void TileMap::Load(std::string file)
                 break;
             default:
                 tileMatrix.push_back(number);
+                Rect* colliderMetaData = tileSet->getColliderMetaData(number);
+                if(colliderMetaData){
+                    Collider* collider = new Collider(this->associated, {"phys0"}, new OnCollisionEvent(associated), colliderMetaData->GetSize(), {1,1}, colliderMetaData->GetPos());
+                }
                 break;
             }
             counter++;
