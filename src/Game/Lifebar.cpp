@@ -10,6 +10,7 @@
 
 Lifebar::Lifebar(GameObject &associated, float max, Vec2 size, Vec2 offset) : Component(associated), total(max), size(size), offset(offset)
 {
+    current = max;
 }
 
 bool Lifebar::Is(std::string type)
@@ -43,7 +44,7 @@ void Lifebar::Render()
 
 void Lifebar::setAmount(float amount)
 {
-    current = amount;
+    current = amount > 0? amount : 0;
 }
 
 void Lifebar::setMax(float max)
