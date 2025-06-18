@@ -42,6 +42,19 @@ public:
         m_collisionLayers[layer_name].push_back(collider);
     }
 
+    inline void registerPhysicsCollider(std::string layer_name, Collider *collider)
+    {
+        if (m_physicsLayers.find(layer_name) == m_physicsLayers.end())
+        {
+            m_physicsLayers[layer_name] = std::map<std::string, std::vector<Collider *>>();
+        }
+        if(m_physicsLayers[layer_name].find(collider->GetTag()) == m_physicsLayers[layer_name].end()){
+
+            m_physicsLayers[layer_name][collider->GetTag()] = std::vector<Collider *>();
+        }
+        m_physicsLayers[layer_name][collider->GetTag()].push_back(collider);
+    }
+
     inline void removeCollider(std::string layer_name, Collider *collider)
     {
         for (int i = 0; i < m_collisionLayers[layer_name].size(); i++)
@@ -53,8 +66,59 @@ public:
         }
     }
 
-    inline void checkCollisions()
+        inline void removePhysicsCollider(std::string layer_name, Collider *collider)
     {
+        for (int i = 0; i < m_physicsLayers[layer_name].size(); i++)
+        {
+            if (m_physicsLayers[layer_name][collider->GetTag()][i] == collider)
+            {
+                m_physicsLayers[layer_name][collider->GetTag()].erase(m_physicsLayers[layer_name][collider->GetTag()].begin() + i);
+            }
+        }
+    }
+
+    inline void checkCollisions(float dt)
+    {
+
+        time = 0;
+        for(auto &el : m_physicsLayers){
+            //iter on tags
+            for(auto tag : el.second){
+                //iter on the elements with the same tag
+                for (int i = 0; i < (int)(tag.second.size()); i++)
+                {
+                    //base collider (the one being checked)
+                    Collider *colliderA = tag.second[i];
+                    if (colliderA != nullptr)
+                    {
+                        //iter on the tags to check collision between different tags
+                        for(auto tag2 : el.second)
+                        {
+                            if(tag == tag2){
+                                continue;
+                            }
+                            //secondary collider (the one that is on a different tag vector)
+                            for(int i = 0; i<tag2.second.size(); i++){
+                                Collider *colliderB = tag2.second[i];
+                                if (colliderB != nullptr)
+                                {
+                                    if(colliderA->GetTag() != colliderB->GetTag()){
+                                        GameObject* goA = colliderA->getAssociated();
+                                        GameObject* goB = colliderB->getAssociated();
+                                        if (Collision::IsColliding(colliderA->box, colliderB->box, colliderA->getAngleDeg(), colliderB->getAngleDeg(), goA->GetSpeed(), goB->GetSpeed())){
+                                            // colliderA->getAssociated()->subject.notify(*colliderB->GetEvent());
+                                            // colliderB->getAssociated()->subject.notify(*colliderA->GetEvent());
+                                            goA->SetSpeed(goA->GetSpeed()*-1);
+                                            goB->SetSpeed(goB->GetSpeed()*-1);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         for (auto &el : m_collisionLayers)
         {
             for (int i = 0; i < (int)(el.second.size()); i++)
@@ -69,8 +133,6 @@ public:
                         {
                             if (Collision::IsColliding(colliderA->box, colliderB->box, colliderA->getAngleDeg(), colliderB->getAngleDeg()))
                             {
-                                // LOG_INFO(colliderA->GetEvent());
-                                // LOG_INFO(colliderB->GetEvent());
                                 colliderA->getAssociated()->subject.notify(*colliderB->GetEvent());
                                 colliderB->getAssociated()->subject.notify(*colliderA->GetEvent());
                             }
@@ -89,7 +151,9 @@ protected:
     bool popRequested;
     bool started;
     bool quitRequested;
+    float time;
 
     std::vector<std::shared_ptr<GameObject>> objectArray;
     std::map<std::string, std::vector<Collider *>> m_collisionLayers;
+    std::map<std::string, std::map<std::string,std::vector<Collider *>>> m_physicsLayers;
 };

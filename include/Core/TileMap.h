@@ -19,6 +19,7 @@ class TileMap : public Component {
         int GetDepth();
         bool Is(std::string type);
         void Update(float dt);
+        void Start();
     private:
         std::vector<std::shared_ptr<Collider>> m_colliders;
         std::vector<int> tileMatrix;

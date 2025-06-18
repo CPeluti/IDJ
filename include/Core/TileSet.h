@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "Sprite.h"
+#include "Rect.h"
 
 class TileSet {
     public:
