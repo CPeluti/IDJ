@@ -45,24 +45,25 @@ StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
 {
     GameObject *bg = new GameObject();
     bg->z = 0;
-    TileSet *tileset = new TileSet(64, 64, "resources/img/Tileset.png");
-    TileMap *tilemap = new TileMap(*bg, "resources/map/map.txt", tileset);
     bg->box.RawMove({0, 0});
+    TileSet *tileset = new TileSet(64, 64, "resources/img/Tileset.png" , {{17,{0,0,64,64}},{18,{0,0,64,64}},{3,{0,0,64,64}},{4,{0,0,64,64}},{10,{0,0,64,64}},{11,{0,0,64,64}}});
+    TileMap *tilemap = new TileMap(*bg, "resources/map/map.txt", tileset);
     bg->AddComponent(tilemap);
     this->AddObject(bg);
 
     GameObject *character = new GameObject();
+    character->angleDeg = 45;
     Character *characterComponent = new Character(*character, "resources/img/Player.png", true);
     character->AddComponent(characterComponent);
     player = this->AddObject(character);
-    character->box.RawMove({1280, 1280});
+    character->box.RawMove({0, 0});
     Character::player = characterComponent;
     Camera::Follow(character);
 
-    GameObject *waveSpawner = new GameObject();
-    WaveSpawner *ws = new WaveSpawner(*waveSpawner);
-    waveSpawner->AddComponent(ws);
-    spawner = this->AddObject(waveSpawner);
+    // GameObject *waveSpawner = new GameObject();
+    // WaveSpawner *ws = new WaveSpawner(*waveSpawner);
+    // waveSpawner->AddComponent(ws);
+    // spawner = this->AddObject(waveSpawner);
 }
 StageState::~StageState()
 {
@@ -134,7 +135,7 @@ void StageState::Update(float dt)
     //     }
     // }
 
-    this->checkCollisions();
+    this->checkCollisions(dt);
 
     if (ts.IsTypingMode() && ts.HasSubmitted())
     {
