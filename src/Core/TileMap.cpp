@@ -94,8 +94,17 @@ void TileMap::Start(){
                 Vec2 cantoInfDireitoCollider2 = cantoSupDireitoCollider2+Vec2(.0,collider2->GetSize().y);
                 bool checkIntersectionX = cantoSupDireitoCollider.x >= cantoSupEsquerdoCollider2.x && cantoInfDireitoCollider.x >= cantoInfEsquerdoCollider2.x;
                 bool checkSameY = cantoSupDireitoCollider.y == cantoSupDireitoCollider2.y && cantoInfDireitoCollider.y == cantoInfDireitoCollider2.y;
-                if(checkIntersectionX && checkSameY){
-                    Vec2 newSize = {cantoSupDireitoCollider2.x-cantoSupEsquerdoCollider.x, collider->GetSize().y};
+                bool checkIntersectionY = cantoInfEsquerdoCollider.y <= cantoSupEsquerdoCollider2.y && cantoSupDireitoCollider.y <= cantoSupDireitoCollider2.y;
+                bool checkSameX = cantoSupEsquerdoCollider.x == cantoInfEsquerdoCollider2.x && cantoSupDireitoCollider.x == cantoInfDireitoCollider2.x;
+
+                LOG_INFO("checkIntersectionY: {},checkSameX: {}",checkIntersectionY,checkSameX);
+                if((checkIntersectionX && checkSameY)||(checkIntersectionY && checkSameX)){
+                    Vec2 newSize;
+                    if(checkIntersectionX && checkSameY){
+                        newSize = {cantoSupDireitoCollider2.x-cantoSupEsquerdoCollider.x, collider->GetSize().y};
+                    } else{
+                        newSize = { collider->GetSize().x, cantoInfEsquerdoCollider2.y-cantoSupEsquerdoCollider.y};
+                    }
                     collider->SetSize(newSize);
                     if(collider>collider2){
                         colliders2BCreated.erase(collider2);

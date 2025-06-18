@@ -52,11 +52,10 @@ StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
     this->AddObject(bg);
 
     GameObject *character = new GameObject();
-    character->angleDeg = 45;
     Character *characterComponent = new Character(*character, "resources/img/Player.png", true);
     character->AddComponent(characterComponent);
     player = this->AddObject(character);
-    character->box.RawMove({0, 0});
+    character->box.RawMove({1280, 1280});
     Character::player = characterComponent;
     Camera::Follow(character);
 
