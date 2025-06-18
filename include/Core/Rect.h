@@ -4,6 +4,7 @@ class Rect {
     public: 
         Rect();
         Rect(float x, float y, float w, float h);
+        Rect(Vec2 Pos, Vec2 Size);
         static Rect AddVector(Rect a, Vec2 b);
         Vec2 center();
 
@@ -22,6 +23,7 @@ class Rect {
 
 
         //Move using the center as ref 
+        void MoveToPos(Vec2 amount);
         void Move(Vec2 newPos);
         void RawMove(Vec2 newPos);
 
