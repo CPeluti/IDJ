@@ -11,9 +11,12 @@ class Collision {
 		// Observação: IsColliding espera ângulos em radianos!
 		// Para usar graus, forneça a sua própria implementação de Rotate,
 		// ou transforme os ângulos no corpo de IsColliding.
-		static inline bool IsColliding(Rect& a, Rect& b, float angleOfA, float angleOfB) {
-			Vec2 A[] = { Vec2( a.GetPos().x, a.GetPos().y + a.GetSize().x ),
-						  Vec2( a.GetPos().x + a.GetSize().x, a.GetPos().y + a.GetSize().x ),
+		static inline bool IsColliding(Rect& rA, Rect& rB, float angleOfA, float angleOfB, Vec2 offsetA={0,0}, Vec2 offsetB={0,0}) {
+			Rect a = Rect::AddVector(rA,offsetA);
+			Rect b = Rect::AddVector(rB,offsetB);
+			
+			Vec2 A[] = { Vec2( a.GetPos().x, a.GetPos().y + a.GetSize().y ),
+						  Vec2( a.GetPos().x + a.GetSize().x, a.GetPos().y + a.GetSize().y ),
 						  Vec2( a.GetPos().x + a.GetSize().x, a.GetPos().y ),
 						  Vec2( a.GetPos().x, a.GetPos().y )
 						};
@@ -49,7 +52,6 @@ class Collision {
 				if (maxA < minB || minA > maxB)
 					return false;
 			}
-
 			return true;
 		}
 

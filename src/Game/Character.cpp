@@ -95,10 +95,10 @@ void Character::Start()
     GameObject *gunObj = new GameObject();
     std::vector<std::string> layers, interactionLayers;
     layers.push_back("layer0");
-    interactionLayers.push_back("interaction0");
-    Collider *collider = new Collider(associated, layers, new OnCollisionEvent(associated));
-    Collider *interactionEffectCollider = new Collider(associated, {"interaction0"}, new OnInteractionEvent(associated, InteractionType::Effect), {100, 100});
-    associated.AddComponent(collider);
+    interactionLayers.push_back("interaction0, phys0");
+    // Collider *collider = new Collider(associated, layers, new OnCollisionEvent(associated));
+    Collider *interactionEffectCollider = new Collider(associated, {"phys0"}, new OnInteractionEvent(associated, InteractionType::Effect), {200, 200}, {1,1}, (Vec2(-100,-100)+associated.box.GetSize()/2), "phys1");
+    // associated.AddComponent(collider);
     associated.AddComponent(interactionEffectCollider);
     Gun *gunComponent = new Gun(*gunObj, s.GetObjectPtr(&associated));
 
@@ -144,6 +144,7 @@ bool Character::OnDamageTaken(OnDamageTakenEvent &evt)
 void Character::Update(float dt)
 {
     Vec2 speed = {0, 0};
+    this->associated.SetSpeed({0,0});
     Character::player->UpdateEffects(dt);
     Animator *animator = ((Animator *)associated.GetComponent("Animator"));
     if (isDead)
@@ -188,27 +189,27 @@ void Character::Update(float dt)
             Vec2 currentPos = associated.box.GetPos();
             if (this == this->player)
             {
-                if (this == this->player)
-                {
-                    Vec2 charPos = this->associated.box.GetPos();
-                    if (charPos.x < 640 && newSpeed.x < 0)
-                    {
-                        newSpeed.x = 0;
-                    }
-                    else if (charPos.x > 1920 - associated.box.GetSize().x && newSpeed.x > 0)
-                    {
-                        newSpeed.x = 0;
-                    }
-                    if (charPos.y < 512 && newSpeed.y < 0)
-                    {
-                        newSpeed.y = 0;
-                    }
-                    else if (charPos.y > 2048 - associated.box.GetSize().y && newSpeed.y > 0)
-                    {
-                        newSpeed.y = 0;
-                    }
-                }
-                associated.box.RawMove(currentPos + newSpeed);
+                // if (this == this->player)
+                // {
+                //     Vec2 charPos = this->associated.box.GetPos();
+                //     if (charPos.x < 640 && newSpeed.x < 0)
+                //     {
+                //         newSpeed.x = 0;
+                //     }
+                //     else if (charPos.x > 1920 - associated.box.GetSize().x && newSpeed.x > 0)
+                //     {
+                //         newSpeed.x = 0;
+                //     }
+                //     if (charPos.y < 512 && newSpeed.y < 0)
+                //     {
+                //         newSpeed.y = 0;
+                //     }
+                //     else if (charPos.y > 2048 - associated.box.GetSize().y && newSpeed.y > 0)
+                //     {
+                //         newSpeed.y = 0;
+                //     }
+                // }
+                associated.SetSpeed(newSpeed);
             }
         }
         SpriteRenderer *sr = (SpriteRenderer *)this->associated.GetComponent("SpriteRenderer");

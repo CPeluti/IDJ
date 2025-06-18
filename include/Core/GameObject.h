@@ -17,6 +17,8 @@ public:
     void RequestDelete();
     void AddComponent(Component *cpt);
     void RemoveComponent(Component *cpt);
+    inline void SetSpeed(Vec2 newSpeed){ m_speed = newSpeed; }
+    inline Vec2 GetSpeed(){ return m_speed;}
     Component *GetComponent(std::string type);
     void Start();
     Rect box;
@@ -24,7 +26,9 @@ public:
     int z;
     double angleDeg;
     Subject subject;
+    
 private:
+    Vec2 m_speed;
     bool started;
     std::vector<Component *> components;
     bool isDead;
