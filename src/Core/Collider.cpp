@@ -10,16 +10,25 @@
 #include <SDL2/SDL.h>
 #endif // DEBUG
 
-Collider::Collider(GameObject &associated, std::vector<std::string> collisionLayers, Event *event, Vec2 size, Vec2 scale, Vec2 offset) : Component(associated),
-																																																																				 size(size),
-																																																																				 scale(scale),
-																																																																				 offset(offset),
-																																																																				 m_collisionLayers(collisionLayers),
-																																																																				 m_event(event)
+Collider::Collider(GameObject &associated, std::vector<std::string> collisionLayers, Event *event, Vec2 size, Vec2 scale, Vec2 offset, std::string tag) : Component(associated),
+																																							size(size),
+																																							scale(scale),
+																																							offset(offset),
+																																							m_collisionLayers(collisionLayers),
+																																							m_event(event),
+																																							m_tag(tag)
 {
-	for (auto &layer : m_collisionLayers)
-	{
-		Game::GetInstance().GetCurrentState().registerCollider(layer, this);
+	this->box.SetSize(size);
+	if(tag=="phys" || tag=="phys1"){
+		for(auto &layer : m_collisionLayers)
+		{
+			Game::GetInstance().GetCurrentState().registerPhysicsCollider(layer, this);
+		}
+	}else {
+		for (auto &layer : m_collisionLayers)
+		{
+			Game::GetInstance().GetCurrentState().registerCollider(layer, this);
+		}
 	}
 }
 
@@ -28,18 +37,17 @@ Collider::~Collider()
 	for (auto &layer : m_collisionLayers)
 	{
 		Game::GetInstance().GetCurrentState().removeCollider(layer, this);
+		Game::GetInstance().GetCurrentState().removePhysicsCollider(layer, this);
 	}
+	this->associated.RemoveComponent(this);
 }
 
 void Collider::Update(float dt)
 {
-	this->box = this->associated.box;
-	Vec2 newScale = this->box.GetSize() + this->size;
-	this->box.SetSize({newScale.x * scale.x, newScale.y * scale.y});
-	Vec2 center = this->associated.box.center();
+	Vec2 center = this->associated.box.GetPos();
 	Vec2 offsetWithRotation = Vec2::Rotate(offset, associated.angleDeg);
 	center = center + offsetWithRotation;
-	this->box.Move(center);
+	this->box.RawMove(center);
 }
 
 void Collider::Render()
@@ -67,6 +75,10 @@ void Collider::Render()
 		GPU_Line(Game::GetInstance().GetGPUTarget(), points[i].x, points[i].y, points[(i + 1) % 5].x, points[(i + 1) % 5].y, {255, 0, 0, 255});
 	}
 #endif // DEBUG
+}
+
+std::string Collider::GetTag(){
+	return m_tag;
 }
 
 bool Collider::Is(std::string type)

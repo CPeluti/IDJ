@@ -27,6 +27,7 @@ void GameObject::Start(){
 
 void GameObject::Update(float dt)
 {
+    this->box.MoveToPos(m_speed);
     for (int i = 0; i < (int)this->components.size(); i++)
     {
         this->components[i]->Update(dt);

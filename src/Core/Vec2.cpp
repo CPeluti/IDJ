@@ -12,6 +12,11 @@ Vec2::Vec2(float x,float y) {
     this->y = y;
 }
 
+Vec2::Vec2(double x,double y) {
+    this->x = x;
+    this->y = y;
+}
+
 Vec2::Vec2(int x,int y) {
     this->x = (float)x;
     this->y = (float)y;

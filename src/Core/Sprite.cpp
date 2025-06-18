@@ -40,7 +40,6 @@ void Sprite::Open(std::string file)
     texture = Resources::GetImage(file);
     this->width = texture->w;
     this->height = texture->h;
-    LOG_INFO(width);
     SetClip({0, 0}, {width, height});
 }
 void Sprite::SetClip(Vec2 pos, Vec2 size)
