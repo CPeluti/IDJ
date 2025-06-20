@@ -10,7 +10,7 @@
 #include <SDL2/SDL.h>
 #endif // DEBUG
 
-Collider::Collider(GameObject &associated, std::vector<std::string> collisionLayers, Event *event, Vec2 size, Vec2 scale, Vec2 offset, std::string tag) : Component(associated),
+Collider::Collider(GameObject &associated, std::vector<std::string> collisionLayers, Event *event, Vec2 size, Vec2 scale, Vec2 offset, std::string tag) :   Component(associated),
 																																							size(size),
 																																							scale(scale),
 																																							offset(offset),
@@ -19,27 +19,31 @@ Collider::Collider(GameObject &associated, std::vector<std::string> collisionLay
 																																							m_tag(tag)
 {
 	this->box.SetSize(size);
-	if(tag=="phys" || tag=="phys1"){
-		for(auto &layer : m_collisionLayers)
-		{
-			Game::GetInstance().GetCurrentState().registerPhysicsCollider(layer, this);
-		}
-	}else {
-		for (auto &layer : m_collisionLayers)
-		{
-			Game::GetInstance().GetCurrentState().registerCollider(layer, this);
+	if(auto s = std::move(Game::GetInstance().GetCurrentState())){
+		if(tag=="phys" || tag=="phys1"){
+			for(auto &layer : m_collisionLayers)
+			{
+				s->registerPhysicsCollider(layer, this);
+			}
+		}else {
+			for (auto &layer : m_collisionLayers)
+			{
+				s->registerCollider(layer, this);
+			}
 		}
 	}
 }
 
 Collider::~Collider()
 {
-	for (auto &layer : m_collisionLayers)
-	{
-		Game::GetInstance().GetCurrentState().removeCollider(layer, this);
-		Game::GetInstance().GetCurrentState().removePhysicsCollider(layer, this);
+	if(auto s = std::move(Game::GetInstance().GetCurrentState())){
+		for (auto &layer : m_collisionLayers)
+		{
+			s->removeCollider(layer, this);
+			s->removePhysicsCollider(layer, this);
+		}
+		this->associated.RemoveComponent(weak_from_this());
 	}
-	this->associated.RemoveComponent(this);
 }
 
 void Collider::Update(float dt)
