@@ -23,7 +23,7 @@ public:
     virtual void Pause() = 0;
 
     virtual std::weak_ptr<GameObject> GetObjectPtr(GameObject *go);
-    virtual std::weak_ptr<GameObject> AddObject(GameObject *object);
+    virtual std::weak_ptr<GameObject> AddObject(std::shared_ptr<GameObject> object);
 
     bool PopRequested();
     bool QuitRequested();

@@ -77,9 +77,9 @@ void InputManager::Update()
             if (event.key.keysym.sym == SDLK_ESCAPE)
             {
                 // popRequested = true;
-                Game::GetInstance().GetCurrentState().SetPopRequested(true);
-                TitleState *titleStage = new TitleState();
-                Game::GetInstance().Push(titleStage);
+                if(auto s = Game::GetInstance().GetCurrentState())
+                    s->SetPopRequested(true);
+                Game::GetInstance().Push(std::make_unique<TitleState>());
             }
             break;
         case SDL_QUIT:

@@ -7,15 +7,17 @@ HealthSystem::HealthSystem(GameObject &associated, float hp) : Component(associa
 {
     m_maxHp = hp;
     associated.subject.addObserver(this);
-
-    m_lifebar = new Lifebar(associated, (int)m_maxHp, {associated.box.GetSize().x, (float)10}, {0, (int)associated.box.GetSize().y / 4});
-    associated.AddComponent(m_lifebar);
+    auto lb = std::make_shared<Lifebar>(associated, (int)m_maxHp, Vec2(associated.box.GetSize().x, 10.0), Vec2(0, (int)associated.box.GetSize().y / 4));
+    associated.AddComponent(lb);
+    m_lifebar = lb;
 }
 
 float HealthSystem::TakeDamage(float damage)
 {
     hp -= damage;
-    m_lifebar->setAmount(hp);
+    if(auto lifebar = m_lifebar.lock()){
+        lifebar->setAmount(hp);
+    }
     return damage;
 }
 
