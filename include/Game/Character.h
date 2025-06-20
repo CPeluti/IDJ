@@ -6,7 +6,7 @@
 
 #include <memory>
 #include <queue>
-class Character : public Component, public Observer, public Entity
+class Character : public Component, public Observer, public Entity, public std::enable_shared_from_this<Character>
 {
 public:
     class Command
@@ -44,7 +44,7 @@ public:
 
 public:
     static int npcCounter;
-    static Character *player;
+    static std::weak_ptr<Character> player;
 
 private:
     bool OnCollision(OnCollisionEvent &evt);
