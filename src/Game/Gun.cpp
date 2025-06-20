@@ -21,8 +21,8 @@ Gun::Gun(GameObject &associated, std::weak_ptr<GameObject> character) : Componen
                                                                         bulletOutput(0, 0),
                                                                         projectileAmount(1)
 {
-    SpriteRenderer *sr = new SpriteRenderer(associated, "resources/img/Gun.png", 3, 2);
-    Animator *animator = new Animator(associated);
+    std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(associated, "resources/img/Gun.png", 3, 2);
+    std::shared_ptr<Animator> animator = std::make_shared<Animator>(associated);
 
     associated.AddComponent(sr);
     associated.AddComponent(animator);
@@ -36,59 +36,60 @@ Gun::Gun(GameObject &associated, std::weak_ptr<GameObject> character) : Componen
 
 void Gun::Update(float dt)
 {
-    Animator *animator = (Animator *)associated.GetComponent("Animator");
     InputManager &ip = InputManager::GetInstance();
 
     bool inverted = true;
     if (auto c = character.lock())
     {
-        Character* charComponent = ((Character*)c->GetComponent("Character"));
-        Vec2 centroChar = c->box.center();
-        Vec2 target;
-        if(charComponent == Character::player){
-            target = {(float)ip.GetMouseX(), (float)ip.GetMouseY()};
+        if(auto charComponent = std::dynamic_pointer_cast<Character>(c->GetComponent("Character").lock())){
+            Vec2 centroChar = c->box.center();
+            Vec2 target;
+            if(charComponent == Character::player.lock()){
+                target = {(float)ip.GetMouseX(), (float)ip.GetMouseY()};
 
-        } else if (charComponent != Character::player && Character::player != nullptr){
-            target = Character::player->GetPos();
-        } else {
-            target = {0,0};
-        }
-        if (this->cdTimer.Expired())
-        {
-            angle = Vec2::Angle(centroChar, target);
-            associated.angleDeg = angle;
-        }
-
-        if (angle >= 90 && angle <= 270)
-        {
-            inverted = false;
-            charComponent->SetFlip(false);
-        }
-        else
-        {
-            inverted = true;
-            charComponent->SetFlip(true);
-        }
-        associated.box.RawMove(centroChar);
-        Vec2 pos = {OFFSET, 0};
-        Vec2 currentPos = associated.box.GetPos();
-
-        pos = Vec2::Rotate(pos, angle);
-
-        associated.box.Move(currentPos + pos);
-
-        if (cdTimer.Expired())
-        {
-            animator->SetAnimation(inverted ? "idle" : "i_idle");
-        }
-        else
-        {
-            animator->SetAnimation(inverted ? "reloading" : "i_reloading");
-            if (cdTimer.GetTime() == 0)
-            {
-                reloadSound.Play();
+            } else if (charComponent != Character::player.lock() && Character::player.lock()){
+                auto character = Character::player.lock();
+                target = character->GetPos();
+            } else {
+                target = {0,0};
             }
-            cdTimer.Update(dt);
+            if (this->cdTimer.Expired())
+            {
+                angle = Vec2::Angle(centroChar, target);
+                associated.angleDeg = angle;
+            }
+
+            if (angle >= 90 && angle <= 270)
+            {
+                inverted = false;
+                charComponent->SetFlip(false);
+            }
+            else
+            {
+                inverted = true;
+                charComponent->SetFlip(true);
+            }
+            associated.box.RawMove(centroChar);
+            Vec2 pos = {OFFSET, 0};
+            Vec2 currentPos = associated.box.GetPos();
+            
+            pos = Vec2::Rotate(pos, angle);
+            associated.box.Move(currentPos + pos);
+        }
+        if(auto animator = std::dynamic_pointer_cast<Animator>(this->associated.GetComponent("Animator").lock())){
+            if (cdTimer.Expired())
+            {
+                animator->SetAnimation(inverted ? "idle" : "i_idle");
+            }
+            else
+            {
+                animator->SetAnimation(inverted ? "reloading" : "i_reloading");
+                if (cdTimer.GetTime() == 0)
+                {
+                    reloadSound.Play();
+                }
+                cdTimer.Update(dt);
+            }
         }
     }
     else
@@ -106,34 +107,36 @@ void Gun::Shoot(Vec2 target)
         centro = c->box.center();
         if (cdTimer.Expired())
         {
-            Character* character = (Character*)c->GetComponent("Character");
-            int projectiles = (projectileAmount+character->getProjectileNumber());
-            float angleStep = 10;
-            float startingAngle = Vec2::Angle(centro, target);
-            angle = startingAngle-((projectiles/2)*angleStep);
+            if(auto character = std::dynamic_pointer_cast<Character>(c->GetComponent("Character").lock())){
+                int projectiles = (projectileAmount+character->getProjectileNumber());
+                float angleStep = 10;
+                float startingAngle = Vec2::Angle(centro, target);
+                angle = startingAngle-((projectiles/2)*angleStep);
 
-            // int offset = 10;
-            // int startingPoint = -((projectileAmount/2) * 10);
-            for(int i = 0; i<projectiles; i++){
-                GameObject *bullet = new GameObject();
-                // Bullet *bulletComponent = new Bullet(*bullet, angle, 350, 500, 400, Character::player != this->associated.GetComponent("Character"));
-                Vec2 gunOffset = {associated.box.GetSize().x + OFFSET, .0};
-                Vec2 bulletOffset = Vec2::Rotate(gunOffset, angle);
-                Vec2 bulletInitialPos = centro + bulletOffset;
+                // int offset = 10;
+                // int startingPoint = -((projectileAmount/2) * 10);
+                for(int i = 0; i<projectiles; i++){
+                    std::shared_ptr<GameObject> bullet = std::make_shared<GameObject>();
+                    // Bullet *bulletComponent = new Bullet(*bullet, angle, 350, 500, 400, Character::player != this->associated.GetComponent("Character"));
+                    Vec2 gunOffset = {associated.box.GetSize().x + OFFSET, .0};
+                    Vec2 bulletOffset = Vec2::Rotate(gunOffset, angle);
+                    Vec2 bulletInitialPos = centro + bulletOffset;
 
-                FireProjectileSpell* fSpell = new FireProjectileSpell(*bullet, bulletInitialPos);
-                bullet->AddComponent(fSpell);
-                // bullet->box.Move();
-    
-                // bullet->box.Move(bulletInitialPos);
-                // bullet->AddComponent(bulletComponent);
-                bullet->angleDeg = angle + 90;
-                Game::GetInstance().GetCurrentState().AddObject(bullet);
-                angle+=angleStep;
+                    std::shared_ptr<FireProjectileSpell> fSpell = std::make_shared<FireProjectileSpell>(*bullet, bulletInitialPos);
+                    bullet->AddComponent(fSpell);
+                    // bullet->box.Move();
+        
+                    // bullet->box.Move(bulletInitialPos);
+                    // bullet->AddComponent(bulletComponent);
+                    bullet->angleDeg = angle + 90;
+                    if(auto s = Game::GetInstance().GetCurrentState())
+                        s->AddObject(bullet);
+                    angle+=angleStep;
+                }
+                associated.angleDeg = startingAngle;
+                shotSound.Play();
+                cdTimer.Restart();
             }
-            associated.angleDeg = startingAngle;
-            shotSound.Play();
-            cdTimer.Restart();
         }
     }
 }

@@ -74,7 +74,7 @@ Game::~Game()
 {
     if (storedState != nullptr)
     {
-        delete storedState;
+        storedState.reset();
     }
     stateStack = std::stack<std::unique_ptr<State>>();
     Resources::ClearImages();
@@ -89,18 +89,21 @@ Game::~Game()
     SDL_Quit();
 }
 
-void Game::Push(State *state)
+void Game::Push(std::unique_ptr<State> state)
 {
-    storedState = state;
+    storedState = std::move(state);
 }
 
 GPU_Target *Game::GetGPUTarget()
 {
     return this->m_gpuTarget;
 }
-State &Game::GetCurrentState()
+State* Game::GetCurrentState()
 {
-    return *stateStack.top();
+    if (stateStack.empty()) {
+        return nullptr;  // Ou lance uma exceção
+    }
+    return stateStack.top().get();
 }
 
 Vec2 Game::GetWindowSize()
@@ -136,36 +139,41 @@ void Game::Run()
     float t;
     if (storedState != nullptr)
     {
-        stateStack.emplace(storedState);
-        storedState = nullptr;
-        GetCurrentState().Start();
+        stateStack.emplace(std::move(storedState));
+        storedState.reset();
+        if(auto s = GetCurrentState())
+            s->Start();
     }
     GPU_ActivateShaderProgram(0, NULL);
-
-    while (!GetCurrentState().QuitRequested() && !stateStack.empty())
+    while (!GetCurrentState()->QuitRequested() && !stateStack.empty())
     {
-        if (GetCurrentState().PopRequested())
-        {
-            stateStack.pop();
-            if (!stateStack.empty())
+        if(auto s = GetCurrentState()){
+            if (s->PopRequested())
             {
-                GetCurrentState().Resume();
+                auto aux = std::move(stateStack.top());
+                stateStack.pop();
+                if (!stateStack.empty())
+                {
+                    s->Resume();
+                }
             }
+            if (storedState != nullptr)
+            {
+                stateStack.emplace(std::move(storedState));
+                s = GetCurrentState();
+                s->Start();
+                storedState.reset();
+            }
+            CalculateDeltaTime();
+            inputManager.Update();
+            t = SDL_GetTicks() / 1000.0f;
+            s->Update(dt);
+            s->Render();
+            GPU_FlushBlitBuffer();
+            GPU_Flip(this->m_gpuTarget);
+            SDL_Delay(16);
         }
-        if (storedState != nullptr)
-        {
-            stateStack.emplace(storedState);
-            GetCurrentState().Start();
-            storedState = nullptr;
-        }
-        CalculateDeltaTime();
-        inputManager.Update();
-        t = SDL_GetTicks() / 1000.0f;
-        GetCurrentState().Update(dt);
-        GetCurrentState().Render();
-        GPU_FlushBlitBuffer();
-        GPU_Flip(this->m_gpuTarget);
-        SDL_Delay(16);
+
     }
     Resources::ClearImages();
     Resources::ClearMusics();
