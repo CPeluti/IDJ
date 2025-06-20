@@ -23,12 +23,14 @@ public:
     void SetLifebar(bool enable)
     {
         m_enableLifebar = enable;
-        m_lifebar->SetEnableLifebar(enable);
+        if(auto lifebar = m_lifebar.lock()){
+            lifebar->SetEnableLifebar(enable);
+        }
     };
 
 private:
     float hp;
     float m_maxHp;
     bool m_enableLifebar = true;
-    Lifebar *m_lifebar;
+    std::weak_ptr <Lifebar> m_lifebar;
 };

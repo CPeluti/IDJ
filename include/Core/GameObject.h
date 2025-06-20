@@ -15,11 +15,11 @@ public:
     void Render();
     bool IsDead();
     void RequestDelete();
-    void AddComponent(Component *cpt);
-    void RemoveComponent(Component *cpt);
+    void AddComponent(std::shared_ptr<Component> cpt);
+    void RemoveComponent(std::weak_ptr<Component> cpt);
     inline void SetSpeed(Vec2 newSpeed){ m_speed = newSpeed; }
     inline Vec2 GetSpeed(){ return m_speed;}
-    Component *GetComponent(std::string type);
+    std::weak_ptr<Component> GetComponent(std::string type);
     void Start();
     Rect box;
     // void NotifyCollision(GameObject& other);
@@ -30,6 +30,6 @@ public:
 private:
     Vec2 m_speed;
     bool started;
-    std::vector<Component *> components;
+    std::vector<std::shared_ptr<Component>> components;
     bool isDead;
 };
