@@ -20,7 +20,7 @@ Collider::Collider(GameObject &associated, std::vector<std::string> collisionLay
 {
 	this->box.SetSize(size);
 	if(auto s = std::move(Game::GetInstance().GetCurrentState())){
-		if(tag=="phys" || tag=="phys1"){
+		if(tag=="phys" || tag=="entity" || tag == "phys12"){
 			for(auto &layer : m_collisionLayers)
 			{
 				s->registerPhysicsCollider(layer, this);
