@@ -65,7 +65,7 @@ void Sprite::SetFrameCount(int frameCountW, int frameCountH)
 }
 void Sprite::Render(Vec2 pos, Vec2 size, float angle)
 {
-    GPU_Rect dstRect = {pos.x,pos.y, (clipRect.w * scale.x), (clipRect.h * scale.y)};
+    GPU_Rect dstRect = {(float)pos.x,(float)pos.y, (float)(clipRect.w * scale.x), (float)(clipRect.h * scale.y)};
     if(!cameraFollower){
         dstRect.y -= Camera::pos.y;
         dstRect.x -= Camera::pos.x;   
