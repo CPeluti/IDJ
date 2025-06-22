@@ -52,10 +52,10 @@ void Text::Render()
 {
     if (appear)
     {
-        GPU_Rect clipRect = {0, 0, associated.box.GetSize().x, associated.box.GetSize().y};
+        GPU_Rect clipRect = {0, 0, (float)associated.box.GetSize().x, (float)associated.box.GetSize().y};
         Vec2 pos = associated.box.GetPos();
         std::cout << "Text pos: " << pos.x << ", " << pos.y << std::endl;
-        GPU_Rect dstRect = {pos.x, pos.y, associated.box.GetSize().x, associated.box.GetSize().y};
+        GPU_Rect dstRect = {(float)pos.x, (float)pos.y, (float)associated.box.GetSize().x, (float)associated.box.GetSize().y};
         if (!cameraFollower)
         {
             dstRect.y -= Camera::pos.y;

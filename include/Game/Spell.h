@@ -86,7 +86,7 @@ protected:
     inline void SpellTypeStrategy(GameObject &associated, float dt)
     {
 
-        Vec2 rotatedSpeed = Vec2::Rotate({.0, -m_speed}, associated.angleDeg);
+        Vec2 rotatedSpeed = Vec2::Rotate({.0f, -m_speed}, associated.angleDeg);
 
         Vec2 oldPos = associated.box.GetPos();
         Vec2 newPos = {

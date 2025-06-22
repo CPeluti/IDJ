@@ -97,7 +97,6 @@ void TileMap::Start(){
                 bool checkIntersectionY = cantoInfEsquerdoCollider.y <= cantoSupEsquerdoCollider2.y && cantoSupDireitoCollider.y <= cantoSupDireitoCollider2.y;
                 bool checkSameX = cantoSupEsquerdoCollider.x == cantoInfEsquerdoCollider2.x && cantoSupDireitoCollider.x == cantoInfDireitoCollider2.x;
 
-                LOG_INFO("checkIntersectionY: {},checkSameX: {}",checkIntersectionY,checkSameX);
                 if((checkIntersectionX && checkSameY)||(checkIntersectionY && checkSameX)){
                     Vec2 newSize;
                     if(checkIntersectionX && checkSameY){
