@@ -128,6 +128,9 @@ void TileMap::Start(){
         m_colliders.emplace_back(collider);
         this->associated.AddComponent(collider);
     }
+    std::shared_ptr<Collider> collider1 = std::make_shared<Collider>(this->associated, std::vector<std::string>{"phys0"}, new OnCollisionEvent(associated), Vec2{100,100}, Vec2{1,1}, Vec2{1480,1480}, "phys12");
+    m_colliders.emplace_back(collider1);
+    this->associated.AddComponent(collider1);
 }
 
 int &TileMap::At(int x, int y, int z)
