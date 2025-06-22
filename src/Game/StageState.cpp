@@ -58,11 +58,10 @@ StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
     character->box.RawMove({1280, 1280});
     Character::player = characterComponent;
     Camera::Follow(character);
-
-    std::shared_ptr<GameObject> waveSpawner = std::make_shared<GameObject>();
-    std::shared_ptr<WaveSpawner>ws = std::make_shared<WaveSpawner>(*waveSpawner);
-    waveSpawner->AddComponent(ws);
-    spawner = this->AddObject(waveSpawner);
+    // std::shared_ptr<GameObject> waveSpawner = std::make_shared<GameObject>();
+    // std::shared_ptr<WaveSpawner>ws = std::make_shared<WaveSpawner>(*waveSpawner);
+    // waveSpawner->AddComponent(ws);
+    // spawner = this->AddObject(waveSpawner);
 }
 StageState::~StageState()
 {

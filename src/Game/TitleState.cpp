@@ -19,7 +19,6 @@ TitleState::TitleState()
     sr->SetCameraFollower(true);
     start->AddComponent(sr);
     this->AddObject(start);
-
     std::shared_ptr<GameObject> text =  std::make_shared<GameObject>();
     std::shared_ptr<Text> textComponent =  std::make_shared<Text>(*text, "resources/font/neodgm.ttf", 20, Text::SOLID, "Press SPACEBAR to play again or ESC to leave",SDL_Color{255,255,255}, 1);
     

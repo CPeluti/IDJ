@@ -5,6 +5,7 @@
 #include "Collision.h"
 #include "Log.h"
 #include <vector>
+#include <set>
 #include <memory>
 // class GameObject;
 #include "GameObject.h"
@@ -83,7 +84,9 @@ public:
         time = 0;
         for(auto &el : m_physicsLayers){
             //iter on tags
+            std::set<std::string> checked;
             for(auto tag : el.second){
+                checked.insert(tag.first);
                 //iter on the elements with the same tag
                 for (int i = 0; i < (int)(tag.second.size()); i++)
                 {
@@ -94,7 +97,7 @@ public:
                         //iter on the tags to check collision between different tags
                         for(auto tag2 : el.second)
                         {
-                            if(tag == tag2){
+                            if(tag == tag2 || checked.find(tag2.first) != checked.end()){
                                 continue;
                             }
                             //secondary collider (the one that is on a different tag vector)
@@ -105,11 +108,11 @@ public:
                                     if(colliderA->GetTag() != colliderB->GetTag()){
                                         GameObject* goA = colliderA->getAssociated();
                                         GameObject* goB = colliderB->getAssociated();
-                                        if (Collision::IsColliding(colliderA->box, colliderB->box, colliderA->getAngleDeg(), colliderB->getAngleDeg(), goA->GetSpeed(), goB->GetSpeed())){
+                                        if (Collision::IsColliding(*colliderA, *colliderB)){
                                             // colliderA->getAssociated()->subject.notify(*colliderB->GetEvent());
                                             // colliderB->getAssociated()->subject.notify(*colliderA->GetEvent());
-                                            goA->SetSpeed(goA->GetSpeed()*-1);
-                                            goB->SetSpeed(goB->GetSpeed()*-1);
+                                            // goA->SetSpeed(goA->GetSpeed()*-1);
+                                            // goB->SetSpeed(goB->GetSpeed()*-1);
                                         }
                                     }
                                 }
@@ -131,7 +134,7 @@ public:
                         Collider *colliderB = el.second[j];
                         if (colliderB != nullptr)
                         {
-                            if (Collision::IsColliding(colliderA->box, colliderB->box, colliderA->getAngleDeg(), colliderB->getAngleDeg()))
+                            if (Collision::IsColliding(*colliderA, *colliderB))
                             {
                                 colliderA->getAssociated()->subject.notify(*colliderB->GetEvent());
                                 colliderB->getAssociated()->subject.notify(*colliderA->GetEvent());
