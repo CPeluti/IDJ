@@ -1,12 +1,14 @@
 #include "Core/TileMap.h"
 #include "Core/GameObject.h"
 #include "Core/Camera.h"
+#include "Core/Log.h"
 #include <fstream>
 #include <memory>
 #include <string>
 #include <iostream>
 
-TileMap::TileMap(GameObject& associated, std::string file, TileSet* tileSet): Component(associated), tileSet(tileSet){
+TileMap::TileMap(GameObject &associated, std::string file, TileSet *tileSet) : Component(associated), tileSet(tileSet)
+{
     Load(file);
 }
 
@@ -15,8 +17,10 @@ void TileMap::Load(std::string file)
     std::string line;
     std::ifstream map(file);
     int counter = 0;
-    if(map.is_open()){
-        while(std::getline(map, line,',')){
+    if (map.is_open())
+    {
+        while (std::getline(map, line, ','))
+        {
             // cout << "item" << counter
             int number = std::stoi(line);
             switch (counter)
@@ -61,34 +65,40 @@ void TileMap::SetTileSet(TileSet *ts)
 int &TileMap::At(int x, int y, int z)
 {
     // if (x < mapWidth && y < mapHeight && z < mapDepth){
-        int pos = x+(y*GetWidth()) + z * GetHeight()* GetWidth();
-    
-        return this->tileMatrix[pos];
+    int pos = x + (y * GetWidth()) + z * GetHeight() * GetWidth();
+
+    return this->tileMatrix[pos];
     // } else {
     // std::cout << "Coordinates exceed tilemap boundary" << std::endl;
     // }
 }
 
-void TileMap::RenderLayer(int layer){
-    int spaceX = tileSet->GetTileWidth();
-    int spaceY = tileSet->GetTileHeight();
+void TileMap::RenderLayer(int layer)
+{
+    int spaceX = tileSet->GetTileWidth() * Camera::zoom;
+    int spaceY = tileSet->GetTileHeight() * Camera::zoom;
     Vec2 offset = associated.box.GetPos();
-    Vec2 factor = layer? Vec2::Zero : Camera::pos*0.5;
-    for(int y = 0; y<GetWidth(); y++){
-        for(int x=0; x<GetHeight(); x++){
-            tileSet->RenderTile(At(x,y,layer),(spaceX*x+offset.x+factor.x), spaceY*y+offset.y+factor.y);
+    Vec2 factor = layer ? Vec2::Zero : Camera::pos * 0.5;
+    for (int x = 0; x < GetWidth(); x++)
+    {
+        for (int y = 0; y < GetHeight(); y++)
+        {
+            tileSet->RenderTile(At(x, y, layer), (spaceX * x + offset.x + factor.x), spaceY * y + offset.y + factor.y);
         }
     }
 }
 
-void TileMap::Render(){
+void TileMap::Render()
+{
     // return;
-    for(int z = 0; z<GetDepth(); z++){
+    for (int z = 0; z < GetDepth(); z++)
+    {
         RenderLayer(z);
     }
 }
-void TileMap::Update(float dt){}
+void TileMap::Update(float dt) {}
 
-bool TileMap::Is(std::string type){
+bool TileMap::Is(std::string type)
+{
     return type == "TileMap";
 }

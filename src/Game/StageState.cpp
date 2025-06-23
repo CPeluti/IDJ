@@ -43,10 +43,12 @@ void createZombie(Vec2 pos, State *state)
 
 StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
 {
+    Camera::zoom = 3.0f;
+
     GameObject *bg = new GameObject();
     bg->z = 0;
-    TileSet *tileset = new TileSet(64, 64, "resources/img/Tileset.png");
-    TileMap *tilemap = new TileMap(*bg, "resources/map/map.txt", tileset);
+    TileSet *tileset = new TileSet(16, 16, "resources/img/TilesetCastle.png");
+    TileMap *tilemap = new TileMap(*bg, "resources/map/mapCastle.txt", tileset);
     bg->box.RawMove({0, 0});
     bg->AddComponent(tilemap);
     this->AddObject(bg);
@@ -55,14 +57,14 @@ StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
     Character *characterComponent = new Character(*character, "resources/img/Player.png", true);
     character->AddComponent(characterComponent);
     player = this->AddObject(character);
-    character->box.RawMove({1280, 1280});
+    character->box.RawMove({240, 160});
     Character::player = characterComponent;
     Camera::Follow(character);
 
-    GameObject *waveSpawner = new GameObject();
-    WaveSpawner *ws = new WaveSpawner(*waveSpawner);
-    waveSpawner->AddComponent(ws);
-    spawner = this->AddObject(waveSpawner);
+    // GameObject *waveSpawner = new GameObject();
+    // WaveSpawner *ws = new WaveSpawner(*waveSpawner);
+    // waveSpawner->AddComponent(ws);
+    // spawner = this->AddObject(waveSpawner);
 }
 StageState::~StageState()
 {
