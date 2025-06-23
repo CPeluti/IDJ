@@ -10,26 +10,20 @@
 #include <SDL2/SDL.h>
 #endif // DEBUG
 
-Collider::Collider(GameObject &associated, std::vector<std::string> collisionLayers, Event *event, Vec2 size, Vec2 scale, Vec2 offset, std::string tag) :   Component(associated),
+Collider::Collider(GameObject &associated, std::vector<std::string> collisionLayers, Event *event, Vec2 size, Vec2 scale, Vec2 offset, std::string tag, float weight) :   Component(associated),
 																																							size(size),
 																																							scale(scale),
 																																							offset(offset),
 																																							m_collisionLayers(collisionLayers),
 																																							m_event(event),
-																																							m_tag(tag)
+																																							m_tag(tag),
+																																							weight(weight)
 {
 	this->box.SetSize(size);
 	if(auto s = std::move(Game::GetInstance().GetCurrentState())){
-		if(tag=="phys" || tag=="entity" || tag == "phys12"){
-			for(auto &layer : m_collisionLayers)
-			{
-				s->registerPhysicsCollider(layer, this);
-			}
-		}else {
-			for (auto &layer : m_collisionLayers)
-			{
-				s->registerCollider(layer, this);
-			}
+		for (auto &layer : m_collisionLayers)
+		{
+			s->registerCollider(layer, this);
 		}
 	}
 }
@@ -40,7 +34,6 @@ Collider::~Collider()
 		for (auto &layer : m_collisionLayers)
 		{
 			s->removeCollider(layer, this);
-			s->removePhysicsCollider(layer, this);
 		}
 		this->associated.RemoveComponent(weak_from_this());
 	}

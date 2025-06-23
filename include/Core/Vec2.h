@@ -48,3 +48,4 @@ Vec2 operator/(const Vec2& a, int b);
 Vec2 operator/(const Vec2& a, float b);
 bool operator==(const Vec2 a, const Vec2 b);
 bool operator!=(const Vec2 a, const Vec2 b);
+Vec2 operator-(const Vec2& a);
