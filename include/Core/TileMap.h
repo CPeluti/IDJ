@@ -4,6 +4,7 @@
 #include <memory>
 #include "TileSet.h"
 #include "Component.h"
+#include "Collider.h"
 class GameObject;
 class TileMap : public Component {
     public:
@@ -18,7 +19,9 @@ class TileMap : public Component {
         int GetDepth();
         bool Is(std::string type);
         void Update(float dt);
+        void Start();
     private:
+        std::vector<std::shared_ptr<Collider>> m_colliders;
         std::vector<int> tileMatrix;
         std::unique_ptr<TileSet> tileSet;
         int mapWidth;

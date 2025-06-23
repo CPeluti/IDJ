@@ -7,7 +7,7 @@
 int main(int argc, char* argv[]){
     SDL_Log("Starting game"); 
     Game& game = Game::GetInstance();
-    game.Push(new TitleState());
+    game.Push(std::make_unique<TitleState>());
     game.Run();
     return 0;
 }

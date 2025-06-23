@@ -11,11 +11,10 @@ GameObject::GameObject()
 
 GameObject::~GameObject()
 {
-    for (int i = (int)this->components.size()-1; i >= 0; i--)
+    for(auto component = components.begin(); component != components.end();)
     {
-        delete this->components[i];
+        components.erase(component);
     }
-    this->components.clear();
 }
 
 void GameObject::Start(){
@@ -27,6 +26,7 @@ void GameObject::Start(){
 
 void GameObject::Update(float dt)
 {
+    this->box.MoveToPos(m_speed);
     for (int i = 0; i < (int)this->components.size(); i++)
     {
         this->components[i]->Update(dt);
@@ -52,7 +52,7 @@ void GameObject::RequestDelete()
     this->isDead = true;
 }
 
-void GameObject::AddComponent(Component *cpt)
+void GameObject::AddComponent(std::shared_ptr<Component> cpt)
 {
     this->components.emplace_back(cpt);
     if(started){
@@ -60,11 +60,11 @@ void GameObject::AddComponent(Component *cpt)
     }
 }
 
-void GameObject::RemoveComponent(Component *cpt)
+void GameObject::RemoveComponent(std::weak_ptr<Component> cpt)
 {
     for (int i = 0; i < (int)this->components.size();)
     {
-        if (this->components[i] == cpt)
+        if (this->components[i] == cpt.lock())
         {
             this->components.erase(this->components.begin() + i);
         } else {
@@ -73,7 +73,7 @@ void GameObject::RemoveComponent(Component *cpt)
     }
 }
 
-Component *GameObject::GetComponent(std::string type)
+std::weak_ptr<Component> GameObject::GetComponent(std::string type)
 {
     if(type == "Animator"){
         std::cout << "teste";
@@ -85,7 +85,7 @@ Component *GameObject::GetComponent(std::string type)
             return this->components[i];
         }
     }
-    return nullptr;
+    return std::weak_ptr<Component>();
 }
 
 // void GameObject::NotifyCollision(GameObject& other)

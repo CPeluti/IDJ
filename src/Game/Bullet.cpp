@@ -2,6 +2,7 @@
 #include "Core/Vec2.h"
 #include "Core/Collider.h"
 #include "Game/Bullet.h"
+#include "Game/HealthSystem.h"
 
 #include <iostream>
 #include <vector>
@@ -11,15 +12,13 @@ Bullet::Bullet(GameObject &associated, float angle, float speed, int damage, flo
     this->associated.subject.addObserver(this);
     // ParticleSystem* ps = new ParticleSystem(associated);
     // associated.AddComponent(ps);
-    SpriteRenderer *sr = new SpriteRenderer(associated, "resources/img/Bullet.png", 1, 1);
-    associated.AddComponent(sr);
+    associated.AddComponent(std::make_shared<SpriteRenderer>(associated, "resources/img/Bullet.png", 1, 1));
     std::vector<std::string> layers;
     layers.push_back("layer0");
-    Collider *collider = new Collider(associated, layers, new OnCollisionEvent(associated));
-    associated.AddComponent(collider);
+    associated.AddComponent(std::make_shared<Collider>(associated, layers, new OnCollisionEvent(associated)));
 
     this->targetsPlayer = targetsPlayer;
-    this->speed = {speed, .0};
+    this->speed = {(double)speed, .0};
     this->speed = Vec2::Rotate(this->speed, angle);
     this->distanceLeft = maxDistance;
     associated.angleDeg = angle;
@@ -47,19 +46,20 @@ void Bullet::Update(float dt)
     associated.box.RawMove(newPos);
 
     distanceLeft -= Vec2::Distance(newPos, oldPos);
-    ParticleSystem *particles = (ParticleSystem *)associated.GetComponent("ParticleSystem");
-    if (particles)
-    {
-        m_Particle.Position = associated.box.center();
-        for (int i = 0; i < 1; i++)
+    if(auto particles = std::dynamic_pointer_cast<ParticleSystem>(this->associated.GetComponent("ParticleSystem").lock())){
+        if (particles)
         {
-            particles->Emit(m_Particle);
+            m_Particle.Position = associated.box.center();
+            for (int i = 0; i < 1; i++)
+            {
+                particles->Emit(m_Particle);
+            }
         }
-    }
 
-    if (distanceLeft <= 0)
-    {
-        associated.RequestDelete();
+        if (distanceLeft <= 0)
+        {
+            associated.RequestDelete();
+        }
     }
 }
 
@@ -86,9 +86,9 @@ bool Bullet::OnCollision(OnCollisionEvent &evt)
 {
     GameObject &go = evt.GetGameObject();
     OnDamageTakenEvent e = OnDamageTakenEvent(this->associated, this->damage);
-    if (go.GetComponent("HealthSystem"))
+    if(go.GetComponent("HealthSystem").lock())
         go.subject.notify(e);
-    if (!go.GetComponent("Bullet"))
+    if (!go.GetComponent("Bullet").lock())
         this->associated.RequestDelete();
 
     return true;
