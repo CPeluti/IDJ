@@ -7,31 +7,17 @@
 #include <algorithm>
 #include <cmath>
 
-struct vec2d
-{
-	float x;
-	float y;
+struct CollisionManifold {
+    bool  hit{};
+    Vec2  normal;      
+    float penetration; 
 };
 
-
-class polygon
-{
-	public:
-		std::string tag;
-		std::vector<vec2d> p;	// Transformed Points
-		vec2d pos;				// Position of shape
-		float angle;			// Direction of shape
-		std::vector<vec2d> o;	// "Model" of shape							
-		bool overlap = false;	// Flag to indicate if overlap has occurred
-};
 
 class Collision {
 
 	public:
-		// Observação: IsColliding espera ângulos em radianos!
-		// Para usar graus, forneça a sua própria implementação de Rotate,
-		// ou transforme os ângulos no corpo de IsColliding.
-		static inline bool IsColliding(Collider& rA, Collider& rB, Vec2 offsetA={0,0}, Vec2 offsetB={0,0}) {
+		static inline CollisionManifold IsColliding(Collider& rA, Collider& rB, Vec2 offsetA={0,0}, Vec2 offsetB={0,0}) {
 			double angleOfA = rA.getAngleDeg();
 			double angleOfB = rB.getAngleDeg();
 			float overlap = INFINITY;
@@ -77,7 +63,7 @@ class Collision {
 				float maxB = *std::max_element(PB, PB + 4);
 
 				if (maxA < minB || minA > maxB)
-					return false;
+					return {false};
 
 				float o = std::min(maxA, maxB) - std::max(minA, minB);
 				if (o < overlap) {
@@ -89,14 +75,37 @@ class Collision {
 			if (Dot((b.center() - a.center()), mtvAxis) < 0)
 				mtvAxis = {-mtvAxis.x, -mtvAxis.y};
 
+			return {true, mtvAxis,overlap};
+		}
+
+		static inline void ResolveCollision(Collider& A, Collider& B, const CollisionManifold& m){
+			if(!m.hit){
+				return;
+			}
+
 			float slop = 0.01f;
 			float percent = 0.8f;
-			float correctedOverlap = std::max(overlap - slop, 0.0f) * percent;
-			Vec2 d = (mtvAxis * correctedOverlap);
-			rA.box.Move(rA.box.center()-d);
-			rA.getAssociated()->box.Move(rA.box.center());
-			
-			return true;
+			float correctedOverlap = std::max(m.penetration - slop, 0.0f) * percent;
+
+			float invweightA = (A.weight > 0.f) ? 1.f / A.weight : 0.f;
+			float invweightB = (B.weight > 0.f) ? 1.f / B.weight : 0.f;
+			float invTotal = invweightA + invweightB;
+			if (invTotal == 0.f) return;
+
+			Vec2 correction = m.normal * (correctedOverlap / invTotal) * percent;
+
+			Vec2 rv = B.getAssociated()->GetSpeed() - A.getAssociated()->GetSpeed();
+			float velAlongNormal = Dot(rv, m.normal);
+			if (velAlongNormal > 0) return;
+
+			float e = 0;
+
+			float j = -(1.f + e) * velAlongNormal;
+			j /= invTotal;
+
+			Vec2 impulse = m.normal * j;
+			A.getAssociated()->SetSpeed(A.getAssociated()->GetSpeed() - impulse * invweightA);
+			B.getAssociated()->SetSpeed(B.getAssociated()->GetSpeed() + impulse * invweightB);
 		}
 
 	private:
@@ -129,8 +138,3 @@ class Collision {
 // Vec2 operator*(const float rhs) const {
 //    return Vec2(x * rhs, y * rhs);
 // }
-
-inline std::string format_as(const polygon &c)
-{
-    return fmt::format("{}: x:{} y:{}", c.tag, c.pos.x, c.pos.y);
-}
