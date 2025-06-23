@@ -106,6 +106,9 @@ class Collision {
 			Vec2 impulse = m.normal * j;
 			A.getAssociated()->SetSpeed(A.getAssociated()->GetSpeed() - impulse * invweightA);
 			B.getAssociated()->SetSpeed(B.getAssociated()->GetSpeed() + impulse * invweightB);
+			A.getAssociated()->subject.notify(*B.GetEvent());
+			B.getAssociated()->subject.notify(*A.GetEvent());
+                                          
 		}
 
 	private:
