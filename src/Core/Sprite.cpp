@@ -16,7 +16,7 @@ Sprite::Sprite()
     frameCountW = 1;
     cameraFollower = false;
     texture = nullptr;
-    scale = {1,1};
+    scale = {1, 1};
     flip = SDL_FLIP_NONE;
 }
 Sprite::Sprite(std::string file, int frameCountW, int frameCountH)
@@ -25,7 +25,7 @@ Sprite::Sprite(std::string file, int frameCountW, int frameCountH)
     texture = nullptr;
     cameraFollower = false;
     Open(file);
-    scale = {1,1};
+    scale = {1, 1};
     flip = SDL_FLIP_NONE;
 }
 Sprite::~Sprite()
@@ -66,31 +66,35 @@ void Sprite::SetFrameCount(int frameCountW, int frameCountH)
 }
 void Sprite::Render(Vec2 pos, Vec2 size, float angle)
 {
-    GPU_Rect dstRect = {pos.x,pos.y, (clipRect.w * scale.x), (clipRect.h * scale.y)};
-    if(!cameraFollower){
+    GPU_Rect dstRect = {pos.x, pos.y, (clipRect.w * scale.x * Camera::zoom), (clipRect.h * scale.y * Camera::zoom)};
+    if (!cameraFollower)
+    {
         dstRect.y -= Camera::pos.y;
-        dstRect.x -= Camera::pos.x;   
+        dstRect.x -= Camera::pos.x;
     }
     // std::cout << "x: " << x << std::endl << " y: " << y << std::endl << " w: " << w << std::endl << " h: " << h << std::endl;
-    GPU_BlitRectX(texture, &clipRect, Game::GetInstance().GetGPUTarget(), &dstRect, angle, clipRect.x+(clipRect.w/2), clipRect.y+(clipRect.h/2), flip);
+    GPU_SetImageFilter(texture, GPU_FILTER_NEAREST);
+    GPU_BlitRectX(texture, &clipRect, Game::GetInstance().GetGPUTarget(), &dstRect, angle, clipRect.x + (clipRect.w / 2), clipRect.y + (clipRect.h / 2), flip);
 }
 int Sprite::GetWidth()
 {
-    return (width*scale.x / frameCountW);
+    return (width * scale.x / frameCountW);
 }
 int Sprite::GetHeight()
 {
-    return (height*scale.y / frameCountH);
+    return (height * scale.y / frameCountH);
 }
 bool Sprite::IsOpen()
 {
     return texture != nullptr;
 }
 
-void Sprite::SetScale(float scaleX, float scaleY){
-    scale = {scaleX?scaleX:scale.x,scaleY?scaleY:scale.y};
+void Sprite::SetScale(float scaleX, float scaleY)
+{
+    scale = {scaleX ? scaleX : scale.x, scaleY ? scaleY : scale.y};
 }
 
-void Sprite::SetFlip(SDL_RendererFlip flip){
+void Sprite::SetFlip(SDL_RendererFlip flip)
+{
     this->flip = flip;
 }
