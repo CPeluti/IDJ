@@ -30,25 +30,28 @@ void WaveSpawner::Update(float dt)
         float randomAngle = rand() % 36000 / 100.0;
         Vec2 windowSize = Game::GetInstance().GetWindowSize();
         Vec2 distance = {windowSize.x / 2, .0};
-        if (zombieCounter < waves[currentWave]->zombies)
-        {
-            GameObject *go = new GameObject();
-            Zombie *z = new Zombie(*go);
-            go->AddComponent(z);
-            Game::GetInstance().GetCurrentState().AddObject(go);
-            go->box.Move(Camera::pos + windowSize / 2 + Vec2::Rotate({distance}, randomAngle));
-            zombieCounter++;
-        }
-        if(npcCounter < waves[currentWave]->npcs){
-            randomAngle = rand() % 36000 / 100.0;
-            GameObject* cgo = new GameObject();
-            Character* c = new Character(*cgo, "resources/img/NPC.png");
-            AIController* a = new AIController(*cgo);
-            cgo->AddComponent(c);
-            cgo->AddComponent(a);
-            Game::GetInstance().GetCurrentState().AddObject(cgo);
-            cgo->box.Move(Camera::pos + windowSize / 2 + Vec2::Rotate({distance}, randomAngle));
-            npcCounter++;
+
+        if(auto s = std::move(Game::GetInstance().GetCurrentState())){
+            if (zombieCounter < waves[currentWave]->zombies)
+            {
+                std::shared_ptr<GameObject> go = std::make_shared<GameObject>();
+                std::shared_ptr<Zombie> z = std::make_shared<Zombie>(*go);
+                go->AddComponent(z);
+                s->AddObject(go);
+                go->box.Move(Camera::pos + windowSize / 2 + Vec2::Rotate({distance}, randomAngle));
+                zombieCounter++;
+            }
+            if(npcCounter < waves[currentWave]->npcs){
+                randomAngle = rand() % 36000 / 100.0;
+                std::shared_ptr<GameObject> cgo = std::make_shared<GameObject>();
+                std::shared_ptr<Character> c = std::make_shared<Character>(*cgo, "resources/img/NPC.png");
+                std::shared_ptr<AIController> a = std::make_shared<AIController>(*cgo);
+                cgo->AddComponent(c);
+                cgo->AddComponent(a);
+                s->AddObject(cgo);
+                cgo->box.Move(Camera::pos + windowSize / 2 + Vec2::Rotate({distance}, randomAngle));
+                npcCounter++;
+            }
         }
 
 

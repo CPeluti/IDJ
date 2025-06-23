@@ -33,8 +33,8 @@ bool z_sort(std::shared_ptr<GameObject> i, std::shared_ptr<GameObject> j)
 
 void createZombie(Vec2 pos, State *state)
 {
-    GameObject *enemy = new GameObject();
-    Component *zombie = new Zombie(*enemy);
+    std::shared_ptr<GameObject> enemy = std::make_shared<GameObject>();
+    std::shared_ptr<Zombie> zombie = std::make_shared<Zombie>(*enemy);
     enemy->AddComponent(zombie);
     state->AddObject(enemy);
 
@@ -43,26 +43,25 @@ void createZombie(Vec2 pos, State *state)
 
 StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
 {
-    GameObject *bg = new GameObject();
+    std::shared_ptr<GameObject> bg = std::make_shared<GameObject>();
     bg->z = 0;
-    TileSet *tileset = new TileSet(64, 64, "resources/img/Tileset.png");
-    TileMap *tilemap = new TileMap(*bg, "resources/map/map.txt", tileset);
     bg->box.RawMove({0, 0});
+    TileSet* tileset = new TileSet(64, 64, "resources/img/Tileset.png" , std::map<int,Rect>{{17,{0,0,64,64}},{18,{0,0,64,64}},{3,{0,0,64,64}},{4,{0,0,64,64}},{10,{0,0,64,64}},{11,{0,0,64,64}}});
+    std::shared_ptr<TileMap> tilemap = std::make_shared<TileMap>(*bg, "resources/map/map.txt", tileset);
     bg->AddComponent(tilemap);
     this->AddObject(bg);
 
-    GameObject *character = new GameObject();
-    Character *characterComponent = new Character(*character, "resources/img/Player.png", true);
+    std::shared_ptr<GameObject> character = std::make_shared<GameObject>();
+    std::shared_ptr<Character> characterComponent = std::make_shared<Character>(*character, "resources/img/Player.png", true);
     character->AddComponent(characterComponent);
-    player = this->AddObject(character);
+    this->AddObject(character);
     character->box.RawMove({1280, 1280});
     Character::player = characterComponent;
     Camera::Follow(character);
-
-    GameObject *waveSpawner = new GameObject();
-    WaveSpawner *ws = new WaveSpawner(*waveSpawner);
-    waveSpawner->AddComponent(ws);
-    spawner = this->AddObject(waveSpawner);
+    // std::shared_ptr<GameObject> waveSpawner = std::make_shared<GameObject>();
+    // std::shared_ptr<WaveSpawner>ws = std::make_shared<WaveSpawner>(*waveSpawner);
+    // waveSpawner->AddComponent(ws);
+    // spawner = this->AddObject(waveSpawner);
 }
 StageState::~StageState()
 {
@@ -93,8 +92,7 @@ void StageState::Update(float dt)
         {
             popRequested = true;
             GameData::playerWon = false;
-            EndState *stage = new EndState();
-            Game::GetInstance().Push(stage);
+            Game::GetInstance().Push(std::make_unique<EndState>());
             backgroundMusic.Stop();
             return;
         }
@@ -104,9 +102,8 @@ void StageState::Update(float dt)
             {
                 popRequested = true;
                 GameData::playerWon = true;
-                EndState *stage = new EndState();
                 backgroundMusic.Stop();
-                Game::GetInstance().Push(stage);
+                Game::GetInstance().Push(std::make_unique<EndState>());
                 return;
             }
         }
@@ -134,7 +131,7 @@ void StageState::Update(float dt)
     //     }
     // }
 
-    this->checkCollisions();
+    this->checkCollisions(dt);
 
     if (ts.IsTypingMode() && ts.HasSubmitted())
     {
