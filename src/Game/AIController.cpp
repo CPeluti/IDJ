@@ -1,5 +1,6 @@
 #include "Game/AIController.h"
 #include "Game/Character.h"
+#include "Core/Component.h"
 #include <iostream>
 
 AIController::AIController(GameObject& associated) : Component(associated), restTimer(3){
@@ -20,14 +21,16 @@ void AIController::Update(float dt){
         break;
     
     case MOVING:
-            if(Character::player != nullptr){
-                Vec2 playerPos = Character::player->GetPos();
+            if(auto character = Character::player.lock()){
+                Vec2 playerPos = character->GetPos();
                 Vec2 distance = (playerPos - associated.box.center()).normalized();
-                ((Character*)this->associated.GetComponent("Character"))->Issue(Character::Command(Character::Command::MOVE,distance));
-                if(Vec2::Distance(playerPos,this->associated.box.GetPos()) < 400){
-                    ((Character*)this->associated.GetComponent("Character"))->Issue(Character::Command(Character::Command::SHOOT,playerPos));
-                    restTimer.Restart();
-                    state=RESTING;
+                if(auto character = std::dynamic_pointer_cast<Character>(this->associated.GetComponent("Character").lock())){
+                    character->Issue(Character::Command(Character::Command::MOVE,distance));
+                    if(Vec2::Distance(playerPos,this->associated.box.GetPos()) < 400){
+                        character->Issue(Character::Command(Character::Command::SHOOT,playerPos));
+                        restTimer.Restart();
+                        state=RESTING;
+                    }
                 }
             }
         break;

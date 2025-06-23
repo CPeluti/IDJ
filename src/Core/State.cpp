@@ -6,14 +6,14 @@ State::~State()
     this->objectArray.clear();
 }
 
-std::weak_ptr<GameObject> State::AddObject(GameObject *object)
+std::weak_ptr<GameObject> State::AddObject(std::shared_ptr<GameObject> object)
 {
     objectArray.emplace_back(object);
     if (started)
     {
         object->Start();
     }
-    return GetObjectPtr(object);
+    return GetObjectPtr(object.get());
 }
 
 std::weak_ptr<GameObject> State::GetObjectPtr(GameObject *object)
