@@ -19,7 +19,6 @@ Collider::Collider(GameObject &associated, std::vector<std::string> collisionLay
 																																																																																				m_tag(tag),
 																																																																																				weight(weight)
 {
-	this->box.SetSize(size);
 	if (auto s = std::move(Game::GetInstance().GetCurrentState()))
 	{
 		for (auto &layer : m_collisionLayers)
@@ -44,6 +43,7 @@ Collider::~Collider()
 void Collider::Update(float dt)
 {
 	Vec2 center = this->associated.box.GetPos();
+	this->box.SetSize(size);
 	Vec2 offsetWithRotation = Vec2::Rotate(offset, associated.angleDeg);
 	center = center + offsetWithRotation;
 	this->box.RawMove(center);
@@ -55,17 +55,17 @@ void Collider::Render()
 	Vec2 center(box.center());
 	SDL_Point points[5];
 
-	Vec2 point = Vec2::Rotate((Vec2(box.GetPos().x, box.GetPos().y) - center), (associated.angleDeg)) + center - Camera::pos;
+	Vec2 point = (Vec2::Rotate((Vec2(box.GetPos().x, box.GetPos().y) - center), (associated.angleDeg)) + center)* Camera::zoom - Camera::pos ;
 	points[0] = {(int)point.x, (int)point.y};
 	points[4] = {(int)point.x, (int)point.y};
 
-	point = Vec2::Rotate((Vec2(box.GetPos().x + box.GetSize().x, box.GetPos().y) - center), (associated.angleDeg)) + center - Camera::pos;
+	point = (Vec2::Rotate((Vec2(box.GetPos().x + box.GetSize().x, box.GetPos().y) - center), (associated.angleDeg)) + center)* Camera::zoom - Camera::pos ;
 	points[1] = {(int)point.x, (int)point.y};
 
-	point = Vec2::Rotate((Vec2(box.GetPos().x + box.GetSize().x, box.GetPos().y + box.GetSize().y) - center), (associated.angleDeg)) + center - Camera::pos;
+	point = (Vec2::Rotate((Vec2(box.GetPos().x + box.GetSize().x, box.GetPos().y + box.GetSize().y) - center), (associated.angleDeg)) + center)* Camera::zoom - Camera::pos ;
 	points[2] = {(int)point.x, (int)point.y};
 
-	point = Vec2::Rotate((Vec2(box.GetPos().x, box.GetPos().y + box.GetSize().y) - center), (associated.angleDeg)) + center - Camera::pos;
+	point =(Vec2::Rotate((Vec2(box.GetPos().x, box.GetPos().y + box.GetSize().y) - center), (associated.angleDeg)) + center)* Camera::zoom - Camera::pos ;
 	points[3] = {(int)point.x, (int)point.y};
 
 	// SDL_SetRenderDrawColor(Game::GetInstance().GetRenderer(), 255, 0, 0, SDL_ALPHA_OPAQUE);
