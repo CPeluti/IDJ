@@ -1,45 +1,52 @@
 #include "Core/Collider.h"
 #include "Core/GameObject.h"
 #include "Core/Game.h"
+#include "Core/Camera.h"
 #include <math.h>
 
 #ifdef DEBUG
-#include "Core/Camera.h"
 #include "Core/Game.h"
 
 #include <SDL2/SDL.h>
 #endif // DEBUG
 
-Collider::Collider(GameObject &associated, std::vector<std::string> collisionLayers, Event *event, Vec2 size, Vec2 scale, Vec2 offset) : Component(associated),
-																																																																				 size(size),
-																																																																				 scale(scale),
-																																																																				 offset(offset),
-																																																																				 m_collisionLayers(collisionLayers),
-																																																																				 m_event(event)
+Collider::Collider(GameObject &associated, std::vector<std::string> collisionLayers, Event *event, Vec2 size, Vec2 scale, Vec2 offset, std::string tag, float weight) : Component(associated),
+																																																																																				size(size),
+																																																																																				scale(scale),
+																																																																																				offset(offset),
+																																																																																				m_collisionLayers(collisionLayers),
+																																																																																				m_event(event),
+																																																																																				m_tag(tag),
+																																																																																				weight(weight)
 {
-	for (auto &layer : m_collisionLayers)
+	this->box.SetSize(size);
+	if (auto s = std::move(Game::GetInstance().GetCurrentState()))
 	{
-		Game::GetInstance().GetCurrentState().registerCollider(layer, this);
+		for (auto &layer : m_collisionLayers)
+		{
+			s->registerCollider(layer, this);
+		}
 	}
 }
 
 Collider::~Collider()
 {
-	for (auto &layer : m_collisionLayers)
+	if (auto s = std::move(Game::GetInstance().GetCurrentState()))
 	{
-		Game::GetInstance().GetCurrentState().removeCollider(layer, this);
+		for (auto &layer : m_collisionLayers)
+		{
+			s->removeCollider(layer, this);
+		}
+		this->associated.RemoveComponent(weak_from_this());
 	}
 }
 
 void Collider::Update(float dt)
 {
-	this->box = this->associated.box;
-	Vec2 newScale = this->box.GetSize() + this->size;
-	this->box.SetSize({newScale.x * scale.x, newScale.y * scale.y});
-	Vec2 center = this->associated.box.center();
+	Vec2 center = this->associated.box.GetPos();
 	Vec2 offsetWithRotation = Vec2::Rotate(offset, associated.angleDeg);
 	center = center + offsetWithRotation;
-	this->box.Move(center);
+	this->box.RawMove(center);
 }
 
 void Collider::Render()
@@ -67,6 +74,11 @@ void Collider::Render()
 		GPU_Line(Game::GetInstance().GetGPUTarget(), points[i].x, points[i].y, points[(i + 1) % 5].x, points[(i + 1) % 5].y, {255, 0, 0, 255});
 	}
 #endif // DEBUG
+}
+
+std::string Collider::GetTag()
+{
+	return m_tag;
 }
 
 bool Collider::Is(std::string type)

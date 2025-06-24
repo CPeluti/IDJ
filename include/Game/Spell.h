@@ -86,7 +86,7 @@ protected:
     inline void SpellTypeStrategy(GameObject &associated, float dt)
     {
 
-        Vec2 rotatedSpeed = Vec2::Rotate({.0, -m_speed}, associated.angleDeg);
+        Vec2 rotatedSpeed = Vec2::Rotate({.0f, -m_speed}, associated.angleDeg);
 
         Vec2 oldPos = associated.box.GetPos();
         Vec2 newPos = {
@@ -111,13 +111,13 @@ class FireProjectileSpell : public Spell, public Projectile, public Component, p
 {
 public:
     FireProjectileSpell(GameObject &associated, Vec2 initialPos) : Spell(associated, {}, 10, "resources/img/Bullet.png"),
-                                                                   Projectile(350, 100),
+                                                                   Projectile(350, 300),
                                                                    Component(associated)
     {
 
         this->associated.subject.addObserver(this);
 
-        SpriteRenderer *sr = new SpriteRenderer(associated, baseSprite, 1, 1);
+        std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(associated, baseSprite, 1, 1);
         this->associated.box.Move(initialPos);
         this->associated.angleDeg = angle + 90;
 
@@ -125,7 +125,7 @@ public:
 
         std::vector<std::string> layers;
         layers.push_back("layer0");
-        Collider *collider = new Collider(associated, layers, new OnCollisionEvent(associated));
+        std::shared_ptr<Collider> collider = std::make_shared<Collider>(associated, layers, new OnCollisionEvent(associated), Vec2{10,10});
         associated.AddComponent(collider);
     }
     ~FireProjectileSpell() {}
@@ -151,9 +151,9 @@ private:
     {
         GameObject &go = evt.GetGameObject();
         OnDamageTakenEvent e = OnDamageTakenEvent(this->associated, this->baseDamage);
-        if (go.GetComponent("HealthSystem"))
+        if (go.GetComponent("HealthSystem").lock())
             go.subject.notify(e);
-        if (!go.GetComponent("Bullet"))
+        if (!go.GetComponent("Bullet").lock())
             this->associated.RequestDelete();
 
         return true;
