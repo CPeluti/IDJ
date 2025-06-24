@@ -13,9 +13,9 @@ public:
 
     static Game &GetInstance();
     GPU_Target *GetGPUTarget();
-    State &GetCurrentState();
+    State* GetCurrentState();
 
-    void Push(State *state);
+    void Push(std::unique_ptr<State> state);
 
     void Run();
 
@@ -29,7 +29,7 @@ private:
     float dt;
 
     static Game *instance;
-    State *storedState;
+    std::unique_ptr<State> storedState;
     GPU_Target *m_gpuTarget;
     SDL_Renderer *renderer;
     std::stack<std::unique_ptr<State>> stateStack;
