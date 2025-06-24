@@ -57,7 +57,7 @@ StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
     this->AddObject(bg);
 
     std::shared_ptr<GameObject> character = std::make_shared<GameObject>();
-    std::shared_ptr<Character> characterComponent = std::make_shared<Character>(*character, "resources/img/Player.png", true);
+    std::shared_ptr<Character> characterComponent = std::make_shared<Character>(*character, "resources/img/Protagonista.png", true);
     character->AddComponent(characterComponent);
     this->AddObject(character);
     character->box.RawMove({0, 0});
@@ -110,7 +110,6 @@ void StageState::Update(float dt)
     TypingSystem &ts = TypingSystem::GetInstance();
 
     ts.Update(dt);
-
 
     if (ts.IsTypingMode() && ts.HasSubmitted())
     {

@@ -28,7 +28,7 @@ void Lifebar::Render()
 {
     std::cout << m_enableLifebar << std::endl;
     if (!m_enableLifebar)
-    return;
+        return;
 
     SDL_Rect barToFill = {lifebar.x, lifebar.y, (int)(lifebar.w), (int)(lifebar.h)};
     SDL_Rect bg = {lifebar.x, lifebar.y, (int)(lifebar.w), (int)(lifebar.h)};
@@ -38,13 +38,13 @@ void Lifebar::Render()
 
     barToFill.x *= Camera::zoom;
     barToFill.y *= Camera::zoom;
-    barToFill.w *= Camera::zoom;
-    barToFill.h *= Camera::zoom;
-    
+    // barToFill.w *= Camera::zoom;
+    // barToFill.h *= Camera::zoom;
+
     bg.x *= Camera::zoom;
     bg.y *= Camera::zoom;
-    bg.w *= Camera::zoom;
-    bg.h *= Camera::zoom;
+    // bg.w *= Camera::zoom;
+    // bg.h *= Camera::zoom;
 
     barToFill.x -= Camera::pos.x;
     barToFill.y -= Camera::pos.y;
@@ -53,14 +53,14 @@ void Lifebar::Render()
     bg.y -= Camera::pos.y;
 
     // SDL_SetRenderDrawColor(Game::GetInstance().GetRenderer(), 0, 0, 0, 255);
-    GPU_RectangleFilled(Game::GetInstance().GetGPUTarget(), bg.x, bg.y, bg.x+bg.w, bg.y+bg.h, {0,0,0,255});
+    GPU_RectangleFilled(Game::GetInstance().GetGPUTarget(), bg.x, bg.y, bg.x + bg.w, bg.y + bg.h, {0, 0, 0, 255});
     // SDL_SetRenderDrawColor(Game::GetInstance().GetRenderer(), 255, 0, 0, 255);
-    GPU_RectangleFilled(Game::GetInstance().GetGPUTarget(), barToFill.x, barToFill.y, barToFill.x+barToFill.w, barToFill.y+barToFill.h, {255,0,0,255});
+    GPU_RectangleFilled(Game::GetInstance().GetGPUTarget(), barToFill.x, barToFill.y, barToFill.x + barToFill.w, barToFill.y + barToFill.h, {255, 0, 0, 255});
 }
 
 void Lifebar::setAmount(float amount)
 {
-    current = amount > 0? amount : 0;
+    current = amount > 0 ? amount : 0;
 }
 
 void Lifebar::setMax(float max)
