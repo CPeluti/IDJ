@@ -5,7 +5,7 @@
 class Camera
 {
 public:
-    static void Follow(GameObject *newFocus);
+    static void Follow(std::weak_ptr<GameObject> newFocus);
     static void Unfollow();
     static void Update(float dt);
     static Vec2 pos;
@@ -13,5 +13,5 @@ public:
     static float zoom;
 
 private:
-    static GameObject *focus;
+    static std::weak_ptr<GameObject> focus;
 };

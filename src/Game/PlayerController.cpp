@@ -35,7 +35,9 @@ void PlayerController::Update(float dt)
     if (direction.x || direction.y)
     {
         Character::Command c = Character::Command(Character::Command::MOVE, direction);
-        ((Character *)associated.GetComponent("Character"))->Issue(c);
+        if(auto character = std::dynamic_pointer_cast<Character>(this->associated.GetComponent("Character").lock())){
+            character->Issue(c);
+        }
     }
     if (ip.MousePress(LEFT_MOUSE_BUTTON))
     {
@@ -43,7 +45,9 @@ void PlayerController::Update(float dt)
         target.x = ip.GetMouseX();
         target.y = ip.GetMouseY();
         Character::Command c = Character::Command(Character::Command::SHOOT, target);
-        ((Character *)associated.GetComponent("Character"))->Issue(c);
+        if(auto character = std::dynamic_pointer_cast<Character>(this->associated.GetComponent("Character").lock())){
+            character->Issue(c);
+        }
     }
 }
 

@@ -49,7 +49,7 @@ public:
     return this->isTypingMode;
   };
 
-  void SetTextComponent(Text *textComponent)
+  void SetTextComponent(std::shared_ptr<Text> textComponent)
   {
     this->textComponent = textComponent;
   };
@@ -57,7 +57,7 @@ public:
 private:
   TypingSystem(Text *textComponent, bool enableCursor = true, bool isTypingMode = true);
 
-  Text *textComponent;
+  std::shared_ptr<Text> textComponent;
   std::string text;
   bool isTypingMode;
   bool enableCursor;

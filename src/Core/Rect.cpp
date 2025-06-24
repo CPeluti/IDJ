@@ -12,6 +12,12 @@ Rect::Rect(float x, float y, float w, float h) {
     this->pivot = {w/2, h/2};
 }
 
+Rect::Rect(Vec2 Pos, Vec2 Size) {
+    this->size = Size;
+    this->pos = Pos;
+    this->pivot = Size/2;
+}
+
 Rect Rect::AddVector(Rect a, Vec2 b){
     return Rect(a.pos.x + b.x, a.pos.y + b.y, a.size.x, a.size.y);
 }
@@ -25,6 +31,10 @@ float Rect::CenterDistance(Rect a, Rect b){
 //Check if a point is inside the rectangle
 bool Rect::contains(Vec2 point){
     return (point.x >= this->pos.x && point.x <= this->pos.x + this->size.x && point.y >= this->pos.y && point.y <= this->pos.y + this->size.y);
+}
+
+void Rect::MoveToPos(Vec2 amount){
+    pos = amount+pos;
 }
 
 void Rect::Move(Vec2 newPos){
