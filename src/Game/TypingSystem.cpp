@@ -1,4 +1,5 @@
 #include "Game/TypingSystem.h"
+#include "Game/Character.h"
 #include "Core/Log.h"
 
 TypingSystem::TypingSystem(Text *textComponent, bool enableCursor, bool isTypingMode) : textComponent(textComponent),
@@ -49,15 +50,20 @@ void TypingSystem::HandleSubmit()
 
 void TypingSystem::Update(float dt)
 {
-  if (!this->enableCursor || !this->isTypingMode)
-    return;
+  if(auto player = Character::player.lock()){
+    auto pBox = player->getAssociated()->box;
+    this->textComponent->getAssociated()->box.Move(pBox.center()-Vec2{.0,pBox.GetSize().x/2});
 
-  cursorTimer += dt;
-  if (cursorTimer >= cursorBlinkInterval)
-  {
-    cursorVisible = !cursorVisible;
-    cursorTimer = 0.0f;
-    this->UpdateTextWithCursor();
+    if (!this->enableCursor || !this->isTypingMode)
+    return;
+    
+    cursorTimer += dt;
+    if (cursorTimer >= cursorBlinkInterval)
+    {
+      cursorVisible = !cursorVisible;
+      cursorTimer = 0.0f;
+      this->UpdateTextWithCursor();
+    }
   }
 }
 
