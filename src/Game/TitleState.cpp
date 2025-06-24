@@ -14,14 +14,14 @@
 #include "Game/StageState.h"
 TitleState::TitleState()
 {
-    GameObject *start = new GameObject();
-    SpriteRenderer *sr = new SpriteRenderer(*start, "resources/img/Title.png", 1, 1);
+    std::shared_ptr<GameObject> start =  std::make_shared<GameObject>();
+    std::shared_ptr<SpriteRenderer> sr =  std::make_shared<SpriteRenderer>(*start, "resources/img/Title.png", 1, 1);
     sr->SetCameraFollower(true);
     start->AddComponent(sr);
     this->AddObject(start);
-
-    GameObject* text = new GameObject();
-    Text* textComponent = new Text(*text, "resources/font/neodgm.ttf", 20, Text::SOLID, "Press SPACEBAR to play again or ESC to leave",{255,255,255}, 1);
+    std::shared_ptr<GameObject> text =  std::make_shared<GameObject>();
+    std::shared_ptr<Text> textComponent =  std::make_shared<Text>(*text, "resources/font/neodgm.ttf", 20, Text::SOLID, "Press SPACEBAR to play again or ESC to leave",SDL_Color{255,255,255}, 1);
+    
     text->AddComponent(textComponent);
     this->AddObject(text);
     text->box.Move({Camera::pos.x+Game::GetInstance().GetWindowSize().x/2, Camera::pos.y+Game::GetInstance().GetWindowSize().y/2});
@@ -37,8 +37,9 @@ TitleState::TitleState()
         m_Particle.Position = { 0.0f, 0.0f };
         m_Particle.VelocityFunction = {[](float x){return sin(8*x);},[](float x){return 1;}};
     }
-    GameObject* particles = new GameObject();
-    ParticleSystem* ps = new ParticleSystem(*particles, m_Particle);
+    std::shared_ptr<GameObject> particles =  std::make_shared<GameObject>();
+    std::shared_ptr<ParticleSystem> ps =  std::make_shared<ParticleSystem>(*particles, m_Particle);
+    
     particles->AddComponent(ps);
     particles->box.Move({(Camera::pos.x+Game::GetInstance().GetWindowSize().x/2)-50, (Camera::pos.y+Game::GetInstance().GetWindowSize().y/2)-50});
     particles->z = 1;
@@ -60,15 +61,15 @@ void TitleState::Update(float dt)
     if (ip.KeyPress(SPACE_KEY))
     {
         popRequested = true;
-        StageState* stage = new StageState();
-        Game::GetInstance().Push(stage);
+        Game::GetInstance().Push(std::make_unique<StageState>());
     }
     if(auto ps = particlesSystem.lock()){
         //TODO: rever questão do sistema de particula estar contido em um gameObject
         ps->box.Move({ip.GetMouseX(), ip.GetMouseY()});
-        ParticleSystem* particles = (ParticleSystem*)ps->GetComponent("ParticleSystem");
-        particles->SetExplosiveness(0.5);
-        particles->SetOneshot(false);
+        if(auto particles = std::dynamic_pointer_cast<ParticleSystem>(ps->GetComponent("ParticleSystem").lock())){
+            particles->SetExplosiveness(0.5);
+            particles->SetOneshot(false);
+        }
         
         // particles->Play();
 
@@ -86,8 +87,9 @@ void TitleState::Start()
     LoadAssets();
     StartArray();
     if(auto ps = particlesSystem.lock()){
-        ParticleSystem* particles = (ParticleSystem*)ps->GetComponent("ParticleSystem");
-        particles->SetAmount(30);
+        if(auto particles = std::dynamic_pointer_cast<ParticleSystem>(ps->GetComponent("ParticleSystem").lock())){
+            particles->SetAmount(30);
+        }
     }
 }
 
