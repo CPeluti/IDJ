@@ -54,8 +54,7 @@ void Text::Render()
     {
         GPU_Rect clipRect = {0, 0, (float)associated.box.GetSize().x, (float)associated.box.GetSize().y};
         Vec2 pos = associated.box.GetPos();
-        std::cout << "Text pos: " << pos.x << ", " << pos.y << std::endl;
-        GPU_Rect dstRect = {(float)pos.x, (float)pos.y, (float)associated.box.GetSize().x, (float)associated.box.GetSize().y};
+        GPU_Rect dstRect = {(float)pos.x*Camera::zoom, (float)pos.y*Camera::zoom, (float)associated.box.GetSize().x*Camera::zoom, (float)associated.box.GetSize().y*Camera::zoom};
         if (!cameraFollower)
         {
             dstRect.y -= Camera::pos.y;

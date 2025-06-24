@@ -14,17 +14,19 @@
 #include "Game/StageState.h"
 TitleState::TitleState()
 {
+    Camera::zoom = 1;
+
     std::shared_ptr<GameObject> start =  std::make_shared<GameObject>();
     std::shared_ptr<SpriteRenderer> sr =  std::make_shared<SpriteRenderer>(*start, "resources/img/Title.png", 1, 1);
     sr->SetCameraFollower(true);
     start->AddComponent(sr);
     this->AddObject(start);
     std::shared_ptr<GameObject> text =  std::make_shared<GameObject>();
-    std::shared_ptr<Text> textComponent =  std::make_shared<Text>(*text, "resources/font/neodgm.ttf", 20, Text::SOLID, "Press SPACEBAR to play again or ESC to leave",SDL_Color{255,255,255}, 1);
+    std::shared_ptr<Text> textComponent =  std::make_shared<Text>(*text, "resources/font/neodgm.ttf", 20, Text::SOLID, "Press SPACEBAR to play again or ESC to leave",SDL_Color{255,255,255}, 1, true);
     
     text->AddComponent(textComponent);
     this->AddObject(text);
-    text->box.Move({Camera::pos.x+Game::GetInstance().GetWindowSize().x/2, Camera::pos.y+Game::GetInstance().GetWindowSize().y/2});
+    text->box.Move({Game::GetInstance().GetWindowSize().x/2, Game::GetInstance().GetWindowSize().y/2});
     text->z = 1;
 
 
