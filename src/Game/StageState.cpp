@@ -50,8 +50,8 @@ StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
     // TileSet *tileset = new TileSet(16, 16, "resources/img/TilesetCastle.png");
     // TileMap *tilemap = new TileMap(*bg, "resources/map/mapCastle.txt", tileset);
     bg->box.RawMove({0, 0});
-    int size_pixel = 16 * Camera::zoom;
-    TileSet *tileset = new TileSet(16, 16, "resources/img/TilesetCastle.png", std::map<int, Rect>{{4, {0, 0, size_pixel, size_pixel}}, {14, {0, 0, size_pixel, size_pixel}}, {22, {0, 0, size_pixel, size_pixel}}, {51, {0, 0, size_pixel, size_pixel}}, {69, {0, 0, size_pixel, size_pixel}}, {40, {0, 0, size_pixel, size_pixel}}, {24, {0, 0, size_pixel, size_pixel}}, {68, {0, 0, size_pixel, size_pixel}}, {50, {0, 0, size_pixel, size_pixel}}, {24, {0, 0, size_pixel, size_pixel}}});
+    Rect r = {0, 0, 16, 16};
+    TileSet *tileset = new TileSet(16, 16, "resources/img/TilesetCastle.png", std::map<int, Rect>{{4, r}, {14, r}, {22, r}, {51, r}, {69, r}, {40, r}, {24, r}, {68, r}, {50, r}, {24, r}});
     std::shared_ptr<TileMap> tilemap = std::make_shared<TileMap>(*bg, "resources/map/mapCastle.txt", tileset);
     bg->AddComponent(tilemap);
     this->AddObject(bg);
@@ -60,7 +60,7 @@ StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
     std::shared_ptr<Character> characterComponent = std::make_shared<Character>(*character, "resources/img/Player.png", true);
     character->AddComponent(characterComponent);
     this->AddObject(character);
-    character->box.RawMove({240, 160});
+    character->box.RawMove({0, 0});
     Character::player = characterComponent;
     Camera::Follow(character);
     // std::shared_ptr<GameObject> waveSpawner = std::make_shared<GameObject>();
@@ -82,13 +82,6 @@ void StageState::Update(float dt)
     InputManager &ip = InputManager::GetInstance();
 
     Camera::Update(dt);
-
-    TypingSystem &ts = TypingSystem::GetInstance();
-
-    if (ts.IsTypingMode())
-    {
-        ts.Update(dt);
-    }
 
     UpdateArray(dt);
     if (auto p = player.lock())
@@ -113,30 +106,11 @@ void StageState::Update(float dt)
             }
         }
     }
-    // std::set<std::pair<int, int>> checked;
-    // for (int i = 0; i < (int)this->objectArray.size(); i++)
-    // {
-    //     Collider *colliderA = (Collider *)objectArray[i]->GetComponent("Collider");
-    //     if (colliderA != nullptr)
-    //     {
-    //         for (int j = i+1; j < (int)this->objectArray.size(); j++)
-    //         {
-    //             Collider *colliderB = (Collider *)objectArray[j]->GetComponent("Collider");
-    //             if (colliderB != nullptr)
-    //             {
-    //                 if (Collision::IsColliding(colliderA->box, colliderB->box, objectArray[i]->angleDeg, objectArray[j]->angleDeg))
-    //                 {
-    //                     OnCollisionEvent a(*objectArray[i]);
-    //                     OnCollisionEvent b(*objectArray[j]);
-    //                     objectArray[i]->subject.notify(b);
-    //                     objectArray[j]->subject.notify(a);
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
-
     this->checkCollisions(dt);
+    TypingSystem &ts = TypingSystem::GetInstance();
+
+    ts.Update(dt);
+
 
     if (ts.IsTypingMode() && ts.HasSubmitted())
     {

@@ -30,9 +30,9 @@ void Camera::Update(float dt)
     {
         Vec2 size = game.GetWindowSize();
 
-        Vec2 pos = focus.lock()->box.GetPos();
-        Camera::pos.x = pos.x - (size.x / 2);
-        Camera::pos.y = pos.y - (size.y / 2);
+        Vec2 pos = focus.lock()->box.center();
+        Camera::pos.x = (pos.x*Camera::zoom - (size.x / 2));
+        Camera::pos.y = pos.y*Camera::zoom - (size.y / 2);
     }
     else
     {
