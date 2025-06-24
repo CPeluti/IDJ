@@ -112,9 +112,9 @@ void Character::Start()
     if ( shared_from_this() == Character::player.lock())
     {
         std::shared_ptr<GameObject> textObject = std::make_shared<GameObject>();
-        std::shared_ptr<Text> textComponent = std::make_shared<Text>(*textObject, "resources/font/neodgm.ttf", 30, Text::SOLID, " ", SDL_Color{255, 255, 255}, 0, true);
+        std::shared_ptr<Text> textComponent = std::make_shared<Text>(*textObject, "resources/font/neodgm.ttf", 30, Text::SOLID, " ", SDL_Color{255, 255, 255}, 0);
         textObject->AddComponent(textComponent);
-        textObject->box.SetPos(Game::GetInstance().GetWindowSize() / 2 - this->associated.box.GetSize());
+        // textObject->box.SetPos(Game::GetInstance().GetWindowSize() / 2 - this->associated.box.GetSize());
         if(auto s = Game::GetInstance().GetCurrentState())
             s->AddObject(textObject);
 
