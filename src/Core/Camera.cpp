@@ -7,16 +7,16 @@ Vec2 Camera::pos = {0, 0};
 Vec2 Camera::speed = {0, 0};
 float Camera::zoom = 1.0f;
 
-GameObject *Camera::focus = nullptr;
+std::weak_ptr<GameObject> Camera::focus = std::weak_ptr<GameObject>();
 
-void Camera::Follow(GameObject *newFocus)
+void Camera::Follow(std::weak_ptr<GameObject> newFocus)
 {
     focus = newFocus;
 }
 
 void Camera::Unfollow()
 {
-    focus = nullptr;
+    focus.reset();
 }
 
 void Camera::Update(float dt)
@@ -26,11 +26,11 @@ void Camera::Update(float dt)
     Vec2 direction = {0, 0};
     Game &game = Game::GetInstance();
 
-    if (focus != nullptr)
+    if (focus.lock())
     {
         Vec2 size = game.GetWindowSize();
 
-        Vec2 pos = focus->box.GetPos();
+        Vec2 pos = focus.lock()->box.GetPos();
         Camera::pos.x = pos.x - (size.x / 2);
         Camera::pos.y = pos.y - (size.y / 2);
     }

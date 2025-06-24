@@ -5,6 +5,7 @@
 #include "Collision.h"
 #include "Log.h"
 #include <vector>
+#include <set>
 #include <memory>
 // class GameObject;
 #include "GameObject.h"
@@ -23,7 +24,7 @@ public:
     virtual void Pause() = 0;
 
     virtual std::weak_ptr<GameObject> GetObjectPtr(GameObject *go);
-    virtual std::weak_ptr<GameObject> AddObject(GameObject *object);
+    virtual std::weak_ptr<GameObject> AddObject(std::shared_ptr<GameObject> object);
 
     bool PopRequested();
     bool QuitRequested();
@@ -42,6 +43,7 @@ public:
         m_collisionLayers[layer_name].push_back(collider);
     }
 
+
     inline void removeCollider(std::string layer_name, Collider *collider)
     {
         for (int i = 0; i < m_collisionLayers[layer_name].size(); i++)
@@ -53,7 +55,8 @@ public:
         }
     }
 
-    inline void checkCollisions()
+
+    inline void checkCollisions(float dt)
     {
         for (auto &el : m_collisionLayers)
         {
@@ -67,12 +70,9 @@ public:
                         Collider *colliderB = el.second[j];
                         if (colliderB != nullptr)
                         {
-                            if (Collision::IsColliding(colliderA->box, colliderB->box, colliderA->getAngleDeg(), colliderB->getAngleDeg()))
-                            {
-                                // LOG_INFO(colliderA->GetEvent());
-                                // LOG_INFO(colliderB->GetEvent());
-                                colliderA->getAssociated()->subject.notify(*colliderB->GetEvent());
-                                colliderB->getAssociated()->subject.notify(*colliderA->GetEvent());
+                            if(colliderA->GetTag() != colliderB->GetTag()){
+                                auto r = Collision::IsColliding(*colliderA, *colliderB);
+                                Collision::ResolveCollision(*colliderA, *colliderB, r);
                             }
                         }
                     }
@@ -89,6 +89,7 @@ protected:
     bool popRequested;
     bool started;
     bool quitRequested;
+    float time;
 
     std::vector<std::shared_ptr<GameObject>> objectArray;
     std::map<std::string, std::vector<Collider *>> m_collisionLayers;
