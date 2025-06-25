@@ -168,6 +168,7 @@ void Game::Run()
             inputManager.Update();
             t = SDL_GetTicks() / 1000.0f;
             s->Update(dt);
+            GPU_Clear(this->m_gpuTarget);
             s->Render();
             GPU_FlushBlitBuffer();
             GPU_Flip(this->m_gpuTarget);
