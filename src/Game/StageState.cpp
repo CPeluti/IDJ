@@ -52,7 +52,7 @@ StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
     bg->box.RawMove({0, 0});
     Rect r = {0, 0, 16, 16};
     TileSet *tileset = new TileSet(16, 16, "resources/img/TilesetCastle.png", std::map<int, Rect>{{4, r}, {14, r}, {22, r}, {51, r}, {69, r}, {40, r}, {24, r}, {68, r}, {50, r}, {24, r}});
-    std::shared_ptr<TileMap> tilemap = std::make_shared<TileMap>(*bg, "resources/map/mapCastle.txt", tileset);
+    std::shared_ptr<TileMap> tilemap = std::make_shared<TileMap>(*bg, "resources/map/teste.txt", tileset);
     bg->AddComponent(tilemap);
     this->AddObject(bg);
 
