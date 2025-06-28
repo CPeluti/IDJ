@@ -11,6 +11,7 @@
 Lifebar::Lifebar(GameObject &associated, float max, Vec2 size, Vec2 offset) : Component(associated), total(max), size(size), offset(offset)
 {
     current = max;
+    LOG_INFO(size);
 }
 
 bool Lifebar::Is(std::string type)
@@ -38,20 +39,19 @@ void Lifebar::Render()
 
     barToFill.x *= Camera::zoom;
     barToFill.y *= Camera::zoom;
-    // barToFill.w *= Camera::zoom;
-    // barToFill.h *= Camera::zoom;
+    barToFill.w *= Camera::zoom;
+    barToFill.h *= Camera::zoom;
 
     bg.x *= Camera::zoom;
     bg.y *= Camera::zoom;
-    // bg.w *= Camera::zoom;
-    // bg.h *= Camera::zoom;
+    bg.w *= Camera::zoom;
+    bg.h *= Camera::zoom;
 
     barToFill.x -= Camera::pos.x;
     barToFill.y -= Camera::pos.y;
 
     bg.x -= Camera::pos.x;
     bg.y -= Camera::pos.y;
-
     // SDL_SetRenderDrawColor(Game::GetInstance().GetRenderer(), 0, 0, 0, 255);
     GPU_RectangleFilled(Game::GetInstance().GetGPUTarget(), bg.x, bg.y, bg.x + bg.w, bg.y + bg.h, {0, 0, 0, 255});
     // SDL_SetRenderDrawColor(Game::GetInstance().GetRenderer(), 255, 0, 0, 255);
