@@ -50,8 +50,22 @@ StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
     // TileSet *tileset = new TileSet(16, 16, "resources/img/TilesetCastle.png");
     // TileMap *tilemap = new TileMap(*bg, "resources/map/mapCastle.txt", tileset);
     bg->box.RawMove({0, 0});
-    Rect r = {0, 0, 16, 16};
-    TileSet *tileset = new TileSet(16, 16, "resources/img/TilesetCastle.png", std::map<int, Rect>{{4, r}, {14, r}, {22, r}, {51, r}, {69, r}, {40, r}, {24, r}, {68, r}, {50, r}, {24, r}});
+    Rect fullTileCollider = {0, 0, 16, 16};
+    Rect halfTileLeftCollider = {0, 0, 9, 16};
+    Rect halfTileRightCollider = {7, 0, 9, 16};
+    TileSet *tileset = new TileSet(16, 16, "resources/img/TilesetCastle.png", std::map<int, Rect>{
+        {97, fullTileCollider},
+        {41, fullTileCollider},
+        {32, fullTileCollider},
+        {27, fullTileCollider},
+        {29, fullTileCollider},
+        {98, fullTileCollider},
+        {61, halfTileLeftCollider},
+        {62, halfTileRightCollider},
+        {80, fullTileCollider},
+        {152, fullTileCollider},
+        {79, fullTileCollider}
+    });
     std::shared_ptr<TileMap> tilemap = std::make_shared<TileMap>(*bg, "resources/map/teste.txt", tileset);
     bg->AddComponent(tilemap);
     this->AddObject(bg);
@@ -60,7 +74,7 @@ StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
     std::shared_ptr<Character> characterComponent = std::make_shared<Character>(*character, "resources/img/Protagonista.png", true);
     character->AddComponent(characterComponent);
     this->AddObject(character);
-    character->box.RawMove({0, 0});
+    character->box.RawMove({30, 80});
     Character::player = characterComponent;
     Camera::Follow(character);
     // std::shared_ptr<GameObject> waveSpawner = std::make_shared<GameObject>();
