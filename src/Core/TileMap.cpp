@@ -170,7 +170,8 @@ void TileMap::RenderLayer(int layer)
     {
         for (int y = 0; y < GetHeight(); y++)
         {
-            tileSet->RenderTile(At(x, y, layer), (spaceX * x + offset.x + factor.x), spaceY * y + offset.y + factor.y);
+            if(At(x, y, layer)>=0)
+                tileSet->RenderTile(At(x, y, layer), (spaceX * x + offset.x + factor.x), spaceY * y + offset.y + factor.y);
         }
     }
 }
