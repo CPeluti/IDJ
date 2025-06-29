@@ -13,7 +13,7 @@ GameObject::~GameObject()
 {
     for(auto component = components.begin(); component != components.end();)
     {
-        components.erase(component);
+        component = components.erase(component);
     }
 }
 

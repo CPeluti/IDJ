@@ -11,6 +11,7 @@
 Lifebar::Lifebar(GameObject &associated, float max, Vec2 size, Vec2 offset) : Component(associated), total(max), size(size), offset(offset)
 {
     current = max;
+    LOG_INFO(size);
 }
 
 bool Lifebar::Is(std::string type)
@@ -29,22 +30,37 @@ void Lifebar::Render()
     std::cout << m_enableLifebar << std::endl;
     if (!m_enableLifebar)
         return;
-    lifebar.x -= Camera::pos.x;
-    lifebar.y -= Camera::pos.y;
+
     SDL_Rect barToFill = {lifebar.x, lifebar.y, (int)(lifebar.w), (int)(lifebar.h)};
+    SDL_Rect bg = {lifebar.x, lifebar.y, (int)(lifebar.w), (int)(lifebar.h)};
     barToFill.x = lifebar.x + (lifebar.w / 2) - (barToFill.w / 2);
     barToFill.y = lifebar.y + (lifebar.h / 2) - (barToFill.h / 2);
     barToFill.w = barToFill.w * current / total;
 
+    barToFill.x *= Camera::zoom;
+    barToFill.y *= Camera::zoom;
+    barToFill.w *= Camera::zoom;
+    barToFill.h *= Camera::zoom;
+
+    bg.x *= Camera::zoom;
+    bg.y *= Camera::zoom;
+    bg.w *= Camera::zoom;
+    bg.h *= Camera::zoom;
+
+    barToFill.x -= Camera::pos.x;
+    barToFill.y -= Camera::pos.y;
+
+    bg.x -= Camera::pos.x;
+    bg.y -= Camera::pos.y;
     // SDL_SetRenderDrawColor(Game::GetInstance().GetRenderer(), 0, 0, 0, 255);
-    GPU_RectangleFilled(Game::GetInstance().GetGPUTarget(), lifebar.x, lifebar.y, lifebar.x+lifebar.w, lifebar.y+lifebar.h, {0,0,0,255});
+    GPU_RectangleFilled(Game::GetInstance().GetGPUTarget(), bg.x, bg.y, bg.x + bg.w, bg.y + bg.h, {0, 0, 0, 255});
     // SDL_SetRenderDrawColor(Game::GetInstance().GetRenderer(), 255, 0, 0, 255);
-    GPU_RectangleFilled(Game::GetInstance().GetGPUTarget(), barToFill.x, barToFill.y, barToFill.x+barToFill.w, barToFill.y+barToFill.h, {255,0,0,255});
+    GPU_RectangleFilled(Game::GetInstance().GetGPUTarget(), barToFill.x, barToFill.y, barToFill.x + barToFill.w, barToFill.y + barToFill.h, {255, 0, 0, 255});
 }
 
 void Lifebar::setAmount(float amount)
 {
-    current = amount > 0? amount : 0;
+    current = amount > 0 ? amount : 0;
 }
 
 void Lifebar::setMax(float max)

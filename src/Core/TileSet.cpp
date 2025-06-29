@@ -1,8 +1,10 @@
 #include "Core/TileSet.h"
 #include "Core/Rect.h"
+#include "Core/Camera.h"
+
 #include <iostream>
 
-TileSet::TileSet(int tileWidth, int tileHeight, std::string file, std::map<int,Rect> colliders): tileSet(file)
+TileSet::TileSet(int tileWidth, int tileHeight, std::string file, std::map<int, Rect> colliders) : tileSet(file)
 {
     this->m_colliders = colliders;
     this->tileWidth = tileWidth;
@@ -10,7 +12,7 @@ TileSet::TileSet(int tileWidth, int tileHeight, std::string file, std::map<int,R
     // std::cout << "open" << std::endl;
     // tileSet.Open(file);
     // std::cout << "opened" << std::endl;
-    if(tileSet.IsOpen())
+    if (tileSet.IsOpen())
     {
         int frameCountW = tileSet.GetWidth() / tileWidth;
         int frameCountH = tileSet.GetHeight() / tileHeight;
@@ -20,7 +22,8 @@ TileSet::TileSet(int tileWidth, int tileHeight, std::string file, std::map<int,R
 
 void TileSet::RenderTile(unsigned index, float x, float y)
 {
-    if(index < (unsigned int)tileWidth*tileHeight){
+    if (index < (unsigned int)tileWidth * tileHeight)
+    {
         tileSet.SetFrame(index);
         tileSet.Render({x, y}, {tileSet.GetWidth(), tileSet.GetHeight()});
     }
