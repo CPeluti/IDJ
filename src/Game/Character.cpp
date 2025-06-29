@@ -28,7 +28,7 @@ int Character::npcCounter = 0;
 Character::Character(GameObject &associated, std::string sprite, bool isPlayer) : Component(associated),
                                                                                   gun(),
                                                                                   taskQueue(),
-                                                                                  Entity(300),
+                                                                                  Entity(140),
                                                                                   hp(500),
                                                                                   isDead(false),
                                                                                   deathTimer(5),
@@ -37,7 +37,7 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
 {
     this->associated.subject.addObserver(this);
 
-    std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(associated, sprite, 3, 4);
+    std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(associated, sprite, 4, 4);
     std::shared_ptr<Animator> animator = std::make_shared<Animator>(associated);
 
     std::shared_ptr<HealthSystem> hs = std::make_shared<HealthSystem>(associated, hp);
@@ -50,11 +50,11 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
     }
     else
     {
-        Shader *shader = sr->GetShader();
-        shader->Load("resources/shaders/common.vert", "resources/shaders/teste.frag");
-        int color_loc = shader->GetLocation("myColor");
-        float t = SDL_GetTicks() / 1000.0f;
-        update_color_shader((1 + sin(t)) / 2, (1 + sin(t + 1)) / 2, (1 + sin(t + 2)) / 2, 1.0f, color_loc);
+        // Shader *shader = sr->GetShader();
+        // shader->Load("resources/shaders/common.vert", "resources/shaders/teste.frag");
+        // int color_loc = shader->GetLocation("myColor");
+        // float t = SDL_GetTicks() / 1000.0f;
+        // update_color_shader((1 + sin(t)) / 2, (1 + sin(t + 1)) / 2, (1 + sin(t + 2)) / 2, 1.0f, color_loc);
         std::shared_ptr<PlayerController> playerController = std::make_shared<PlayerController>(associated);
         associated.AddComponent(playerController);
     }
@@ -68,11 +68,14 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
 
     // associated.AddComponent(l);
 
-    animator->AddAnimation("walking", new Animation(0, 5, 0.2));
-    animator->AddAnimation("idle", new Animation(6, 9, 0.5));
-    animator->AddAnimation("i_walking", new Animation(0, 5, 0.2, SDL_FLIP_HORIZONTAL));
-    animator->AddAnimation("i_idle", new Animation(6, 9, 0.5, SDL_FLIP_HORIZONTAL));
-    animator->AddAnimation("dead", new Animation(10, 11, 0.5));
+    // animator->AddAnimation("walking", new Animation(0, 5, 0.2));
+    animator->AddAnimation("idle", new Animation(0, 0, 0.1));
+    // animator->AddAnimation("i_walking", new Animation(0, 5, 0.2, SDL_FLIP_HORIZONTAL));
+    animator->AddAnimation("up", new Animation(0, 2, 0.1));
+    animator->AddAnimation("down", new Animation(6, 8, 0.1));
+    animator->AddAnimation("right", new Animation(3, 5, 0.1));
+    animator->AddAnimation("left", new Animation(9, 11, 0.1));
+    // animator->AddAnimation("dead", new Animation(10, 11, 0.5));
     animator->SetAnimation("idle");
     flip = false;
 }
@@ -81,7 +84,8 @@ Character::~Character()
 {
     if (auto character = Character::player.lock())
     {
-        if(character.get() != this){
+        if (character.get() != this)
+        {
             Character::npcCounter--;
         }
     }
@@ -93,29 +97,31 @@ Character::~Character()
 
 void Character::Start()
 {
-    std::shared_ptr<GameObject> gunObj =  std::make_shared<GameObject>();
+    // std::shared_ptr<GameObject> gunObj = std::make_shared<GameObject>();
     std::vector<std::string> layers, interactionLayers;
     layers.push_back("layer0");
     interactionLayers.push_back("interaction0, phys0");
-    Vec2 colliderOffset = (Vec2(-100,-100)+associated.box.GetSize()/2);
-    std::shared_ptr<Collider> interactionEffectCollider =  std::make_shared<Collider>(associated, std::vector<std::string>{"phys0"}, new OnInteractionEvent(associated, InteractionType::Effect), Vec2{200, 200}, Vec2{1,1}, colliderOffset, "entity");
+    Vec2 colliderSize = associated.box.GetSize();
+    Vec2 colliderOffset = (colliderSize - associated.box.GetSize());
+    std::shared_ptr<Collider> interactionEffectCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"phys0"}, new OnInteractionEvent(associated, InteractionType::Effect), colliderSize, Vec2{1, 1}, colliderOffset, "entity");
     associated.AddComponent(interactionEffectCollider);
-    if(auto s = Game::GetInstance().GetCurrentState()){
-    // Collider *collider =  std::shared_ptr<Collider>(associated, layers, new OnCollisionEvent(associated));
-    // associated.AddComponent(collider);
-        std::shared_ptr<Gun> gunComponent =  std::make_shared<Gun>(*gunObj, s->GetObjectPtr(&associated));
+    // if (auto s = Game::GetInstance().GetCurrentState())
+    // {
+    //     // Collider *collider =  std::shared_ptr<Collider>(associated, layers, new OnCollisionEvent(associated));
+    //     // associated.AddComponent(collider);
+    //     std::shared_ptr<Gun> gunComponent = std::make_shared<Gun>(*gunObj, s->GetObjectPtr(&associated));
 
-        gunObj->AddComponent(gunComponent);
+    //     gunObj->AddComponent(gunComponent);
 
-        this->gun = s->AddObject(gunObj);
-    }
-    if ( shared_from_this() == Character::player.lock())
+    //     this->gun = s->AddObject(gunObj);
+    // }
+    if (shared_from_this() == Character::player.lock())
     {
         std::shared_ptr<GameObject> textObject = std::make_shared<GameObject>();
-        std::shared_ptr<Text> textComponent = std::make_shared<Text>(*textObject, "resources/font/neodgm.ttf", 30, Text::SOLID, " ", SDL_Color{255, 255, 255}, 0, true);
+        std::shared_ptr<Text> textComponent = std::make_shared<Text>(*textObject, "resources/font/neodgm.ttf", 30, Text::SOLID, " ", SDL_Color{255, 255, 255}, 0);
         textObject->AddComponent(textComponent);
-        textObject->box.SetPos(Game::GetInstance().GetWindowSize() / 2 - this->associated.box.GetSize());
-        if(auto s = Game::GetInstance().GetCurrentState())
+        // textObject->box.SetPos(Game::GetInstance().GetWindowSize() / 2 - this->associated.box.GetSize());
+        if (auto s = Game::GetInstance().GetCurrentState())
             s->AddObject(textObject);
 
         TypingSystem &ts = TypingSystem::GetInstance();
@@ -124,22 +130,20 @@ void Character::Start()
 }
 bool Character::OnDamageTaken(OnDamageTakenEvent &evt)
 {
-    // Lifebar *l = (Lifebar *)associated.GetComponent("Lifebar");
-    if(auto animator = std::dynamic_pointer_cast<Animator>(associated.GetComponent("Animator").lock()))
+    if (auto animator = std::dynamic_pointer_cast<Animator>(associated.GetComponent("Animator").lock()))
     // subject.notify(*this, Observer::Event::onTakeDamage);
 
     {
-        if(auto hs = std::dynamic_pointer_cast<HealthSystem>(associated.GetComponent("HealthSystem").lock())){
+        if (auto hs = std::dynamic_pointer_cast<HealthSystem>(associated.GetComponent("HealthSystem").lock()))
+        {
             if (hs->GetHp() <= 0 && !isDead)
             {
                 if (auto g = this->gun.lock())
                 {
                     g->RequestDelete();
                 }
-                // associated.RemoveComponent(l);
                 isDead = true;
                 deathTimer.Restart();
-                animator->SetAnimation("dead");
                 if (Character::player.lock() == shared_from_this())
                 {
                     Camera::Unfollow();
@@ -153,9 +157,10 @@ bool Character::OnDamageTaken(OnDamageTakenEvent &evt)
 void Character::Update(float dt)
 {
     Vec2 speed = {0, 0};
-    this->associated.SetSpeed({0,0});
+    this->associated.SetSpeed({0, 0});
     this->UpdateEffects(dt);
-    if(auto animator = std::dynamic_pointer_cast<Animator>(this->associated.GetComponent("Animator").lock())){
+    if (auto animator = std::dynamic_pointer_cast<Animator>(this->associated.GetComponent("Animator").lock()))
+    {
         if (isDead)
         {
             deathTimer.Update(dt);
@@ -167,7 +172,7 @@ void Character::Update(float dt)
         }
         if (taskQueue.size() == 0 && animator)
         {
-            animator->SetAnimation(flip ? "idle" : "i_idle");
+            animator->SetAnimation("idle");
         }
         while (taskQueue.size() > 0)
         {
@@ -178,6 +183,17 @@ void Character::Update(float dt)
             case c.MOVE:
             {
                 speed = c.pos.normalized() * m_movementSpeed;
+                if(speed.y > 0){
+                    animator->SetAnimation("up");
+                } else if(speed.y < 0) {
+                    animator->SetAnimation("down");
+                } else if (speed.x > 0){
+                    animator->SetAnimation("right");
+                } else if (speed.x < 0){
+                    animator->SetAnimation("left");
+                } else {
+                    animator->SetAnimation("idle");
+                }
             }
             break;
 
@@ -185,7 +201,8 @@ void Character::Update(float dt)
             {
                 if (auto g = gun.lock())
                 {
-                    if(auto gunScript = std::dynamic_pointer_cast<Gun>(g->GetComponent("Gun").lock())){
+                    if (auto gunScript = std::dynamic_pointer_cast<Gun>(g->GetComponent("Gun").lock()))
+                    {
                         gunScript->Shoot(c.pos);
                     }
                 }
@@ -195,7 +212,7 @@ void Character::Update(float dt)
             taskQueue.pop();
             if (speed.x || speed.y)
             {
-                animator->SetAnimation(flip ? "walking" : "i_walking");
+                // animator->SetAnimation(flip ? "walking" : "i_walking");
                 Vec2 newSpeed = (speed * dt);
                 Vec2 currentPos = associated.box.GetPos();
                 if (shared_from_this() == this->player.lock())
