@@ -120,12 +120,12 @@ void TileMap::Start()
                     collider->SetSize(newSize);
                     if (collider > collider2)
                     {
-                        colliders2BCreated.erase(collider2);
+                        collider2 = colliders2BCreated.erase(collider2);
                         collider--;
                     }
                     else
                     {
-                        colliders2BCreated.erase(collider2);
+                        collider2 = colliders2BCreated.erase(collider2);
                         collider2--;
                     }
                 }

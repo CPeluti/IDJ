@@ -1,20 +1,14 @@
 {
   "OutputFoldersPerTargetSystem": {
     "Local Machine": [
-      "out\\build\\x64-debug",
-      "out\\install\\x64-debug",
-      "out\\build\\x64-release",
-      "out\\install\\x64-release",
-      "out\\build\\x86-debug",
-      "out\\install\\x86-debug",
-      "out\\build\\x86-release",
-      "out\\install\\x86-release"
+      "out\\build\\default",
+      "",
+      "out\\build\\debug"
     ]
   },
   "ExpandedNodes": [
-    "",
-    "\\build"
+    ""
   ],
-  "SelectedNode": "\\build\\JOGO.sln",
+  "SelectedNode": "\\C:\\Users\\peluti\\projetos\\IDJ\\CMakeLists.txt\\JOGO.exe\\C:\\Users\\peluti\\projetos\\IDJ\\include\\C:\\Users\\peluti\\projetos\\IDJ\\include\\SDL2",
   "PreviewInSolutionExplorer": false
 }

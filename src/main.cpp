@@ -5,7 +5,7 @@
 #include "Game/TitleState.h"
 #include <iostream>
 int main(int argc, char* argv[]){
-    SDL_Log("Starting game"); 
+    SDL_Log("Starting game!"); 
     Game& game = Game::GetInstance();
     game.Push(std::make_unique<TitleState>());
     game.Run();
