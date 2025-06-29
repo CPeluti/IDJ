@@ -43,19 +43,38 @@ void createZombie(Vec2 pos, State *state)
 
 StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
 {
+    Camera::zoom = 3.0f;
+
     std::shared_ptr<GameObject> bg = std::make_shared<GameObject>();
     bg->z = 0;
+    // TileSet *tileset = new TileSet(16, 16, "resources/img/TilesetCastle.png");
+    // TileMap *tilemap = new TileMap(*bg, "resources/map/mapCastle.txt", tileset);
     bg->box.RawMove({0, 0});
-    TileSet* tileset = new TileSet(64, 64, "resources/img/Tileset.png" , std::map<int,Rect>{{17,{0,0,64,64}},{18,{0,0,64,64}},{3,{0,0,64,64}},{4,{0,0,64,64}},{10,{0,0,64,64}},{11,{0,0,64,64}}});
-    std::shared_ptr<TileMap> tilemap = std::make_shared<TileMap>(*bg, "resources/map/map.txt", tileset);
+    Rect fullTileCollider = {0, 0, 16, 16};
+    Rect halfTileLeftCollider = {0, 0, 9, 16};
+    Rect halfTileRightCollider = {7, 0, 9, 16};
+    TileSet *tileset = new TileSet(16, 16, "resources/img/TilesetCastle.png", std::map<int, Rect>{
+        {97, fullTileCollider},
+        {41, fullTileCollider},
+        {32, fullTileCollider},
+        {27, fullTileCollider},
+        {29, fullTileCollider},
+        {98, fullTileCollider},
+        {61, halfTileLeftCollider},
+        {62, halfTileRightCollider},
+        {80, fullTileCollider},
+        {152, fullTileCollider},
+        {79, fullTileCollider}
+    });
+    std::shared_ptr<TileMap> tilemap = std::make_shared<TileMap>(*bg, "resources/map/teste.txt", tileset);
     bg->AddComponent(tilemap);
     this->AddObject(bg);
 
     std::shared_ptr<GameObject> character = std::make_shared<GameObject>();
-    std::shared_ptr<Character> characterComponent = std::make_shared<Character>(*character, "resources/img/Player.png", true);
+    std::shared_ptr<Character> characterComponent = std::make_shared<Character>(*character, "resources/img/Protagonista.png", true);
     character->AddComponent(characterComponent);
     this->AddObject(character);
-    character->box.RawMove({1280, 1280});
+    character->box.RawMove({30, 80});
     Character::player = characterComponent;
     Camera::Follow(character);
     // std::shared_ptr<GameObject> waveSpawner = std::make_shared<GameObject>();
@@ -77,13 +96,6 @@ void StageState::Update(float dt)
     InputManager &ip = InputManager::GetInstance();
 
     Camera::Update(dt);
-
-    TypingSystem &ts = TypingSystem::GetInstance();
-
-    if (ts.IsTypingMode())
-    {
-        ts.Update(dt);
-    }
 
     UpdateArray(dt);
     if (auto p = player.lock())
@@ -108,30 +120,10 @@ void StageState::Update(float dt)
             }
         }
     }
-    // std::set<std::pair<int, int>> checked;
-    // for (int i = 0; i < (int)this->objectArray.size(); i++)
-    // {
-    //     Collider *colliderA = (Collider *)objectArray[i]->GetComponent("Collider");
-    //     if (colliderA != nullptr)
-    //     {
-    //         for (int j = i+1; j < (int)this->objectArray.size(); j++)
-    //         {
-    //             Collider *colliderB = (Collider *)objectArray[j]->GetComponent("Collider");
-    //             if (colliderB != nullptr)
-    //             {
-    //                 if (Collision::IsColliding(colliderA->box, colliderB->box, objectArray[i]->angleDeg, objectArray[j]->angleDeg))
-    //                 {
-    //                     OnCollisionEvent a(*objectArray[i]);
-    //                     OnCollisionEvent b(*objectArray[j]);
-    //                     objectArray[i]->subject.notify(b);
-    //                     objectArray[j]->subject.notify(a);
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
-
     this->checkCollisions(dt);
+    TypingSystem &ts = TypingSystem::GetInstance();
+
+    ts.Update(dt);
 
     if (ts.IsTypingMode() && ts.HasSubmitted())
     {
