@@ -6,11 +6,9 @@
       "description": "default preset",
       "hidden": false,
       "generator": "Ninja",
-      "binaryDir": "${workspaceFolder}/build",
-      "installDir": "${workspaceFolder}",
+      "installDir": "${sourceDir}",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release",
-        "CMAKE_INSTALL_PREFIX": "${workspaceFolder}/bin"
+        "CMAKE_BUILD_TYPE": "Release"
       }
     },
     {
@@ -18,11 +16,10 @@
       "description": "debug preset",
       "hidden": false,
       "generator": "Ninja",
-      "binaryDir": "${workspaceFolder}/build",
-      "installDir": "${workspaceFolder}",
+      "installDir": "${sourceDir}",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "CMAKE_INSTALL_PREFIX": "${workspaceFolder}/bin"
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/bin"
       }
     }
   ]

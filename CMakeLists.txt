@@ -3,7 +3,7 @@ if (UNIX)
     set(SDL2_gpu_DIR "/usr/local/lib")
 endif (UNIX)
 if (WIN32)
-    cmake_minimum_required(VERSION 4.0)
+    cmake_minimum_required(VERSION 3.28)
 endif (WIN32)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
@@ -15,6 +15,7 @@ option(MYGAME_VENDORED "Use vendored libraries" OFF)
 include_directories(include)
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
+file(GLOB_RECURSE HEADERS "include/*.h")
 
 if(NOT TARGET spdlog)
     # Stand-alone build
@@ -32,7 +33,7 @@ else()
 
 endif()
 
-add_executable(${PROJECT_NAME} WIN32 ${SOURCES} ${IMGUI})
+add_executable(${PROJECT_NAME} WIN32 ${SOURCES} ${HEADERS} ${IMGUI})
 
 # SDL2::SDL2main may or may not be available. It is e.g. required by Windows GUI applications
 if(TARGET SDL2::SDL2main)
