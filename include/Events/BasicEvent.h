@@ -2,6 +2,7 @@
 
 #include "Event.h"
 #include <memory>
+#include <vector>
 
 class GameObject;
 class Effect;
