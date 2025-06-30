@@ -1,4 +1,3 @@
-// class Projectile{};
 #pragma once
 #include <string>
 #include <vector>
@@ -110,7 +109,7 @@ protected:
 class FireProjectileSpell : public Spell, public Projectile, public Component, public Observer
 {
 public:
-    FireProjectileSpell(GameObject &associated, Vec2 initialPos) : Spell(associated, {}, 10, "resources/img/Bullet.png"),
+    FireProjectileSpell(GameObject &associated, Vec2 initialPos) : Spell(associated, {}, 10, "resources/img/fire_placeholder.png"),
                                                                    Projectile(350, 300),
                                                                    Component(associated)
     {
