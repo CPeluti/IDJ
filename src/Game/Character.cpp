@@ -17,6 +17,8 @@
 #include "Game/HealthSystem.h"
 #include "Game/TypingSystem.h"
 
+#include "Game/Spell.h"
+
 void update_color_shader(float r, float g, float b, float a, int color_loc)
 {
     float fcolor[4] = {r, g, b, a};
@@ -59,23 +61,16 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
         associated.AddComponent(playerController);
     }
 
-    // Lifebar *l = new Lifebar(associated,(int)hp, {associated.box.GetSize().x, (float)10},{0,(int)associated.box.GetSize().y/4});
-    // l->setAmount(hp);
-
     associated.AddComponent(sr);
     associated.AddComponent(animator);
     associated.AddComponent(hs);
 
-    // associated.AddComponent(l);
 
-    // animator->AddAnimation("walking", new Animation(0, 5, 0.2));
     animator->AddAnimation("idle", new Animation(0, 0, 0.1));
-    // animator->AddAnimation("i_walking", new Animation(0, 5, 0.2, SDL_FLIP_HORIZONTAL));
     animator->AddAnimation("up", new Animation(0, 2, 0.1));
     animator->AddAnimation("down", new Animation(6, 8, 0.1));
     animator->AddAnimation("right", new Animation(3, 5, 0.1));
     animator->AddAnimation("left", new Animation(9, 11, 0.1));
-    // animator->AddAnimation("dead", new Animation(10, 11, 0.5));
     animator->SetAnimation("idle");
     flip = false;
 }
@@ -199,13 +194,27 @@ void Character::Update(float dt)
 
             case c.SHOOT:
             {
-                if (auto g = gun.lock())
-                {
-                    if (auto gunScript = std::dynamic_pointer_cast<Gun>(g->GetComponent("Gun").lock()))
-                    {
-                        gunScript->Shoot(c.pos);
-                    }
+                Vec2 centro = this->associated.box.center();
+                float angleStep = 10;
+                float startingAngle = Vec2::Angle(centro, c.pos);
+				LOG_INFO("Shooting at pos: ", c.pos);
+                //angle = startingAngle - ((1 / 2) * angleStep);
+
+                 //int offset = 10;
+                // int startingPoint = -((projectileAmount/2) * 10);
+                for (int i = 0; i < 1; i++) {
+                    std::shared_ptr<GameObject> bullet = std::make_shared<GameObject>();
+                    Vec2 gunOffset = { associated.box.GetSize().x + 10, .0 };
+                    Vec2 bulletOffset = Vec2::Rotate(gunOffset, startingAngle);
+                    Vec2 bulletInitialPos = centro + bulletOffset;
+
+                    std::shared_ptr<FireProjectileSpell> fSpell = std::make_shared<FireProjectileSpell>(*bullet, bulletInitialPos);
+                    bullet->AddComponent(fSpell);
+                    bullet->angleDeg = startingAngle + 90;
+                    if (auto s = Game::GetInstance().GetCurrentState())
+                        s->AddObject(bullet);
                 }
+                //associated.angleDeg = startingAngle;
             }
             break;
             }
