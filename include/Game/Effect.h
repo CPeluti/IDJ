@@ -8,6 +8,7 @@
 
 class Entity;
 class Projectile;
+class AreaSpell;
 
 enum EffectType{
   None,
@@ -34,4 +35,14 @@ public:
   virtual EffectType GetEffectType() const = 0;
   virtual const char *GetName() const = 0;
   virtual std::string ToString() const { return GetName(); }
+};
+
+class AreaEffect {
+public:
+	virtual ~AreaEffect() = default;
+	inline virtual void Apply(AreaSpell &areaSpell, float dt) {}
+	inline virtual bool IsExpired() = 0;
+	virtual EffectType GetEffectType() const = 0;
+	virtual const char* GetName() const = 0;
+	virtual std::string ToString() const { return GetName(); }
 };
