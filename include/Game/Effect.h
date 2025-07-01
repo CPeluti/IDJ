@@ -6,31 +6,18 @@
   virtual EffectType GetEffectType() const override { return GetStaticType(); } \
   virtual const char *GetName() const override { return #type; }
 
-class Entity;
-class Projectile;
-
 enum EffectType{
   None,
   Slow
 };
 
+template<typename T>
 class Effect
 {
 public:
   virtual ~Effect() = default;
-  virtual void Apply(Entity &entity, float dt) = 0;
+  virtual void Apply(T &t, float dt) = 0;
   virtual bool IsExpired() = 0;
-  virtual EffectType GetEffectType() const = 0;
-  virtual const char *GetName() const = 0;
-  virtual std::string ToString() const { return GetName(); }
-};
-
-class ProjectileEffect
-{
-public:
-  virtual ~ProjectileEffect() = default;
-  inline virtual void Apply(Projectile &projectile, float dt) {}
-  inline virtual bool IsExpired() = 0;
   virtual EffectType GetEffectType() const = 0;
   virtual const char *GetName() const = 0;
   virtual std::string ToString() const { return GetName(); }
