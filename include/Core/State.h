@@ -34,21 +34,21 @@ public:
         popRequested = req;
     }
 
-    inline void registerCollider(std::string layer_name, Collider *collider)
+    inline void registerCollider(std::string layer_name, std::shared_ptr<Collider> collider)
     {
         if (m_collisionLayers.find(layer_name) == m_collisionLayers.end())
         {
-            m_collisionLayers[layer_name] = std::vector<Collider *>();
+            m_collisionLayers[layer_name] = std::vector<std::shared_ptr<Collider>>();
         }
         m_collisionLayers[layer_name].push_back(collider);
     }
 
 
-    inline void removeCollider(std::string layer_name, Collider *collider)
+    inline void removeCollider(std::string layer_name, std::weak_ptr<Collider> collider)
     {
         for (int i = 0; i < m_collisionLayers[layer_name].size(); i++)
         {
-            if (m_collisionLayers[layer_name][i] == collider)
+            if (m_collisionLayers[layer_name][i] == collider.lock())
             {
                 m_collisionLayers[layer_name].erase(m_collisionLayers[layer_name].begin() + i);
             }
@@ -62,17 +62,17 @@ public:
         {
             for (int i = 0; i < (int)(el.second.size()); i++)
             {
-                Collider *colliderA = el.second[i];
+                std::shared_ptr<Collider> colliderA = el.second[i];
                 if (colliderA != nullptr)
                 {
                     for (int j = i + 1; j < el.second.size(); j++)
                     {
-                        Collider *colliderB = el.second[j];
+                        std::shared_ptr<Collider> colliderB = el.second[j];
                         if (colliderB != nullptr)
                         {
                             if(colliderA->GetTag() != colliderB->GetTag()){
                                 auto r = Collision::IsColliding(*colliderA, *colliderB);
-                                Collision::ResolveCollision(*colliderA, *colliderB, r);
+                                Collision::ResolveCollision(colliderA, colliderB, r);
                             }
                         }
                     }
@@ -92,5 +92,5 @@ protected:
     float time;
 
     std::vector<std::shared_ptr<GameObject>> objectArray;
-    std::map<std::string, std::vector<Collider *>> m_collisionLayers;
+    std::map<std::string, std::vector<std::shared_ptr<Collider>>> m_collisionLayers;
 };
