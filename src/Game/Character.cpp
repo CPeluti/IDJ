@@ -263,7 +263,7 @@ void Character::OnEvent(Event &e)
 
     dispatcher.Dispatch<OnCollisionEvent>(BIND_EVENT_FN(Character::OnCollision));
     dispatcher.Dispatch<OnDamageTakenEvent>(BIND_EVENT_FN(Character::OnDamageTaken));
-    dispatcher.Dispatch<OnEffectEvent>(BIND_EVENT_FN(Character::OnEffect));
+    dispatcher.Dispatch<OnEffectEvent<Entity>>(BIND_EVENT_FN(Character::OnEffect));
 }
 
 bool Character::OnCollision(OnCollisionEvent &evt)
@@ -282,9 +282,9 @@ bool Character::OnCollision(OnCollisionEvent &evt)
     return true;
 }
 
-bool Character::OnEffect(OnEffectEvent &evt)
+bool Character::OnEffect(OnEffectEvent<Entity> &evt)
 {
-    std::vector<std::weak_ptr<Effect>> effects = evt.GetEffects();
+    std::vector<std::weak_ptr<Effect<Entity>>> effects = evt.GetEffects();
     for (auto &effect : effects)
     {
         this->AddEffect(effect);

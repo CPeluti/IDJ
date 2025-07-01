@@ -3,9 +3,9 @@
 #include "Event.h"
 #include <memory>
 #include <vector>
+#include "Game/Effect.h"
 
 class GameObject;
-class Effect;
 class OnCollisionEvent : public Event
 {
 public:
@@ -72,15 +72,17 @@ protected:
     InteractionType m_InteractionType;
 };
 
+
+template <typename EffectType>
 class OnEffectEvent : public Event
 {
 public:
-    OnEffectEvent(std::vector<std::weak_ptr<Effect>> effects) : m_Effects(effects) {}
+    OnEffectEvent(std::vector<std::weak_ptr<Effect<EffectType>>> effects) : m_Effects(effects) {}
 
     EVENT_TYPE(OnEffect);
 
-    inline std::vector<std::weak_ptr<Effect>> GetEffects() const { return m_Effects; }
+    inline std::vector<std::weak_ptr<Effect<EffectType>>> GetEffects() const { return m_Effects; }
 
 protected:
-    std::vector<std::weak_ptr<Effect>> m_Effects;
+    std::vector<std::weak_ptr<Effect<EffectType>>> m_Effects;
 };
