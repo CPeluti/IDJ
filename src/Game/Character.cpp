@@ -98,7 +98,7 @@ void Character::Start()
     interactionLayers.push_back("interaction0, phys0");
     Vec2 colliderSize = associated.box.GetSize();
     Vec2 colliderOffset = (colliderSize - associated.box.GetSize());
-    std::shared_ptr<Collider> interactionEffectCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"phys0"}, new OnInteractionEvent(associated, InteractionType::Effect), colliderSize, Vec2{1, 1}, colliderOffset, "entity");
+    std::shared_ptr<Collider> interactionEffectCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"phys0"}, "entity", new OnInteractionEvent(associated, InteractionType::Effect), colliderSize, Vec2{1, 1}, colliderOffset);
     associated.AddComponent(interactionEffectCollider);
     // if (auto s = Game::GetInstance().GetCurrentState())
     // {
