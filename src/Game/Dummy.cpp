@@ -1,4 +1,4 @@
-#include "Game/Zombie.h"
+#include "Game/Dummy.h"
 #include "Game/Bullet.h"
 #include "Game/Character.h"
 #include "Game/Lifebar.h"
@@ -14,9 +14,9 @@
 #include "Core/Log.h"
 #include <iostream>
 
-int Zombie::zombieCounter = 0;
+int Dummy::dummyCounter = 0;
 
-Zombie::Zombie(GameObject &associated) : Component(associated),
+Dummy::Dummy(GameObject &associated) : Component(associated),
                                          isDead(false),
                                          hitpoints(600),
                                          damageSound("resources/audio/Hit1.wav"),
@@ -28,14 +28,14 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
 {
     this->associated.subject.addObserver(this);
 
-    std::shared_ptr<SpriteRenderer> srZombie = std::make_shared<SpriteRenderer>(associated, "resources/img/Enemy.png", 3, 2);
-    std::shared_ptr<Collider> collider = std::make_shared<Collider>(associated, std::vector<std::string>{"layer0"}, "zombie", new OnCollisionEvent(associated), Vec2{100,100});
-    std::shared_ptr<Collider> interactionCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"interaction0"}, "zombie", new OnInteractionEvent(associated, InteractionType::None), Vec2{100, 100});
+    std::shared_ptr<SpriteRenderer> srDummy = std::make_shared<SpriteRenderer>(associated, "resources/img/Enemy.png", 3, 2);
+    std::shared_ptr<Collider> collider = std::make_shared<Collider>(associated, std::vector<std::string>{"layer0"}, "Dummy", new OnCollisionEvent(associated), Vec2{100,100});
+    //std::shared_ptr<Collider> interactionCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"layer0"}, new OnInteractionEvent(associated, InteractionType::None), Vec2{ 100, 100 });
     std::shared_ptr<Animator> animator = std::make_shared<Animator>(associated);
     std::shared_ptr<HealthSystem> healthSystem = std::make_shared<HealthSystem>(associated, hitpoints);
-    associated.AddComponent(srZombie);
+    associated.AddComponent(srDummy);
     associated.AddComponent(collider);
-    associated.AddComponent(interactionCollider);
+    //associated.AddComponent(interactionCollider);
 
     animator->AddAnimation("walking", new Animation(0, 3, 0.3));
     animator->AddAnimation("r_walking", new Animation(0, 3, 0.3, SDL_FLIP_HORIZONTAL));
@@ -56,10 +56,10 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
 
     //m_Effects.push_back(std::make_unique<SlowMotionEffect>(0.5, 2));
 
-    zombieCounter++;
+    dummyCounter++;
 }
 
-bool Zombie::OnDamageTaken(OnDamageTakenEvent &evt)
+bool Dummy::OnDamageTaken(OnDamageTakenEvent &evt)
 {
     if(auto animator = std::dynamic_pointer_cast<Animator>(this->associated.GetComponent("Animator").lock())){
 
@@ -88,18 +88,18 @@ bool Zombie::OnDamageTaken(OnDamageTakenEvent &evt)
     return true;
 }
 
-bool checkClickInsideBox(int x, int y, float boxX, float boxY, float boxW, float boxH)
-{
-    return (x > boxX && x < boxX + boxW) && (y > boxY && y < boxY + boxH);
-}
+//bool checkClickInsideBox(int x, int y, float boxX, float boxY, float boxW, float boxH)
+//{
+//    return (x > boxX && x < boxX + boxW) && (y > boxY && y < boxY + boxH);
+//}
 
-Zombie::~Zombie()
+Dummy::~Dummy()
 {
-    zombieCounter--;
+    dummyCounter--;
 }
-void Zombie::Start() {}
+void Dummy::Start() {}
 
-void Zombie::Update(float dt)
+void Dummy::Update(float dt)
 {
     if(auto animator = std::dynamic_pointer_cast<Animator>(associated.GetComponent("Animator").lock()))
     {// this->Damage(1);
@@ -117,7 +117,7 @@ void Zombie::Update(float dt)
         {
             if (!hit && Character::player.lock())
             {
-                Vec2 playerPos = Character::player.lock()->GetPos();
+               /* Vec2 playerPos = Character::player.lock()->GetPos();
                 Vec2 distance = playerPos - associated.box.center();
                 Vec2 currentPos = this->associated.box.center();
                 this->associated.box.Move(currentPos + distance.normalized() * dt * 200);
@@ -129,7 +129,7 @@ void Zombie::Update(float dt)
                 else
                 {
                     animator->SetAnimation("walking");
-                }
+                }*/
             }
             if (hit && hitTimer.Expired() && !isDead)
             {
@@ -148,30 +148,30 @@ void Zombie::Update(float dt)
     }
 }
 
-bool Zombie::Is(std::string type)
+bool Dummy::Is(std::string type)
 {
-    return type == "Zombie";
+    return type == "Dummy";
 }
 
-void Zombie::Render() {}
+void Dummy::Render() {}
 
-int Zombie::GetDamage()
+int Dummy::GetDamage()
 {
     return damage;
 }
 
-void Zombie::OnEvent(Event &evt)
+void Dummy::OnEvent(Event& evt)
 {
     EventDispatcher dispatcher(evt);
 
-    dispatcher.Dispatch<OnCollisionEvent>(BIND_EVENT_FN(Zombie::OnCollision));
-    dispatcher.Dispatch<OnDamageTakenEvent>(BIND_EVENT_FN(Zombie::OnDamageTaken));
-    dispatcher.Dispatch<OnInteractionEvent>(BIND_EVENT_FN(Zombie::OnInteraction));
+    dispatcher.Dispatch<OnCollisionEvent>(BIND_EVENT_FN(Dummy::OnCollision));
+    dispatcher.Dispatch<OnDamageTakenEvent>(BIND_EVENT_FN(Dummy::OnDamageTaken));
+    dispatcher.Dispatch<OnInteractionEvent>(BIND_EVENT_FN(Dummy::OnInteraction));
 }
 
-bool Zombie::OnCollision(OnCollisionEvent &evt)
+bool Dummy::OnCollision(OnCollisionEvent& evt)
 {
-    GameObject &go = evt.GetGameObject();
+    GameObject& go = evt.GetGameObject();
     OnDamageTakenEvent e = OnDamageTakenEvent(this->associated, this->damage);
 
     if (go.GetComponent("HealthSystem").lock())
@@ -180,7 +180,7 @@ bool Zombie::OnCollision(OnCollisionEvent &evt)
     return true;
 }
 
-bool Zombie::OnInteraction(OnInteractionEvent &evt)
+bool Dummy::OnInteraction(OnInteractionEvent &evt)
 {
     GameObject &target = evt.GetGameObject();
     switch (evt.GetInteractionType())

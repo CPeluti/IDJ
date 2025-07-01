@@ -18,6 +18,8 @@
 #include "Game/TypingSystem.h"
 #include "Game/Spell.h"
 
+#include "Game/Spell.h"
+
 void update_color_shader(float r, float g, float b, float a, int color_loc)
 {
     float fcolor[4] = {r, g, b, a};
@@ -60,23 +62,16 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
         associated.AddComponent(playerController);
     }
 
-    // Lifebar *l = new Lifebar(associated,(int)hp, {associated.box.GetSize().x, (float)10},{0,(int)associated.box.GetSize().y/4});
-    // l->setAmount(hp);
-
     associated.AddComponent(sr);
     associated.AddComponent(animator);
     associated.AddComponent(hs);
 
-    // associated.AddComponent(l);
 
-    // animator->AddAnimation("walking", new Animation(0, 5, 0.2));
     animator->AddAnimation("idle", new Animation(0, 0, 0.1));
-    // animator->AddAnimation("i_walking", new Animation(0, 5, 0.2, SDL_FLIP_HORIZONTAL));
     animator->AddAnimation("up", new Animation(0, 2, 0.1));
     animator->AddAnimation("down", new Animation(6, 8, 0.1));
     animator->AddAnimation("right", new Animation(3, 5, 0.1));
     animator->AddAnimation("left", new Animation(9, 11, 0.1));
-    // animator->AddAnimation("dead", new Animation(10, 11, 0.5));
     animator->SetAnimation("idle");
     flip = false;
 }
@@ -104,7 +99,7 @@ void Character::Start()
     interactionLayers.push_back("interaction0, phys0");
     Vec2 colliderSize = associated.box.GetSize();
     Vec2 colliderOffset = (colliderSize - associated.box.GetSize());
-    std::shared_ptr<Collider> interactionEffectCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"phys0"}, new OnInteractionEvent(associated, InteractionType::Effect), colliderSize, Vec2{1, 1}, colliderOffset, "entity");
+    std::shared_ptr<Collider> interactionEffectCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"phys0"}, "entity", new OnInteractionEvent(associated, InteractionType::Effect), colliderSize, Vec2{1, 1}, colliderOffset);
     associated.AddComponent(interactionEffectCollider);
     // if (auto s = Game::GetInstance().GetCurrentState())
     // {
@@ -255,7 +250,7 @@ void Character::OnEvent(Event &e)
 
     dispatcher.Dispatch<OnCollisionEvent>(BIND_EVENT_FN(Character::OnCollision));
     dispatcher.Dispatch<OnDamageTakenEvent>(BIND_EVENT_FN(Character::OnDamageTaken));
-    dispatcher.Dispatch<OnEffectEvent>(BIND_EVENT_FN(Character::OnEffect));
+    dispatcher.Dispatch<OnEffectEvent<Entity>>(BIND_EVENT_FN(Character::OnEffect));
 }
 
 bool Character::OnCollision(OnCollisionEvent &evt)
@@ -274,9 +269,9 @@ bool Character::OnCollision(OnCollisionEvent &evt)
     return true;
 }
 
-bool Character::OnEffect(OnEffectEvent &evt)
+bool Character::OnEffect(OnEffectEvent<Entity> &evt)
 {
-    std::vector<std::weak_ptr<Effect>> effects = evt.GetEffects();
+    std::vector<std::weak_ptr<Effect<Entity>>> effects = evt.GetEffects();
     for (auto &effect : effects)
     {
         this->AddEffect(effect);
