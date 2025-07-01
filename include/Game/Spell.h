@@ -146,7 +146,7 @@ public:
 
         std::vector<std::string> layers;
         layers.push_back("layer0");
-        std::shared_ptr<Collider> collider = std::make_shared<Collider>(associated, layers, new OnCollisionEvent(associated), Vec2{10,10});
+        std::shared_ptr<Collider> collider = std::make_shared<Collider>(associated, layers, "spell", new OnCollisionEvent(associated), Vec2{10,10});
         associated.AddComponent(collider);
     }
     ~FireProjectileSpell() {}
@@ -174,7 +174,7 @@ private:
         OnDamageTakenEvent e = OnDamageTakenEvent(this->associated, this->baseDamage);
         if (go.GetComponent("HealthSystem").lock())
             go.subject.notify(e);
-        if (!go.GetComponent("Bullet").lock())
+        if (!go.GetComponent("FireProjectileSpell").lock())
             this->associated.RequestDelete();
 
         return true;
