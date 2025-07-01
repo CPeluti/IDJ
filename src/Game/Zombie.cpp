@@ -3,7 +3,6 @@
 #include "Game/Character.h"
 #include "Game/Lifebar.h"
 #include "Game/HealthSystem.h"
-#include "Game/SlowMotionEffect.h"
 #include "Core/GameObject.h"
 #include "Core/Animation.h"
 #include "Core/SpriteRenderer.h"
@@ -55,7 +54,7 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
 
     animator->SetAnimation("walking");
 
-    m_Effects.push_back(std::make_unique<SlowMotionEffect>(0.5, 2));
+    //m_Effects.push_back(std::make_unique<SlowMotionEffect>(0.5, 2));
 
     zombieCounter++;
 }
@@ -188,13 +187,13 @@ bool Zombie::OnInteraction(OnInteractionEvent &evt)
     {
     case InteractionType::Effect:
     {
-        std::vector<std::weak_ptr<Effect>> effects;
+        std::vector<std::weak_ptr<Effect<Entity>>> effects;
         for (auto &effect : this->m_Effects)
         {
-            std::weak_ptr<Effect> newWeakEffect = effect;
+            std::weak_ptr<Effect<Entity>> newWeakEffect = effect;
             effects.push_back(newWeakEffect);
         }
-        OnEffectEvent e = OnEffectEvent(effects);
+        OnEffectEvent<Entity> e = OnEffectEvent<Entity>(effects);
         target.subject.notify(e);
         break;
     }
