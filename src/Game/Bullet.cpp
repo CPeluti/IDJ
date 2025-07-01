@@ -15,7 +15,7 @@ Bullet::Bullet(GameObject &associated, float angle, float speed, int damage, flo
     associated.AddComponent(std::make_shared<SpriteRenderer>(associated, "resources/img/Bullet.png", 1, 1));
     std::vector<std::string> layers;
     layers.push_back("layer0");
-    associated.AddComponent(std::make_shared<Collider>(associated, layers, new OnCollisionEvent(associated)));
+    associated.AddComponent(std::make_shared<Collider>(associated, layers, "bullet", new OnCollisionEvent(associated)));
 
     this->targetsPlayer = targetsPlayer;
     this->speed = {(double)speed, .0};
