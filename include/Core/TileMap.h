@@ -21,7 +21,7 @@ class TileMap : public Component {
         void Update(float dt);
         void Start();
     private:
-        std::vector<std::shared_ptr<Collider>> m_colliders;
+        std::vector<std::weak_ptr<Collider>> m_colliders;
         std::vector<int> tileMatrix;
         std::unique_ptr<TileSet> tileSet;
         int mapWidth;

@@ -8,7 +8,7 @@ class Observer {
         Observer();
         virtual ~Observer();
         virtual void OnEvent(Event& e) = 0;
-    private:
+    protected:
         std::vector<Subject*> subjects;
         Observer* next;
 };
