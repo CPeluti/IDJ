@@ -39,13 +39,13 @@ public:
     virtual float GetDamage() = 0;
     virtual void CastSpell() {};
 
-    void AddEffect(std::weak_ptr<Effect<SpellType>> e)
+    void AddEffect(std::weak_ptr<Effect<SpellType, float>> e)
     {
         bool exists = false;
         if (auto targetEffect = e.lock()) {
             for (auto it = spellEffects.begin(); it != spellEffects.end();)
             {
-                std::shared_ptr<Effect<SpellStrategy>> effect = (*it).lock();
+                std::shared_ptr<Effect<SpellStrategy, float>> effect = (*it).lock();
 
                 if (targetEffect->GetName() == effect->GetName())
                 {
@@ -63,7 +63,7 @@ public:
     {
         for (auto it = spellEffects.begin(); it != spellEffects.end();)
         {
-            std::shared_ptr<Effect<SpellStrategy>> e = (*it).lock();
+            std::shared_ptr<Effect<SpellStrategy, float>> e = (*it).lock();
             if (e->GetName() == effectName)
                 auto erased = spellEffects.erase(it);
             else
@@ -74,7 +74,7 @@ public:
     void UpdateEffect(float dt) {
         for(auto it = spellEffects.begin(); it != spellEffects.end();)
         {
-            std::shared_ptr<Effect<SpellStrategy>> e = (*it).lock();
+            std::shared_ptr<Effect<SpellStrategy, float>> e = (*it).lock();
             if (e)
             {
                 e->Update(dt);
@@ -91,7 +91,7 @@ public:
     }
 
 protected:
-	std::vector<std::weak_ptr<Effect<SpellStrategy>>> spellEffects;
+	std::vector<std::weak_ptr<Effect<SpellStrategy, float>>> spellEffects;
     std::vector<std::string> modifiers;
     float baseDamage;
     std::string baseSprite;
@@ -100,14 +100,19 @@ protected:
 class Projectile
 {
 public:
-    Projectile(float speed, float distanceLeft) : m_baseSpeed(speed), m_actualSpeed(speed), m_distanceLeft(distanceLeft) {}
-
+    Projectile(float speed, float distanceLeft) : m_baseSpeed(speed), m_currentSpeed(speed), m_distanceLeft(distanceLeft) {}
+    void addProjectiles(int amount) {
+		m_currentProjectileAmount += amount;
+    }
+    void removeProjectiles(int amount) {
+        m_currentProjectileAmount -= amount;
+    }
 protected:
     //std::vector<std::weak_ptr<Effect>> spellEffects;
     inline void SpellTypeStrategy(GameObject &associated, float dt)
     {
 
-        Vec2 rotatedSpeed = Vec2::Rotate({.0f, -m_actualSpeed}, associated.angleDeg);
+        Vec2 rotatedSpeed = Vec2::Rotate({.0f, -m_currentSpeed}, associated.angleDeg);
 
         Vec2 oldPos = associated.box.GetPos();
         Vec2 newPos = {
@@ -123,8 +128,9 @@ protected:
             associated.RequestDelete();
         }
     }
-    float m_projectileAmount;
-    float m_actualSpeed;
+    float m_baseProjectileAmount;
+    float m_currentProjectileAmount;
+    float m_currentSpeed;
     float m_baseSpeed;
     float m_distanceLeft;
 };
