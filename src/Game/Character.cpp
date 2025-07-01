@@ -16,6 +16,7 @@
 #include "Game/PlayerController.h"
 #include "Game/HealthSystem.h"
 #include "Game/TypingSystem.h"
+#include "Game/Spell.h"
 
 void update_color_shader(float r, float g, float b, float a, int color_loc)
 {
@@ -199,13 +200,13 @@ void Character::Update(float dt)
 
             case c.SHOOT:
             {
-                if (auto g = gun.lock())
-                {
-                    if (auto gunScript = std::dynamic_pointer_cast<Gun>(g->GetComponent("Gun").lock()))
-                    {
-                        gunScript->Shoot(c.pos);
-                    }
-                }
+                std::shared_ptr<GameObject> bullet = std::make_shared<GameObject>();
+                // Bullet *bulletComponent = new Bullet(*bullet, angle, 350, 500, 400, Character::player != this->associated.GetComponent("Character"));
+
+                std::shared_ptr<FireAreaSpell> fSpell = std::make_shared<FireAreaSpell>(*bullet, c.pos);
+                bullet->AddComponent(fSpell);
+                if(auto s = Game::GetInstance().GetCurrentState())
+					s->AddObject(bullet);
             }
             break;
             }
