@@ -187,13 +187,13 @@ bool Zombie::OnInteraction(OnInteractionEvent &evt)
     {
     case InteractionType::Effect:
     {
-        std::vector<std::weak_ptr<Effect<Entity>>> effects;
-        for (auto &effect : this->m_Effects)
+        std::vector<std::weak_ptr<Effect<Entity, float>>> effects;
+        for (auto& effect : this->m_Effects)
         {
-            std::weak_ptr<Effect<Entity>> newWeakEffect = effect;
+            std::weak_ptr<Effect<Entity, float>> newWeakEffect = effect;
             effects.push_back(newWeakEffect);
         }
-        OnEffectEvent<Entity> e = OnEffectEvent<Entity>(effects);
+        OnEffectEvent<Entity, float> e = OnEffectEvent<Entity, float>(effects);
         target.subject.notify(e);
         break;
     }
