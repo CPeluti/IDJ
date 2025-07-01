@@ -21,7 +21,7 @@ enum class ColliderFunctionType
 class Collider : public Component, public std::enable_shared_from_this<Component>
 {
 public:
-    Collider(GameObject &associated, std::vector<std::string> collisionLayers, Event *event, Vec2 size = {0, 0}, Vec2 scale = {1, 1}, Vec2 offset = {0, 0}, std::string tag = "", float weight = 0.5f);
+    Collider(GameObject &associated, std::vector<std::string> collisionLayers, std::string tag, Event *event, Vec2 size = {0, 0}, Vec2 scale = {1, 1}, Vec2 offset = {0, 0}, float weight = 0.5f);
     ~Collider();
     Rect box;
     void Update(float dt);

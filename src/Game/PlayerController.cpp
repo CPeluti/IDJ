@@ -1,6 +1,7 @@
 #include "Core/InputManager.h"
 
 #include "Game/Character.h"
+#include "Game/Dummy.h"
 #include "Game/PlayerController.h"
 #include "Game/TypingSystem.h"
 
@@ -48,6 +49,19 @@ void PlayerController::Update(float dt)
         if(auto character = std::dynamic_pointer_cast<Character>(this->associated.GetComponent("Character").lock())){
             character->Issue(c);
         }
+    }
+
+    if (ip.MousePress(RIGHT_MOUSE_BUTTON))
+    {
+        std::shared_ptr<GameObject> dummy = std::make_shared<GameObject>();
+        std::shared_ptr<Dummy> dummyComponent = std::make_shared<Dummy>(*dummy);
+		dummy->box.Move({ ip.GetMouseX(), ip.GetMouseY() });
+        dummy->AddComponent(dummyComponent);
+        if(auto s = Game::GetInstance().GetCurrentState())
+        {
+            s->AddObject(dummy);
+		}
+        
     }
 }
 
