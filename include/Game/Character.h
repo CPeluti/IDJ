@@ -49,7 +49,7 @@ public:
 private:
     bool OnCollision(OnCollisionEvent &evt);
     bool OnDamageTaken(OnDamageTakenEvent &evt);
-    bool OnEffect(OnEffectEvent &evt);
+    bool OnEffect(OnEffectEvent<Entity> &evt);
 
 private:
     bool flip;
