@@ -73,16 +73,16 @@ protected:
 };
 
 
-template <typename EffectType>
+template <typename EffectType, typename type>
 class OnEffectEvent : public Event
 {
 public:
-    OnEffectEvent(std::vector<std::weak_ptr<Effect<EffectType>>> effects) : m_Effects(effects) {}
+    OnEffectEvent(std::vector<std::weak_ptr<Effect<EffectType, type>>> effects) : m_Effects(effects) {}
 
     EVENT_TYPE(OnEffect);
 
-    inline std::vector<std::weak_ptr<Effect<EffectType>>> GetEffects() const { return m_Effects; }
+    inline std::vector<std::weak_ptr<Effect<EffectType, type>>> GetEffects() const { return m_Effects; }
 
 protected:
-    std::vector<std::weak_ptr<Effect<EffectType>>> m_Effects;
+    std::vector<std::weak_ptr<Effect<EffectType, type>>> m_Effects;
 };
