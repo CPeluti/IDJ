@@ -25,6 +25,7 @@ enum class SpellElement
     water
 };
 
+template <typename SpellStrategy>
 class Spell
 {
 public:
@@ -38,7 +39,59 @@ public:
     virtual float GetDamage() = 0;
     virtual void CastSpell() {};
 
+    void AddEffect(std::weak_ptr<Effect<SpellType>> e)
+    {
+        bool exists = false;
+        if (auto targetEffect = e.lock()) {
+            for (auto it = spellEffects.begin(); it != spellEffects.end();)
+            {
+                std::shared_ptr<Effect<SpellStrategy>> effect = (*it).lock();
+
+                if (targetEffect->GetName() == effect->GetName())
+                {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists)
+            {
+                spellEffects.push_back(e);
+            }
+        }
+    }
+    void RemoveEffect(std::string effectName)
+    {
+        for (auto it = spellEffects.begin(); it != spellEffects.end();)
+        {
+            std::shared_ptr<Effect<SpellStrategy>> e = (*it).lock();
+            if (e->GetName() == effectName)
+                auto erased = spellEffects.erase(it);
+            else
+                ++it;
+        }
+    }
+
+    void UpdateEffect(float dt) {
+        for(auto it = spellEffects.begin(); it != spellEffects.end();)
+        {
+            std::shared_ptr<Effect<SpellStrategy>> e = (*it).lock();
+            if (e)
+            {
+                e->Update(dt);
+                if (e->IsExpired())
+                    it = spellEffects.erase(it);
+                else
+                    ++it;
+            }
+            else
+            {
+                it = spellEffects.erase(it);
+            }
+		}
+    }
+
 protected:
+	std::vector<std::weak_ptr<Effect<SpellStrategy>>> spellEffects;
     std::vector<std::string> modifiers;
     float baseDamage;
     std::string baseSprite;
@@ -47,45 +100,14 @@ protected:
 class Projectile
 {
 public:
-    Projectile(float speed, float distanceLeft) : m_speed(speed), m_distanceLeft(distanceLeft) {}
-    void AddEffect(std::weak_ptr<ProjectileEffect> pe)
-    {
-        bool exists = false;
-        
-        for (auto it = spellEffects.begin(); it != spellEffects.end();)
-        {
-            std::shared_ptr<ProjectileEffect> e = (*it).lock();
-            std::shared_ptr<ProjectileEffect> peLocked = (*it).lock();
-            
-            if (e->GetName() == peLocked->GetName())
-            {
-                exists = true;
-                break;
-            }
-        }
-        if (!exists)
-        {
-            spellEffects.push_back(pe);
-        }
-    }
-    void RemoveEffect(std::string effectName)
-    {
-        for (auto it = spellEffects.begin(); it != spellEffects.end();)
-        {
-            std::shared_ptr<ProjectileEffect> e = (*it).lock();
-            if (e->GetName() == effectName)
-                auto erased = spellEffects.erase(it);
-            else
-                ++it;
-        }
-    }
+    Projectile(float speed, float distanceLeft) : m_baseSpeed(speed), m_actualSpeed(speed), m_distanceLeft(distanceLeft) {}
 
 protected:
-    std::vector<std::weak_ptr<ProjectileEffect>> spellEffects;
+    //std::vector<std::weak_ptr<Effect>> spellEffects;
     inline void SpellTypeStrategy(GameObject &associated, float dt)
     {
 
-        Vec2 rotatedSpeed = Vec2::Rotate({.0f, -m_speed}, associated.angleDeg);
+        Vec2 rotatedSpeed = Vec2::Rotate({.0f, -m_actualSpeed}, associated.angleDeg);
 
         Vec2 oldPos = associated.box.GetPos();
         Vec2 newPos = {
@@ -101,12 +123,13 @@ protected:
             associated.RequestDelete();
         }
     }
-    float m_speed;
+    float m_projectileAmount;
+    float m_actualSpeed;
+    float m_baseSpeed;
     float m_distanceLeft;
-    float angle;
 };
 
-class FireProjectileSpell : public Spell, public Projectile, public Component, public Observer
+class FireProjectileSpell : public Spell<Projectile>, public Projectile, public Component, public Observer
 {
 public:
     FireProjectileSpell(GameObject &associated, Vec2 initialPos) : Spell(associated, {}, 10, "resources/img/fire_placeholder.png"),
@@ -118,7 +141,6 @@ public:
 
         std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(associated, baseSprite, 1, 1);
         this->associated.box.Move(initialPos);
-        this->associated.angleDeg = angle + 90;
 
         this->associated.AddComponent(sr);
 
