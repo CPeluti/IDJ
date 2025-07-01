@@ -140,7 +140,7 @@ void TileMap::Start()
 
     for (auto c : colliders2BCreated)
     {
-        std::shared_ptr<Collider> collider = std::make_shared<Collider>(this->associated, std::vector<std::string>{"phys0"}, new OnCollisionEvent(associated), c.GetSize(), Vec2{1, 1}, c.GetPos(), "phys", 0);
+        std::shared_ptr<Collider> collider = std::make_shared<Collider>(this->associated, std::vector<std::string>{"phys0"}, "phys", new OnCollisionEvent(associated), c.GetSize(), Vec2{1, 1}, c.GetPos(), 0);
         m_colliders.emplace_back(collider);
         this->associated.AddComponent(collider);
     }

@@ -10,20 +10,20 @@
 #include <SDL2/SDL.h>
 #endif // DEBUG
 
-Collider::Collider(GameObject &associated, std::vector<std::string> collisionLayers, Event *event, Vec2 size, Vec2 scale, Vec2 offset, std::string tag, float weight) : Component(associated),
-																																																																																				size(size),
-																																																																																				scale(scale),
-																																																																																				offset(offset),
-																																																																																				m_collisionLayers(collisionLayers),
-																																																																																				m_event(event),
-																																																																																				m_tag(tag),
-																																																																																				weight(weight)
+Collider::Collider(GameObject &associated, std::vector<std::string> collisionLayers, std::string tag, Event *event, Vec2 size, Vec2 scale, Vec2 offset, float weight) : Component(associated),
+																																										size(size),
+																																										scale(scale),
+																																										offset(offset),
+																																										m_collisionLayers(collisionLayers),
+																																										m_event(event),
+																																										m_tag(tag),
+																																										weight(weight)
 {
 	if (auto s = std::move(Game::GetInstance().GetCurrentState()))
 	{
 		for (auto &layer : m_collisionLayers)
 		{
-			s->registerCollider(layer, this);
+			s->registerCollider(layer, std::dynamic_pointer_cast<Collider>(shared_from_this()));
 		}
 	}
 }
@@ -34,7 +34,7 @@ Collider::~Collider()
 	{
 		for (auto &layer : m_collisionLayers)
 		{
-			s->removeCollider(layer, this);
+			s->removeCollider(layer, std::dynamic_pointer_cast<Collider>(shared_from_this()));
 		}
 		this->associated.RemoveComponent(weak_from_this());
 	}

@@ -78,23 +78,25 @@ class Collision {
 			return {true, mtvAxis,overlap};
 		}
 
-		static inline void ResolveCollision(Collider& A, Collider& B, const CollisionManifold& m){
+		static inline void ResolveCollision(std::weak_ptr<Collider> ptrA, std::weak_ptr<Collider> ptrB, const CollisionManifold& m){
 			if(!m.hit){
 				return;
 			}
+			auto A = ptrA.lock();
+			auto B = ptrB.lock();
 
 			float slop = 0.01f;
 			float percent = 0.8f;
 			float correctedOverlap = std::max(m.penetration - slop, 0.0f) * percent;
 
-			float invweightA = (A.weight > 0.f) ? 1.f / A.weight : 0.f;
-			float invweightB = (B.weight > 0.f) ? 1.f / B.weight : 0.f;
+			float invweightA = (A->weight > 0.f) ? 1.f / A->weight : 0.f;
+			float invweightB = (B->weight > 0.f) ? 1.f / B->weight : 0.f;
 			float invTotal = invweightA + invweightB;
 			if (invTotal == 0.f) return;
 
 			Vec2 correction = m.normal * (correctedOverlap / invTotal) * percent;
 
-			Vec2 rv = B.getAssociated()->GetSpeed() - A.getAssociated()->GetSpeed();
+			Vec2 rv = B->getAssociated()->GetSpeed() - A->getAssociated()->GetSpeed();
 			float velAlongNormal = Dot(rv, m.normal);
 			if (velAlongNormal > 0) return;
 
@@ -104,10 +106,17 @@ class Collision {
 			j /= invTotal;
 
 			Vec2 impulse = m.normal * j;
-			A.getAssociated()->SetSpeed(A.getAssociated()->GetSpeed() - impulse * invweightA);
-			B.getAssociated()->SetSpeed(B.getAssociated()->GetSpeed() + impulse * invweightB);
-			A.getAssociated()->subject.notify(*B.GetEvent());
-			B.getAssociated()->subject.notify(*A.GetEvent());
+			A->getAssociated()->SetSpeed(A->getAssociated()->GetSpeed() - impulse * invweightA);
+			B->getAssociated()->SetSpeed(B->getAssociated()->GetSpeed() + impulse * invweightB);
+			OnCollisionEvent evtA = *dynamic_cast<OnCollisionEvent*>(A->GetEvent());
+			OnCollisionEvent evtB = *dynamic_cast<OnCollisionEvent*>(B->GetEvent());
+
+			if (ptrA.lock()) {
+				A->getAssociated()->subject.notify(evtB);
+			}
+			if (ptrB.lock()) {
+				B->getAssociated()->subject.notify(evtA);
+			}
                                           
 		}
 
