@@ -17,13 +17,18 @@ struct CollisionManifold {
 class Collision {
 
 	public:
-		static inline CollisionManifold IsColliding(Collider& rA, Collider& rB, Vec2 offsetA={0,0}, Vec2 offsetB={0,0}) {
-			double angleOfA = rA.getAngleDeg();
-			double angleOfB = rB.getAngleDeg();
+		static inline CollisionManifold IsColliding(std::weak_ptr<Collider> ptrA, std::weak_ptr<Collider> ptrB, Vec2 offsetA={0,0}, Vec2 offsetB={0,0}) {
+			auto rA = ptrA.lock();
+			auto rB = ptrB.lock();
+			if(!rA || !rB) {
+				return {false};
+			}
+			double angleOfA = rA->getAngleDeg();
+			double angleOfB = rB->getAngleDeg();
 			float overlap = INFINITY;
 			Vec2  mtvAxis{};  
-			Rect a = Rect::AddVector(rA.box,offsetA);
-			Rect b = Rect::AddVector(rB.box,offsetB);
+			Rect a = Rect::AddVector(rA->box,offsetA);
+			Rect b = Rect::AddVector(rB->box,offsetB);
 			
 			Vec2 A[] = { Vec2( a.GetPos().x, a.GetPos().y + a.GetSize().y ),
 						  Vec2( a.GetPos().x + a.GetSize().x, a.GetPos().y + a.GetSize().y ),
@@ -82,40 +87,41 @@ class Collision {
 			if(!m.hit){
 				return;
 			}
-			auto A = ptrA.lock();
-			auto B = ptrB.lock();
 
 			float slop = 0.01f;
 			float percent = 0.8f;
 			float correctedOverlap = std::max(m.penetration - slop, 0.0f) * percent;
+			auto A = ptrA.lock();
+			auto B = ptrB.lock();
+			if (A && B) {
+				float invweightA = (A->weight > 0.f) ? 1.f / A->weight : 0.f;
+				float invweightB = (B->weight > 0.f) ? 1.f / B->weight : 0.f;
+				float invTotal = invweightA + invweightB;
+				if (invTotal == 0.f) return;
 
-			float invweightA = (A->weight > 0.f) ? 1.f / A->weight : 0.f;
-			float invweightB = (B->weight > 0.f) ? 1.f / B->weight : 0.f;
-			float invTotal = invweightA + invweightB;
-			if (invTotal == 0.f) return;
+				Vec2 correction = m.normal * (correctedOverlap / invTotal) * percent;
 
-			Vec2 correction = m.normal * (correctedOverlap / invTotal) * percent;
+				Vec2 rv = B->getAssociated()->GetSpeed() - A->getAssociated()->GetSpeed();
+				float velAlongNormal = Dot(rv, m.normal);
+				if (velAlongNormal > 0) return;
 
-			Vec2 rv = B->getAssociated()->GetSpeed() - A->getAssociated()->GetSpeed();
-			float velAlongNormal = Dot(rv, m.normal);
-			if (velAlongNormal > 0) return;
+				float e = 0;
 
-			float e = 0;
+				float j = -(1.f + e) * velAlongNormal;
+				j /= invTotal;
 
-			float j = -(1.f + e) * velAlongNormal;
-			j /= invTotal;
+				Vec2 impulse = m.normal * j;
+				A->getAssociated()->SetSpeed(A->getAssociated()->GetSpeed() - impulse * invweightA);
+				B->getAssociated()->SetSpeed(B->getAssociated()->GetSpeed() + impulse * invweightB);
+				OnCollisionEvent* evtA = dynamic_cast<OnCollisionEvent*>(A->GetEvent());
+				OnCollisionEvent* evtB = dynamic_cast<OnCollisionEvent*>(B->GetEvent());
 
-			Vec2 impulse = m.normal * j;
-			A->getAssociated()->SetSpeed(A->getAssociated()->GetSpeed() - impulse * invweightA);
-			B->getAssociated()->SetSpeed(B->getAssociated()->GetSpeed() + impulse * invweightB);
-			OnCollisionEvent evtA = *dynamic_cast<OnCollisionEvent*>(A->GetEvent());
-			OnCollisionEvent evtB = *dynamic_cast<OnCollisionEvent*>(B->GetEvent());
-
-			if (ptrA.lock()) {
-				A->getAssociated()->subject.notify(evtB);
-			}
-			if (ptrB.lock()) {
-				B->getAssociated()->subject.notify(evtA);
+				if (evtB && A) {
+					A->getAssociated()->subject.notify(*evtB);
+				}
+				if (evtA && B) {
+					B->getAssociated()->subject.notify(*evtA);
+				}
 			}
                                           
 		}

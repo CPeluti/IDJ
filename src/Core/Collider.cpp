@@ -19,13 +19,7 @@ Collider::Collider(GameObject &associated, std::vector<std::string> collisionLay
 																																										m_tag(tag),
 																																										weight(weight)
 {
-	if (auto s = std::move(Game::GetInstance().GetCurrentState()))
-	{
-		for (auto &layer : m_collisionLayers)
-		{
-			s->registerCollider(layer, std::dynamic_pointer_cast<Collider>(shared_from_this()));
-		}
-	}
+
 }
 
 Collider::~Collider()
@@ -34,12 +28,21 @@ Collider::~Collider()
 	{
 		for (auto &layer : m_collisionLayers)
 		{
-			s->removeCollider(layer, std::dynamic_pointer_cast<Collider>(shared_from_this()));
+			s->removeCollider(layer, this);
 		}
-		this->associated.RemoveComponent(weak_from_this());
+		//this->associated.RemoveComponent(weak_from_this());
 	}
 }
 
+void Collider::registerCollider() {
+	if (auto s = std::move(Game::GetInstance().GetCurrentState()))
+	{
+		for (auto& layer : m_collisionLayers)
+		{
+			s->registerCollider(layer, weak_from_this());
+		}
+	}
+}
 void Collider::Update(float dt)
 {
 	Vec2 center = this->associated.box.GetPos();
