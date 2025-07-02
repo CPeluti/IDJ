@@ -16,6 +16,7 @@
 #include "Game/PlayerController.h"
 #include "Game/HealthSystem.h"
 #include "Game/TypingSystem.h"
+#include "Game/Spell.h"
 
 #include "Game/Spell.h"
 
@@ -194,27 +195,13 @@ void Character::Update(float dt)
 
             case c.SHOOT:
             {
-                Vec2 centro = this->associated.box.center();
-                float angleStep = 10;
-                float startingAngle = Vec2::Angle(centro, c.pos);
-				LOG_INFO("Shooting at pos: ", c.pos);
-                //angle = startingAngle - ((1 / 2) * angleStep);
+                std::shared_ptr<GameObject> bullet = std::make_shared<GameObject>();
+                // Bullet *bulletComponent = new Bullet(*bullet, angle, 350, 500, 400, Character::player != this->associated.GetComponent("Character"));
 
-                 //int offset = 10;
-                // int startingPoint = -((projectileAmount/2) * 10);
-                for (int i = 0; i < 1; i++) {
-                    std::shared_ptr<GameObject> bullet = std::make_shared<GameObject>();
-                    Vec2 gunOffset = { associated.box.GetSize().x + 10, .0 };
-                    Vec2 bulletOffset = Vec2::Rotate(gunOffset, startingAngle);
-                    Vec2 bulletInitialPos = centro + bulletOffset;
-
-                    std::shared_ptr<FireProjectileSpell> fSpell = std::make_shared<FireProjectileSpell>(*bullet, bulletInitialPos);
-                    bullet->AddComponent(fSpell);
-                    bullet->angleDeg = startingAngle + 90;
-                    if (auto s = Game::GetInstance().GetCurrentState())
-                        s->AddObject(bullet);
-                }
-                //associated.angleDeg = startingAngle;
+                std::shared_ptr<FireAreaSpell> fSpell = std::make_shared<FireAreaSpell>(*bullet, c.pos);
+                bullet->AddComponent(fSpell);
+                if(auto s = Game::GetInstance().GetCurrentState())
+					s->AddObject(bullet);
             }
             break;
             }
