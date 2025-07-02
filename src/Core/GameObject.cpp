@@ -18,10 +18,10 @@ GameObject::~GameObject()
 }
 
 void GameObject::Start(){
+    started = true;
     for(auto iter : components){
         iter->Start();
     }
-    started = true;
 }
 
 void GameObject::Update(float dt)

@@ -122,7 +122,7 @@ void Gun::Shoot(Vec2 target)
                     Vec2 bulletOffset = Vec2::Rotate(gunOffset, angle);
                     Vec2 bulletInitialPos = centro + bulletOffset;
 
-                    std::shared_ptr<FireProjectileSpell> fSpell = std::make_shared<FireProjectileSpell>(*bullet, bulletInitialPos);
+                    std::shared_ptr<FireAreaSpell> fSpell = std::make_shared<FireAreaSpell>(*bullet, bulletInitialPos);
                     bullet->AddComponent(fSpell);
                     // bullet->box.Move();
         
