@@ -76,7 +76,7 @@ bool Dummy::OnDamageTaken(OnDamageTakenEvent &evt)
             
             if (hs->GetHp() <= 0 && !isDead)
             {
-                this->associated.RemoveComponent(this->associated.GetComponent("Collider"));
+                this->associated.RemoveComponent(this->associated.GetComponent("Collider").lock());
                 // this->associated.RemoveComponent(l);
                 isDead = true;
                 deathTimer.Restart();

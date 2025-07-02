@@ -14,6 +14,7 @@ std::weak_ptr<GameObject> State::AddObject(std::shared_ptr<GameObject> object)
         object->Start();
     }
     return GetObjectPtr(object.get());
+
 }
 
 std::weak_ptr<GameObject> State::GetObjectPtr(GameObject *object)
