@@ -3,12 +3,12 @@
 #include "Spell.h"
 #include "spdlog/fmt/fmt.h"
 
-class MoreProjectileEffect : public Effect<Projectile>{
+class MoreProjectileEffect : public Effect<Spell<Projectile>>{
 public:
 	MoreProjectileEffect(int amount): m_extraProjectiles(amount) {}
-	void Apply(Projectile &spell) {
+	void Apply(Spell<Projectile> &spell) {
 		if(!applied){
-			spell.addProjectiles(m_extraProjectiles);
+			spell.IncreaseElementCount(m_extraProjectiles);
 		}
 		applied = true;
 	}
