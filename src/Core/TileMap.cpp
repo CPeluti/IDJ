@@ -65,6 +65,7 @@ void TileMap::SetTileSet(TileSet *ts)
 
 void TileMap::Start()
 {
+	LOG_INFO("INICIO TILEMAP");
     std::vector<Rect> colliders2BCreated;
 
     this->associated.box.SetSize({mapWidth * tileSet->GetTileWidth(), mapHeight * tileSet->GetTileHeight()});

@@ -1,4 +1,5 @@
 #pragma once
+// #include "Spell.h"
 
 #define EFFECT_TYPE(type)                                              \
   static EffectType GetStaticType() { return EffectType::type; }                \

@@ -4,6 +4,7 @@
 Subject::Subject():head(NULL){}
 
 void Subject::addObserver(Observer* observer){
+    observer->subjects.push_back(this);
     observer->next = head;
     head = observer;
 }
