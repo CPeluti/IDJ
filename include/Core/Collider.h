@@ -18,7 +18,7 @@ enum class ColliderFunctionType
     OnInteraction,
 };
 
-class Collider : public Component, public std::enable_shared_from_this<Component>
+class Collider : public Component, public std::enable_shared_from_this<Collider>
 {
 public:
     Collider(GameObject &associated, std::vector<std::string> collisionLayers, std::string tag, Event *event, Vec2 size = {0, 0}, Vec2 scale = {1, 1}, Vec2 offset = {0, 0}, float weight = 0.5f);
@@ -26,6 +26,9 @@ public:
     Rect box;
     void Update(float dt);
     void Render();
+    inline void Start() {
+        this->registerCollider();
+    }
     bool Is(std::string type);
     void SetScale(Vec2 scale);
     void SetOffset(Vec2 scale);
@@ -40,6 +43,7 @@ public:
         return fmt::format("\nCollider\n\tTag: {}\n\tPos: ({},{})\n\tSize: ({},{})\n\tOffset: ({},{})",m_tag, this->associated.box.GetPos().x, this->associated.box.GetPos().y, size.x, size.y, offset.x, offset.y);
     }
     float weight;
+    void registerCollider();
 private:
     Vec2 scale;
     Vec2 offset;
