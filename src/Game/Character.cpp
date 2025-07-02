@@ -295,26 +295,9 @@ void Character::CastSpell(SpellType type, SpellElement element, std::vector<std:
     switch (type) {
         case SpellType::projectile:
         {
-            Vec2 centro = this->associated.box.center();
-            float angleStep = 10;
-            float startingAngle = Vec2::Angle(centro, target);
-            std::shared_ptr<FireProjectileSpell> spell = std::make_shared<FireProjectileSpell>(*spellObj, this->associated.box.center());
-            for(auto effect : effects){
-                if (auto locked = effect) {
-                    if (auto projectileEffect = std::dynamic_pointer_cast<Effect<Projectile>>(locked)) {
-                        spell->AddEffect(projectileEffect);
-                    }
-                }
-			}
-            spell->ApplyEffects();
-            for (int i = 0; i < spell->getProjectileAmount();i++) {
-                std::shared_ptr<GameObject> spellObj = std::make_shared<GameObject>();
-                spellObj->angleDeg = startingAngle + 90 + (i*15);
-                spellObj->AddComponent(spell);
-                if (auto s = Game::GetInstance().GetCurrentState())
-                    s->AddObject(spellObj);
-
-            }
+            std::shared_ptr<ProjectileSpell> spell = std::make_shared<ProjectileSpell>(this->associated.box.center(), target);
+			spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared<MoreProjectileEffect>(10)));
+            spell->CastSpell();
         }
         
             break;
