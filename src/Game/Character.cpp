@@ -18,7 +18,8 @@
 #include "Game/TypingSystem.h"
 #include "Game/Spell.h"
 
-#include "Game/Spell.h"
+#include "Game/Effect.h"
+#include "Game/SpellEffects.h"
 
 void update_color_shader(float r, float g, float b, float a, int color_loc)
 {
@@ -195,13 +196,17 @@ void Character::Update(float dt)
 
             case c.SHOOT:
             {
-                std::shared_ptr<GameObject> bullet = std::make_shared<GameObject>();
-                // Bullet *bulletComponent = new Bullet(*bullet, angle, 350, 500, 400, Character::player != this->associated.GetComponent("Character"));
+                //std::shared_ptr<GameObject> bullet = std::make_shared<GameObject>();
+				std::shared_ptr<MoreProjectileEffect> e = std::make_shared<MoreProjectileEffect>(10);
+				this->effects.push_back(e);
+				CastSpell(SpellType::projectile, SpellElement::fire, this->effects, c.pos);
 
-                std::shared_ptr<FireAreaSpell> fSpell = std::make_shared<FireAreaSpell>(*bullet, c.pos);
+
+            /*    std::shared_ptr<FireProjectileSpell> fSpell = std::make_shared<FireProjectileSpell>(*bullet, centro);
                 bullet->AddComponent(fSpell);
+                bullet->angleDeg = startingAngle + 90;
                 if(auto s = Game::GetInstance().GetCurrentState())
-					s->AddObject(bullet);
+					s->AddObject(bullet);*/
             }
             break;
             }
@@ -250,7 +255,7 @@ void Character::OnEvent(Event &e)
 
     dispatcher.Dispatch<OnCollisionEvent>(BIND_EVENT_FN(Character::OnCollision));
     dispatcher.Dispatch<OnDamageTakenEvent>(BIND_EVENT_FN(Character::OnDamageTaken));
-    dispatcher.Dispatch<OnEffectEvent<Entity,float>>(BIND_EVENT_FN(Character::OnEffect));
+    dispatcher.Dispatch<OnEffectEvent<Entity>>(BIND_EVENT_FN(Character::OnEffect));
 }
 
 bool Character::OnCollision(OnCollisionEvent &evt)
@@ -269,12 +274,60 @@ bool Character::OnCollision(OnCollisionEvent &evt)
     return true;
 }
 
-bool Character::OnEffect(OnEffectEvent<Entity,float> &evt)
+bool Character::OnEffect(OnEffectEvent<Entity> &evt)
 {
-    std::vector<std::weak_ptr<Effect<Entity, float>>> effects = evt.GetEffects();
+    std::vector<std::weak_ptr<Effect<Entity>>> effects = evt.GetEffects();
     for (auto &effect : effects)
     {
         this->AddEffect(effect);
     }
     return true;
+}
+
+void Character::CastSpell(SpellType type, SpellElement element, std::vector<std::shared_ptr<IEffect>> effects, Vec2 target)
+{
+    //if (auto spell = std::dynamic_pointer_cast<Spell>(s.shared_from_this()))
+    //{
+    //    spell->SetCaster(shared_from_this());
+    //    spell->Cast();
+    //}
+
+    switch (type) {
+        case SpellType::projectile:
+        {
+            Vec2 centro = this->associated.box.center();
+            float angleStep = 10;
+            float startingAngle = Vec2::Angle(centro, target);
+            std::shared_ptr<FireProjectileSpell> spell = std::make_shared<FireProjectileSpell>(*spellObj, this->associated.box.center());
+            for(auto effect : effects){
+                if (auto locked = effect) {
+                    if (auto projectileEffect = std::dynamic_pointer_cast<Effect<Projectile>>(locked)) {
+                        spell->AddEffect(projectileEffect);
+                    }
+                }
+			}
+            spell->ApplyEffects();
+            for (int i = 0; i < spell->getProjectileAmount();i++) {
+                std::shared_ptr<GameObject> spellObj = std::make_shared<GameObject>();
+                spellObj->angleDeg = startingAngle + 90 + (i*15);
+                spellObj->AddComponent(spell);
+                if (auto s = Game::GetInstance().GetCurrentState())
+                    s->AddObject(spellObj);
+
+            }
+        }
+        
+            break;
+        case SpellType::area:
+        {
+            //std::shared_ptr<GameObject> spellObj = std::make_shared<GameObject>();
+            //std::shared_ptr<FireAreaSpell> spell = std::make_shared<FireAreaSpell>(*spellObj, this->associated.box.center());
+            //spellObj->AddComponent(spell);
+            //if (auto s = Game::GetInstance().GetCurrentState())
+            //    s->AddObject(spellObj);
+            break;
+        }
+        default:
+			break;
+    }
 }

@@ -108,34 +108,34 @@ void Gun::Shoot(Vec2 target)
         if (cdTimer.Expired())
         {
             if(auto character = std::dynamic_pointer_cast<Character>(c->GetComponent("Character").lock())){
-                int projectiles = (projectileAmount+character->getProjectileNumber());
-                float angleStep = 10;
-                float startingAngle = Vec2::Angle(centro, target);
-                angle = startingAngle-((projectiles/2)*angleStep);
+                //int projectiles = (projectileAmount+character->getProjectileNumber());
+                //float angleStep = 10;
+                //float startingAngle = Vec2::Angle(centro, target);
+                //angle = startingAngle-((projectiles/2)*angleStep);
 
-                // int offset = 10;
-                // int startingPoint = -((projectileAmount/2) * 10);
-                for(int i = 0; i<projectiles; i++){
-                    std::shared_ptr<GameObject> bullet = std::make_shared<GameObject>();
-                    // Bullet *bulletComponent = new Bullet(*bullet, angle, 350, 500, 400, Character::player != this->associated.GetComponent("Character"));
-                    Vec2 gunOffset = {associated.box.GetSize().x + OFFSET, .0};
-                    Vec2 bulletOffset = Vec2::Rotate(gunOffset, angle);
-                    Vec2 bulletInitialPos = centro + bulletOffset;
+                //// int offset = 10;
+                //// int startingPoint = -((projectileAmount/2) * 10);
+                //for(int i = 0; i<projectiles; i++){
+                //    std::shared_ptr<GameObject> bullet = std::make_shared<GameObject>();
+                //    // Bullet *bulletComponent = new Bullet(*bullet, angle, 350, 500, 400, Character::player != this->associated.GetComponent("Character"));
+                //    Vec2 gunOffset = {associated.box.GetSize().x + OFFSET, .0};
+                //    Vec2 bulletOffset = Vec2::Rotate(gunOffset, angle);
+                //    Vec2 bulletInitialPos = centro + bulletOffset;
 
-                    std::shared_ptr<FireAreaSpell> fSpell = std::make_shared<FireAreaSpell>(*bullet, bulletInitialPos);
-                    bullet->AddComponent(fSpell);
-                    // bullet->box.Move();
+                //    std::shared_ptr<FireAreaSpell> fSpell = std::make_shared<FireAreaSpell>(*bullet, bulletInitialPos);
+                //    bullet->AddComponent(fSpell);
+                //    // bullet->box.Move();
         
-                    // bullet->box.Move(bulletInitialPos);
-                    // bullet->AddComponent(bulletComponent);
-                    bullet->angleDeg = angle + 90;
-                    if(auto s = Game::GetInstance().GetCurrentState())
-                        s->AddObject(bullet);
-                    angle+=angleStep;
-                }
-                associated.angleDeg = startingAngle;
-                shotSound.Play();
-                cdTimer.Restart();
+                //    // bullet->box.Move(bulletInitialPos);
+                //    // bullet->AddComponent(bulletComponent);
+                //    bullet->angleDeg = angle + 90;
+                //    if(auto s = Game::GetInstance().GetCurrentState())
+                //        s->AddObject(bullet);
+                //    angle+=angleStep;
+                //}
+                //associated.angleDeg = startingAngle;
+                //shotSound.Play();
+                //cdTimer.Restart();
             }
         }
     }
