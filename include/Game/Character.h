@@ -1,6 +1,7 @@
 #include "Core/GameObject.h"
 #include "Core/Subject.h"
 #include "Core/Timer.h"
+#include "Spell.h"
 
 #include "Entity.h"
 
@@ -40,6 +41,8 @@ public:
     inline void SetFlip(bool value) { flip = value; }
 
     inline bool Is(std::string type) { return type == "Character"; }
+
+    void CastSpell(SpellType type, SpellElement element, std::vector<std::shared_ptr<IEffect>>, Vec2 target);
     // COMPONENT_IS("Character");
 
 public:
@@ -49,7 +52,7 @@ public:
 private:
     bool OnCollision(OnCollisionEvent &evt);
     bool OnDamageTaken(OnDamageTakenEvent &evt);
-    bool OnEffect(OnEffectEvent<Entity, float> &evt);
+    bool OnEffect(OnEffectEvent<Entity> &evt);
 
 private:
     bool flip;
@@ -61,4 +64,5 @@ private:
     bool isDead;
     Timer deathTimer;
     int extraProjectiles;
+	std::vector<std::shared_ptr<IEffect>> effects;
 };

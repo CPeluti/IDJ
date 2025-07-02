@@ -27,8 +27,25 @@ enum class SpellElement
     water
 };
 
+class ISpell {
+public:
+    virtual ~ISpell() = default;
+
+    virtual SpellType GetSpellType() const = 0;
+    virtual SpellElement GetSpellElement() const = 0;
+    virtual const char* GetName() const = 0;
+    virtual const char* GetElement() const = 0;
+    virtual std::string ToString() const = 0;
+    virtual float GetDamage() = 0;
+    virtual void ApplyEffects() = 0;
+
+    virtual void UpdateEffect(float dt) = 0;
+    virtual void RemoveEffect(std::string effectName) = 0;
+   
+};
+
 template <typename SpellStrategy>
-class Spell
+class Spell : public ISpell
 {
 public:
     Spell(GameObject &associated, std::vector<std::string> modifiers, float baseDamage, std::string baseSprite) : modifiers(modifiers), baseDamage(baseDamage), baseSprite(baseSprite) {}
@@ -39,15 +56,13 @@ public:
     virtual const char *GetElement() const = 0;
     virtual std::string ToString() const { return GetName(); }
     virtual float GetDamage() = 0;
-    virtual void CastSpell() {};
-
-    void AddEffect(std::weak_ptr<Effect<SpellType, float>> e)
+    inline void AddEffect(std::weak_ptr<Effect<SpellStrategy>> e)
     {
         bool exists = false;
         if (auto targetEffect = e.lock()) {
             for (auto it = spellEffects.begin(); it != spellEffects.end();)
             {
-                std::shared_ptr<Effect<SpellStrategy, float>> effect = (*it).lock();
+                std::shared_ptr<Effect<SpellStrategy>> effect = (*it).lock();
 
                 if (targetEffect->GetName() == effect->GetName())
                 {
@@ -61,22 +76,28 @@ public:
             }
         }
     }
-    void RemoveEffect(std::string effectName)
+    inline void RemoveEffect(std::string effectName)
     {
         for (auto it = spellEffects.begin(); it != spellEffects.end();)
         {
-            std::shared_ptr<Effect<SpellStrategy, float>> e = (*it).lock();
+            std::shared_ptr<Effect<SpellStrategy>> e = (*it).lock();
             if (e->GetName() == effectName)
                 auto erased = spellEffects.erase(it);
             else
                 ++it;
         }
     }
-
+    inline void ApplyEffects() {
+        for (auto se : spellEffects) {
+            if(auto shared = se.lock())
+				if (auto* strategy = dynamic_cast<SpellStrategy*>(this))
+			    shared->Apply(*strategy);
+        }
+    }
     void UpdateEffect(float dt) {
         for(auto it = spellEffects.begin(); it != spellEffects.end();)
         {
-            std::shared_ptr<Effect<SpellStrategy, float>> e = (*it).lock();
+            std::shared_ptr<Effect<SpellStrategy>> e = (*it).lock();
             if (e)
             {
                 e->Update(dt);
@@ -93,7 +114,7 @@ public:
     }
 
 protected:
-	std::vector<std::weak_ptr<Effect<SpellStrategy, float>>> spellEffects;
+	std::vector<std::weak_ptr<Effect<SpellStrategy>>> spellEffects;
     std::vector<std::string> modifiers;
     float baseDamage;
     std::string baseSprite;
@@ -102,12 +123,15 @@ protected:
 class Projectile
 {
 public:
-    Projectile(float speed, float distanceLeft) : m_baseSpeed(speed), m_currentSpeed(speed), m_distanceLeft(distanceLeft) {}
+    Projectile(float speed, float distanceLeft) : m_baseSpeed(speed), m_currentSpeed(speed), m_distanceLeft(distanceLeft), m_currentProjectileAmount(1), m_baseProjectileAmount(1) {}
+    int getProjectileAmount() const {
+        return m_currentProjectileAmount;
+	}
     void addProjectiles(int amount) {
-		m_currentProjectileAmount += amount;
+		m_currentProjectileAmount = m_baseProjectileAmount + amount;
     }
     void removeProjectiles(int amount) {
-        m_currentProjectileAmount -= amount;
+        m_currentProjectileAmount = m_baseProjectileAmount - amount;
     }
 protected:
     //std::vector<std::weak_ptr<Effect>> spellEffects;

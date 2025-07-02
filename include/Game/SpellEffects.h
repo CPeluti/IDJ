@@ -1,20 +1,19 @@
+#pragma once
 #include "Effect.h"
 #include "Spell.h"
 #include "spdlog/fmt/fmt.h"
 
-class MoreProjectileEffect : Effect<Projectile, int>{
+class MoreProjectileEffect : public Effect<Projectile>{
 public:
 	MoreProjectileEffect(int amount): m_extraProjectiles(amount) {}
-	void Apply(Projectile &spell, int amount) {
+	void Apply(Projectile &spell) {
 		if(!applied){
 			spell.addProjectiles(m_extraProjectiles);
 		}
 		applied = true;
 	}
+	void Update(float dt){}
 	bool IsExpired() { return false; };
-	const char* GetName() const {
-		return "More Projectile Effect";
-	}
 	EFFECT_TYPE(Projectile);
 	std::string ToString() const { return GetName(); }
 	int getExtraProjectiles() const {
