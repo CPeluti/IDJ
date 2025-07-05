@@ -65,14 +65,13 @@ void Sprite::SetFrameCount(int frameCountW, int frameCountH)
 }
 void Sprite::Render(Vec2 pos, Vec2 size, float angle)
 {
-    GPU_Rect dstRect = {(float)pos.x*Camera::zoom, (float)pos.y*Camera::zoom, (float)(clipRect.w * scale.x * Camera::zoom), (float)(clipRect.h * scale.y * Camera::zoom)};
+    GPU_Rect dstRect = {(float)pos.x * Camera::zoom, (float)pos.y * Camera::zoom, (float)(clipRect.w * scale.x * Camera::zoom), (float)(clipRect.h * scale.y * Camera::zoom)};
     if (!cameraFollower)
     {
         dstRect.y -= Camera::pos.y;
         dstRect.x -= Camera::pos.x;
     }
     // std::cout << "x: " << x << std::endl << " y: " << y << std::endl << " w: " << w << std::endl << " h: " << h << std::endl;
-    GPU_SetImageFilter(texture, GPU_FILTER_NEAREST);
     GPU_BlitRectX(texture, &clipRect, Game::GetInstance().GetGPUTarget(), &dstRect, angle, clipRect.x + (clipRect.w / 2), clipRect.y + (clipRect.h / 2), flip);
 }
 int Sprite::GetWidth()
