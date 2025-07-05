@@ -15,6 +15,7 @@
 TitleState::TitleState()
 {
     Camera::zoom = 1;
+    Camera::smoothness = 8.f;
 
     std::shared_ptr<GameObject> start =  std::make_shared<GameObject>();
     std::shared_ptr<SpriteRenderer> sr =  std::make_shared<SpriteRenderer>(*start, "resources/img/Title.png", 1, 1);

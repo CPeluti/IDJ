@@ -6,6 +6,7 @@
 Vec2 Camera::pos = {0, 0};
 Vec2 Camera::speed = {0, 0};
 float Camera::zoom = 1.0f;
+float Camera::smoothness = 0.0f;
 
 std::weak_ptr<GameObject> Camera::focus = std::weak_ptr<GameObject>();
 
@@ -21,18 +22,24 @@ void Camera::Unfollow()
 
 void Camera::Update(float dt)
 {
-    const int baseSpeed = 200;
+    const int baseSpeed = 600;
     InputManager ip = InputManager::GetInstance();
     Vec2 direction = {0, 0};
     Game &game = Game::GetInstance();
 
-    if (focus.lock())
+    if (auto focusLocked = focus.lock())
     {
         Vec2 size = game.GetWindowSize();
 
-        Vec2 pos = focus.lock()->box.center();
-        Camera::pos.x = (pos.x*Camera::zoom - (size.x / 2));
-        Camera::pos.y = pos.y*Camera::zoom - (size.y / 2);
+        Vec2 pos = focusLocked->box.center();
+		Vec2 target = { pos.x * Camera::zoom - (size.x / 2) , pos.y * Camera::zoom - (size.y / 2) };
+
+        float weight = (11.f-smoothness) / 100;
+
+        Camera::pos.x = Vec2::lerp(Camera::pos.x, target.x, weight);
+        Camera::pos.y = Vec2::lerp(Camera::pos.y, target.y, weight);
+
+
     }
     else
     {
@@ -58,4 +65,7 @@ void Camera::Update(float dt)
             Camera::pos = Camera::pos + (Camera::speed * dt);
         }
     }
+
+    Camera::pos.x = floor(Camera::pos.x);
+    Camera::pos.y = floor(Camera::pos.y);
 }

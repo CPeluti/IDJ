@@ -112,7 +112,7 @@ Vec2 Vec2::Rotate(Vec2 a, float angle){
 }
 
 float Vec2::lerp(float a, float b, float t){
-    return (1.0f-t)*b+t*a;
+    return a+(b-a)*t;
 }
 Vec2 operator-(const Vec2& a){
     return Vec2(-a.x, -a.y);
