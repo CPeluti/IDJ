@@ -19,7 +19,8 @@ GPU_Image *Resources::GetImage(std::string file)
     {
         try
         {
-            GPU_Image *texture = GPU_LoadImage(file.c_str());
+            GPU_Image* texture = GPU_LoadImage(file.c_str());
+            GPU_SetImageFilter(texture, GPU_FILTER_NEAREST);
             imageTable[file] = texture;
             return texture;
         }

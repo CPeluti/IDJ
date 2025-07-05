@@ -32,7 +32,7 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
     std::shared_ptr<Collider> collider = std::make_shared<Collider>(associated, std::vector<std::string>{"layer0"}, "zombie", new OnCollisionEvent(associated), Vec2{100,100});
     std::shared_ptr<Collider> interactionCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"interaction0"}, "zombie", new OnInteractionEvent(associated, InteractionType::None), Vec2{100, 100});
     std::shared_ptr<Animator> animator = std::make_shared<Animator>(associated);
-    std::shared_ptr<HealthSystem> healthSystem = std::make_shared<HealthSystem>(associated, hitpoints);
+    std::shared_ptr<HealthSystem> healthSystem = std::make_shared<HealthSystem, GameObject&, int&>(associated, hitpoints);
     associated.AddComponent(srZombie);
     associated.AddComponent(collider);
     associated.AddComponent(interactionCollider);
@@ -188,7 +188,7 @@ bool Zombie::OnInteraction(OnInteractionEvent &evt)
     case InteractionType::Effect:
     {
         std::vector<std::weak_ptr<Effect<Entity>>> effects;
-        for (auto &effect : this->m_Effects)
+        for (auto& effect : this->m_Effects)
         {
             std::weak_ptr<Effect<Entity>> newWeakEffect = effect;
             effects.push_back(newWeakEffect);
