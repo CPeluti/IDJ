@@ -22,11 +22,16 @@ public:
     float GetDeltaTime();
     Vec2 GetWindowSize();
 
+    inline float GetFps() {
+        return this->fps;
+    }
+
 private:
     void CalculateDeltaTime();
 
     int frameStart;
     float dt;
+    float fps;
 
     static Game *instance;
     std::unique_ptr<State> storedState;

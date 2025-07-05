@@ -65,7 +65,7 @@ void TileMap::SetTileSet(TileSet *ts)
 
 void TileMap::Start()
 {
-	LOG_INFO("INICIO TILEMAP");
+	Game::GetInstance().GetCurrentState()->SetTileMap(this->weak_from_this());
     std::vector<Rect> colliders2BCreated;
 
     this->associated.box.SetSize({mapWidth * tileSet->GetTileWidth(), mapHeight * tileSet->GetTileHeight()});
@@ -77,9 +77,9 @@ void TileMap::Start()
             int colliderCol = i % (mapWidth);
             int colliderLine = i / (mapWidth);
             Vec2 colliderOffset = colliderMetaData->GetPos() + Vec2(colliderCol * tileSet->GetTileWidth(), colliderLine * tileSet->GetTileHeight());
-            // Collider* collider = new Collider(this->associated, {"phys0"}, new OnCollisionEvent(associated), colliderMetaData->GetSize(), {1,1}, colliderOffset, "phys");
+             //Collider* collider = new Collider(this->associated, {"phys0"}, new OnCollisionEvent(associated), colliderMetaData->GetSize(), {1,1}, colliderOffset, "phys");
             colliders2BCreated.emplace_back(Rect(colliderOffset, colliderMetaData->GetSize()));
-            // this->associated.AddComponent(collider);
+             //this->associated.AddComponent(collider);
         }
     }
     auto collider = colliders2BCreated.begin();
@@ -145,20 +145,13 @@ void TileMap::Start()
         m_colliders.emplace_back(collider);
         this->associated.AddComponent(collider);
     }
-    // std::shared_ptr<Collider> collider1 = std::make_shared<Collider>(this->associated, std::vector<std::string>{"phys0"}, new OnCollisionEvent(associated), Vec2{100, 100}, Vec2{1, 1}, Vec2{1480, 1480}, "phys12", 0);
-    // m_colliders.emplace_back(collider1);
-    // this->associated.AddComponent(collider1);
 }
 
 int &TileMap::At(int x, int y, int z)
 {
-    // if (x < mapWidth && y < mapHeight && z < mapDepth){
     int pos = x + (y * GetWidth()) + z * GetHeight() * GetWidth();
 
     return this->tileMatrix[pos];
-    // } else {
-    // std::cout << "Coordinates exceed tilemap boundary" << std::endl;
-    // }
 }
 
 void TileMap::RenderLayer(int layer)
@@ -167,19 +160,24 @@ void TileMap::RenderLayer(int layer)
     int spaceY = tileSet->GetTileHeight();
     Vec2 offset = associated.box.GetPos();
     Vec2 factor = layer<=1 ? Vec2::Zero : Camera::pos * 0.5;
+    int count = 0;
     for (int x = 0; x < GetWidth(); x++)
     {
         for (int y = 0; y < GetHeight(); y++)
         {
-            if(At(x, y, layer)>=0)
+            if (At(x, y, layer) >= 0)
                 tileSet->RenderTile(At(x, y, layer), (spaceX * x + offset.x + factor.x), spaceY * y + offset.y + factor.y);
+            count++;
+            //if (count > 900)
+                //break;
         }
+        //if (count > 900)
+            //break;
     }
 }
 
 void TileMap::Render()
 {
-    // return;
     for (int z = 0; z < GetDepth(); z++)
     {
         RenderLayer(z);
