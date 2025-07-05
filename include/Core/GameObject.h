@@ -6,6 +6,13 @@
 #include "Subject.h"
 // class Component;
 
+struct Raycast {
+    bool intersects = false;
+    Vec2 intersectionPoint = { 0, 0 };
+	bool maxDistanceExceeded = false;
+};
+
+
 class GameObject
 {
 public:
@@ -22,6 +29,8 @@ public:
     std::weak_ptr<Component> GetComponent(std::string type);
     void Start();
     Rect box;
+    Raycast CastRaycast(Vec2 start, Vec2 end, float maxDistance, int layer = 0);
+    
     // void NotifyCollision(GameObject& other);
     int z;
     double angleDeg;
@@ -33,3 +42,8 @@ private:
     std::vector<std::shared_ptr<Component>> components;
     bool isDead;
 };
+
+inline std::string format_as(const Raycast& c)
+{
+    return fmt::format("Intersects: {},\nIntersectionPoint: {},\nmaxDistanceExceeded: {}", c.intersects, c.intersectionPoint, c.maxDistanceExceeded);
+}

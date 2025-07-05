@@ -1,6 +1,7 @@
 #include "Core/GameObject.h"
 #include "Core/Subject.h"
 #include "Core/Timer.h"
+#include "Core/TileMap.h"
 #include "Spell.h"
 
 #include "Entity.h"
@@ -22,7 +23,7 @@ public:
         CommandType type;
         Vec2 pos;
     };
-    Character(GameObject &associated, std::string sprite, bool isPlayer = false);
+    Character(GameObject &associated, std::string sprite, std::weak_ptr<TileMap> tilemap, bool isPlayer = false);
     ~Character();
     void Start();
     void Update(float dt);
@@ -65,4 +66,6 @@ private:
     Timer deathTimer;
     int extraProjectiles;
 	std::vector<std::shared_ptr<IEffect>> effects;
+
+	std::weak_ptr<TileMap> tilemap;
 };
