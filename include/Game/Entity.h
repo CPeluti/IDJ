@@ -14,7 +14,6 @@ public:
   virtual void UpdateEffects(float dt);
   inline virtual void SetMovementSpeed(const float &newSpeed) { m_movementSpeed = newSpeed; };
   inline virtual float GetMovementSpeed() const { return m_movementSpeed; };
-
 protected:
   float m_movementSpeed;
   int damage;

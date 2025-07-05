@@ -14,7 +14,7 @@ struct Modifier{
 struct ParticleData {
     Vec2 Position;
     Vec2 Velocity, VelocityVariation;
-    float SizeBegin, SizeEnd, SizeVariation;
+    float SizeBegin=0, SizeEnd=0, SizeVariation=0;
     float LifeTime = 1.0f;
 
     Modifier VelocityFunction = {[](float x){return 1.0f;}, [](float x){return 1.0f;}};
