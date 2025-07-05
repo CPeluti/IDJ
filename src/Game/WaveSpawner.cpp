@@ -44,9 +44,9 @@ void WaveSpawner::Update(float dt)
             if(npcCounter < waves[currentWave]->npcs){
                 randomAngle = rand() % 36000 / 100.0;
                 std::shared_ptr<GameObject> cgo = std::make_shared<GameObject>();
-                std::shared_ptr<Character> c = std::make_shared<Character>(*cgo, "resources/img/NPC.png");
+                //std::shared_ptr<Character> c = std::make_shared<Character>(*cgo, "resources/img/NPC.png");
                 std::shared_ptr<AIController> a = std::make_shared<AIController>(*cgo);
-                cgo->AddComponent(c);
+                //cgo->AddComponent(c);
                 cgo->AddComponent(a);
                 s->AddObject(cgo);
                 cgo->box.Move(Camera::pos + windowSize / 2 + Vec2::Rotate({distance}, randomAngle));

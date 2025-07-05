@@ -29,10 +29,11 @@ Dummy::Dummy(GameObject &associated) : Component(associated),
     this->associated.subject.addObserver(this);
 
     std::shared_ptr<SpriteRenderer> srDummy = std::make_shared<SpriteRenderer>(associated, "resources/img/Enemy.png", 3, 2);
-    std::shared_ptr<Collider> collider = std::make_shared<Collider>(associated, std::vector<std::string>{"layer0"}, "Dummy", new OnCollisionEvent(associated), Vec2{100,100});
+    std::shared_ptr<Collider> collider = std::make_shared<Collider>(associated, std::vector<std::string>{"phys0"}, "Dummy", new OnCollisionEvent(associated), Vec2{100,100});
+    //std::shared_ptr<Collider> interactionEffectCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"phys0"}, "entity", new OnInteractionEvent(associated, InteractionType::Effect), colliderSize, Vec2{ 1, 1 }, colliderOffset);
     //std::shared_ptr<Collider> interactionCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"layer0"}, new OnInteractionEvent(associated, InteractionType::None), Vec2{ 100, 100 });
     std::shared_ptr<Animator> animator = std::make_shared<Animator>(associated);
-    std::shared_ptr<HealthSystem> healthSystem = std::make_shared<HealthSystem>(associated, hitpoints);
+    std::shared_ptr<HealthSystem> healthSystem = std::make_shared<HealthSystem, GameObject&, int&>(associated, hitpoints);
     associated.AddComponent(srDummy);
     associated.AddComponent(collider);
     //associated.AddComponent(interactionCollider);
@@ -101,6 +102,7 @@ void Dummy::Start() {}
 
 void Dummy::Update(float dt)
 {
+    //LOG_INFO("dummies: {}", dummyCounter);
     if(auto animator = std::dynamic_pointer_cast<Animator>(associated.GetComponent("Animator").lock()))
     {// this->Damage(1);
         hitTimer.Update(dt);
@@ -115,22 +117,6 @@ void Dummy::Update(float dt)
         }
         else
         {
-            if (!hit && Character::player.lock())
-            {
-               /* Vec2 playerPos = Character::player.lock()->GetPos();
-                Vec2 distance = playerPos - associated.box.center();
-                Vec2 currentPos = this->associated.box.center();
-                this->associated.box.Move(currentPos + distance.normalized() * dt * 200);
-                flip = distance.x < 0;
-                if (flip)
-                {
-                    animator->SetAnimation("r_walking");
-                }
-                else
-                {
-                    animator->SetAnimation("walking");
-                }*/
-            }
             if (hit && hitTimer.Expired() && !isDead)
             {
                 if (flip)
@@ -144,7 +130,23 @@ void Dummy::Update(float dt)
 
                 hit = false;
             }
+
         }
+    }
+    if (auto c = Character::player.lock()) {
+        Vec2 charPos = c->getAssociated()->box.center();
+        auto raycast = this->associated.CastRaycast(charPos, this->associated.box.center(), 5000, 1);
+        LOG_INFO("Raycast: {}", raycast);
+        if (!raycast.intersects && !raycast.maxDistanceExceeded && !moving) {
+            moving = true;
+            LOG_INFO("Character breadcrumb: {}", charPos);
+            this->characterBreadcrumb = charPos;
+            this->associated.SetSpeed((this->characterBreadcrumb-this->associated.box.center()).normalized() * 100 * dt);
+        }
+    }
+    if (Vec2::Distance(this->characterBreadcrumb, this->associated.box.center())<10) {
+		this->associated.SetSpeed(Vec2::Zero);
+        moving = false;
     }
 }
 
@@ -153,7 +155,29 @@ bool Dummy::Is(std::string type)
     return type == "Dummy";
 }
 
-void Dummy::Render() {}
+void Dummy::Render() {
+    if (auto c = Character::player.lock())
+    {
+        Vec2 charPos = (c->getAssociated()->box.center() * Camera::zoom) - Camera::pos;
+        Vec2 dummyPos = (this->associated.box.center() * Camera::zoom) - Camera::pos;
+        auto raycast = this->associated.CastRaycast(c->getAssociated()->box.center(), this->associated.box.center(), 5000, 1);
+        if (!raycast.intersects && !raycast.maxDistanceExceeded) {
+            GPU_Line(Game::GetInstance().GetGPUTarget(), charPos.x, charPos.y, dummyPos.x, dummyPos.y, { 255, 0, 0, 255 });
+        }
+    }
+    GPU_Image* light = GPU_CreateImage(100, 100, GPU_FORMAT_RGBA);
+    GPU_SetBlending(light, true);
+    GPU_LoadTarget(light);
+
+    GPU_ClearRGBA(light->target, 255, 0, 0, 155);
+
+    float radius = 5* Camera::zoom / 2.0f;
+    SDL_Color color = { 255,255,0,128 };
+
+
+    GPU_CircleFilled(Game::GetInstance().GetGPUTarget(), (this->characterBreadcrumb.x * Camera::zoom) - Camera::pos.x, (this->characterBreadcrumb.y * Camera::zoom) - Camera::pos.y, radius, color);
+
+}
 
 int Dummy::GetDamage()
 {

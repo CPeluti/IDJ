@@ -11,7 +11,7 @@
 Lifebar::Lifebar(GameObject &associated, float max, Vec2 size, Vec2 offset) : Component(associated), total(max), size(size), offset(offset)
 {
     current = max;
-    LOG_INFO(size);
+    //LOG_INFO(size);
 }
 
 bool Lifebar::Is(std::string type)

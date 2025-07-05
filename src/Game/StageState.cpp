@@ -45,6 +45,13 @@ StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
 {
     Camera::zoom = 3.0f;
 
+    std::shared_ptr<GameObject> fps = std::make_shared<GameObject>();
+	std::shared_ptr<Text> fpsText = std::make_shared<Text>(*fps, "resources/font/neodgm.ttf", 10, Text::SOLID, "FPS: ", SDL_Color{ 255, 255, 255 }, 0, true);
+    fps->box.RawMove({ 50,50 });
+	fps->AddComponent(fpsText);
+	this->AddObject(fps);
+	this->fpsText = fpsText;
+
     std::shared_ptr<GameObject> bg = std::make_shared<GameObject>();
     bg->z = 0;
     // TileSet *tileset = new TileSet(16, 16, "resources/img/TilesetCastle.png");
@@ -60,18 +67,24 @@ StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
         {27, fullTileCollider},
         {29, fullTileCollider},
         {98, fullTileCollider},
-        {61, halfTileLeftCollider},
-        {62, halfTileRightCollider},
         {80, fullTileCollider},
-        {152, fullTileCollider},
+        { 152, fullTileCollider },
+        { 151, fullTileCollider },
+        { 116, halfTileRightCollider },
+        { 134, fullTileCollider },
+        { 5, fullTileCollider },
+        { 7, fullTileCollider },
+        { 8, fullTileCollider },
+        { 115, halfTileLeftCollider },
+        {116, fullTileCollider},
         {79, fullTileCollider}
     });
-    std::shared_ptr<TileMap> tilemap = std::make_shared<TileMap>(*bg, "resources/map/teste.txt", tileset);
+    std::shared_ptr<TileMap> tilemap = std::make_shared<TileMap>(*bg, "resources/map/testec.txt", tileset);
     bg->AddComponent(tilemap);
     this->AddObject(bg);
 
     std::shared_ptr<GameObject> character = std::make_shared<GameObject>();
-    std::shared_ptr<Character> characterComponent = std::make_shared<Character>(*character, "resources/img/Protagonista.png", true);
+    std::shared_ptr<Character> characterComponent = std::make_shared<Character>(*character, "resources/img/Protagonista.png", tilemap, true);
     character->AddComponent(characterComponent);
     this->AddObject(character);
     character->box.RawMove({30, 80});
@@ -93,6 +106,12 @@ void StageState::LoadAssets()
 }
 void StageState::Update(float dt)
 {
+    float fps = Game::GetInstance().GetFps();
+    std::string fpsstring = fmt::format("FPS: {}", fps);
+    if(auto shared = fpsText.lock())
+    {
+        shared->SetText(fpsstring);
+	}
     InputManager &ip = InputManager::GetInstance();
 
     Camera::Update(dt);
