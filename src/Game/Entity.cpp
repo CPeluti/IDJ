@@ -25,7 +25,7 @@ void Entity::UpdateEffects(float dt)
     for (auto it = activeEffects.begin(); it != activeEffects.end();)
     {
         std::shared_ptr<Effect<Entity>> e = (*it).lock();
-    e->Apply(*this, dt);
+    e->Apply(*this);
     if (e->IsExpired())
     {
       it = activeEffects.erase(it);

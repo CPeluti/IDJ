@@ -18,7 +18,7 @@ void Subject::removeObserver(Observer* observer){
 
     Observer* current = head;
 
-    while(current!=NULL){
+    while(current){
         if(current->next == observer){
             current->next = observer->next;
             observer->next = NULL;
