@@ -1,6 +1,8 @@
 #include "Core/GameObject.h"
 #include "Core/Subject.h"
 #include "Core/Timer.h"
+#include "Core/TileMap.h"
+#include "Spell.h"
 
 #include "Entity.h"
 
@@ -21,7 +23,7 @@ public:
         CommandType type;
         Vec2 pos;
     };
-    Character(GameObject &associated, std::string sprite, bool isPlayer = false);
+    Character(GameObject &associated, std::string sprite, std::weak_ptr<TileMap> tilemap, bool isPlayer = false);
     ~Character();
     void Start();
     void Update(float dt);
@@ -40,6 +42,8 @@ public:
     inline void SetFlip(bool value) { flip = value; }
 
     inline bool Is(std::string type) { return type == "Character"; }
+
+    void CastSpell(SpellType type, SpellElement element, std::vector<std::shared_ptr<IEffect>>, Vec2 target);
     // COMPONENT_IS("Character");
 
 public:
@@ -61,4 +65,7 @@ private:
     bool isDead;
     Timer deathTimer;
     int extraProjectiles;
+	std::vector<std::shared_ptr<IEffect>> effects;
+
+	std::weak_ptr<TileMap> tilemap;
 };

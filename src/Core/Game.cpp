@@ -60,6 +60,7 @@ Game::Game(std::string title, int width, int height) : stateStack()
             SDL_Log(SDL_GetError());
         }
         Mix_AllocateChannels(32);
+        GPU_SetPreInitFlags(GPU_INIT_DISABLE_VSYNC);
         this->m_gpuTarget = GPU_Init(width, height, GPU_DEFAULT_INIT_FLAGS);
         this->storedState = nullptr;
         frameStart = SDL_GetTicks();
@@ -133,8 +134,13 @@ float Game::GetDeltaTime()
     return dt;
 }
 
+
 void Game::Run()
 {
+    int frames_drawn = 0;
+    this->fps = 0.0f;
+    int startTime = SDL_GetTicks();
+
     InputManager &inputManager = InputManager::GetInstance();
     float t;
     if (storedState != nullptr)
@@ -166,13 +172,24 @@ void Game::Run()
             }
             CalculateDeltaTime();
             inputManager.Update();
-            t = SDL_GetTicks() / 1000.0f;
+            //t = SDL_GetTicks() / 1000.0f;
             s->Update(dt);
             GPU_Clear(this->m_gpuTarget);
             s->Render();
             GPU_FlushBlitBuffer();
             GPU_Flip(this->m_gpuTarget);
-            SDL_Delay(16);
+            //SDL_Delay(16);
+            frames_drawn++;
+            int currentTime = SDL_GetTicks();
+            int diff = currentTime - startTime;
+            //fps_counter += diff;
+            //prev_ticks = ticks_now;
+            if (diff >= 1000) {
+                this->fps = frames_drawn / (diff / 1000.0f);
+                frames_drawn = 0;
+                startTime = currentTime;
+                //
+             }
         }
 
     }
