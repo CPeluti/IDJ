@@ -24,6 +24,8 @@ private:
     bool OnInteraction(OnInteractionEvent &evt);
 
 private:
+    bool moving = false;
+    Vec2 characterBreadcrumb;
     int hitpoints;
     Sound damageSound;
     Sound deathSound;

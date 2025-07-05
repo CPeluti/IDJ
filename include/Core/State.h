@@ -4,6 +4,7 @@
 #include "Collider.h"
 #include "Collision.h"
 #include "Log.h"
+#include "TileMap.h"
 #include <vector>
 #include <set>
 #include <memory>
@@ -72,12 +73,21 @@ public:
                             if(colliderA->GetTag() != colliderB->GetTag()){
                                 auto r = Collision::IsColliding(colliderA, colliderB);
                                 Collision::ResolveCollision(colliderA, colliderB, r);
-                                LOG_INFO("AQUI");
                             }
                         }
                     }
             }
         }
+    }
+
+    inline std::weak_ptr<TileMap> GetTileMap()
+    {
+        return tileMap;
+	}
+
+    inline void SetTileMap(std::weak_ptr<TileMap> map)
+    {
+        tileMap = map;
     }
 
 protected:
@@ -89,6 +99,8 @@ protected:
     bool started;
     bool quitRequested;
     float time;
+
+	std::weak_ptr<TileMap> tileMap;
 
     std::vector<std::shared_ptr<GameObject>> objectArray;
     std::map<std::string, std::vector<std::weak_ptr<Collider>>> m_collisionLayers;

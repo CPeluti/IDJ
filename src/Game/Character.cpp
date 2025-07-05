@@ -29,14 +29,15 @@ void update_color_shader(float r, float g, float b, float a, int color_loc)
 
 std::weak_ptr<Character> Character::player;
 int Character::npcCounter = 0;
-Character::Character(GameObject &associated, std::string sprite, bool isPlayer) : Component(associated),
+Character::Character(GameObject &associated, std::string sprite, std::weak_ptr<TileMap> tilemap, bool isPlayer) : Component(associated),
                                                                                   gun(),
                                                                                   taskQueue(),
                                                                                   Entity(140),
                                                                                   hp(500),
                                                                                   isDead(false),
                                                                                   deathTimer(5),
-                                                                                  extraProjectiles(0)
+                                                                                  extraProjectiles(0),
+	tilemap(tilemap)
 
 {
     this->associated.subject.addObserver(this);
@@ -45,8 +46,6 @@ Character::Character(GameObject &associated, std::string sprite, bool isPlayer) 
     std::shared_ptr<Animator> animator = std::make_shared<Animator>(associated);
 
     std::shared_ptr<HealthSystem> hs = std::make_shared<HealthSystem>(associated, hp);
-    // sr->SetScale(2, 2);
-    // associated.box.SetSize(associated.box.GetSize
 
     if (!isPlayer)
     {
@@ -94,7 +93,6 @@ Character::~Character()
 
 void Character::Start()
 {
-    // std::shared_ptr<GameObject> gunObj = std::make_shared<GameObject>();
     std::vector<std::string> layers, interactionLayers;
     layers.push_back("layer0");
     interactionLayers.push_back("interaction0, phys0");
@@ -102,16 +100,6 @@ void Character::Start()
     Vec2 colliderOffset = (colliderSize - associated.box.GetSize());
     std::shared_ptr<Collider> interactionEffectCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"phys0"}, "entity", new OnInteractionEvent(associated, InteractionType::Effect), colliderSize, Vec2{1, 1}, colliderOffset);
     associated.AddComponent(interactionEffectCollider);
-    // if (auto s = Game::GetInstance().GetCurrentState())
-    // {
-    //     // Collider *collider =  std::shared_ptr<Collider>(associated, layers, new OnCollisionEvent(associated));
-    //     // associated.AddComponent(collider);
-    //     std::shared_ptr<Gun> gunComponent = std::make_shared<Gun>(*gunObj, s->GetObjectPtr(&associated));
-
-    //     gunObj->AddComponent(gunComponent);
-
-    //     this->gun = s->AddObject(gunObj);
-    // }
     if (shared_from_this() == Character::player.lock())
     {
         std::shared_ptr<GameObject> textObject = std::make_shared<GameObject>();
@@ -128,8 +116,6 @@ void Character::Start()
 bool Character::OnDamageTaken(OnDamageTakenEvent &evt)
 {
     if (auto animator = std::dynamic_pointer_cast<Animator>(associated.GetComponent("Animator").lock()))
-    // subject.notify(*this, Observer::Event::onTakeDamage);
-
     {
         if (auto hs = std::dynamic_pointer_cast<HealthSystem>(associated.GetComponent("HealthSystem").lock()))
         {
@@ -196,52 +182,34 @@ void Character::Update(float dt)
 
             case c.SHOOT:
             {
-                //std::shared_ptr<GameObject> bullet = std::make_shared<GameObject>();
-				std::shared_ptr<MoreProjectileEffect> e = std::make_shared<MoreProjectileEffect>(10);
-				this->effects.push_back(e);
-				CastSpell(SpellType::projectile, SpellElement::fire, this->effects, c.pos);
+                if (auto shared = tilemap.lock()) {
+                    auto res = associated.CastRaycast(this->associated.box.center(), c.pos, 100, 1);
+                    if (res.intersects) {
+                        //LOG_INFO("Raycast hit something at x: {} y:{}, not shooting.", res.intersectionPoint.x, res.intersectionPoint.y);
+						std::shared_ptr<GameObject> go = std::make_shared<GameObject>();
+						std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(*go, "resources/img/fire_placeholder.png", 1, 1);
+						go->AddComponent(sr);
+                        go->box.Move(res.intersectionPoint * 16);
+						Game::GetInstance().GetCurrentState()->AddObject(go);
+                    }
+                    else {
+                        //LOG_INFO("Raycast missed.");
 
-
-            /*    std::shared_ptr<FireProjectileSpell> fSpell = std::make_shared<FireProjectileSpell>(*bullet, centro);
-                bullet->AddComponent(fSpell);
-                bullet->angleDeg = startingAngle + 90;
-                if(auto s = Game::GetInstance().GetCurrentState())
-					s->AddObject(bullet);*/
+                    }
+                }
             }
             break;
             }
             taskQueue.pop();
             if (speed.x || speed.y)
             {
-                // animator->SetAnimation(flip ? "walking" : "i_walking");
                 Vec2 newSpeed = (speed * dt);
                 Vec2 currentPos = associated.box.GetPos();
                 if (shared_from_this() == this->player.lock())
                 {
-                    // if (this == this->player)
-                    // {
-                    //     Vec2 charPos = this->associated.box.GetPos();
-                    //     if (charPos.x < 640 && newSpeed.x < 0)
-                    //     {
-                    //         newSpeed.x = 0;
-                    //     }
-                    //     else if (charPos.x > 1920 - associated.box.GetSize().x && newSpeed.x > 0)
-                    //     {
-                    //         newSpeed.x = 0;
-                    //     }
-                    //     if (charPos.y < 512 && newSpeed.y < 0)
-                    //     {
-                    //         newSpeed.y = 0;
-                    //     }
-                    //     else if (charPos.y > 2048 - associated.box.GetSize().y && newSpeed.y > 0)
-                    //     {
-                    //         newSpeed.y = 0;
-                    //     }
-                    // }
                     associated.SetSpeed(newSpeed);
                 }
             }
-            // SpriteRenderer *sr = (SpriteRenderer *)this->associated.GetComponent("SpriteRenderer");
         }
     }
 }
@@ -286,12 +254,6 @@ bool Character::OnEffect(OnEffectEvent<Entity> &evt)
 
 void Character::CastSpell(SpellType type, SpellElement element, std::vector<std::shared_ptr<IEffect>> effects, Vec2 target)
 {
-    //if (auto spell = std::dynamic_pointer_cast<Spell>(s.shared_from_this()))
-    //{
-    //    spell->SetCaster(shared_from_this());
-    //    spell->Cast();
-    //}
-
     switch (type) {
         case SpellType::projectile:
         {
