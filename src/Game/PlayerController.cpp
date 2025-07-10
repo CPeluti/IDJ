@@ -64,7 +64,7 @@ void PlayerController::Update(float dt)
 		}*/
 
         std::shared_ptr<GameObject> enemy = std::make_shared<GameObject>();
-        std::shared_ptr<Enemy> enemyComponent = std::make_shared<Enemy>(*enemy, "resources/img/Zombie.png");
+        std::shared_ptr<Enemy> enemyComponent = std::make_shared<Enemy>(*enemy, "resources/img/Enemy.png");
         enemy->box.Move({ ip.GetMouseX(), ip.GetMouseY() });
         enemy->AddComponent(enemyComponent);
         if (auto s = Game::GetInstance().GetCurrentState())
