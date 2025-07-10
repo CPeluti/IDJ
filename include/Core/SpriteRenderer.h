@@ -23,6 +23,7 @@ public:
     void SetCameraFollower(bool state);
     void SetScale(float scaleX, float scaleY);
     void SetFrame(int frame, SDL_RendererFlip flip);
+    bool enabled = true;
 private:
     Sprite sprite;
     Shader m_shader;
