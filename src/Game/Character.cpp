@@ -36,13 +36,12 @@ Character::Character(GameObject &associated, std::string sprite, std::weak_ptr<T
                                                                                   hp(500),
                                                                                   isDead(false),
                                                                                   deathTimer(5),
-                                                                                  extraProjectiles(0),
 	tilemap(tilemap)
 
 {
     this->associated.subject.addObserver(this);
 
-    std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(associated, sprite, 4, 4);
+    std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(associated, sprite, 6, 5);
     std::shared_ptr<Animator> animator = std::make_shared<Animator>(associated);
 
     std::shared_ptr<HealthSystem> hs = std::make_shared<HealthSystem>(associated, hp);
@@ -68,10 +67,15 @@ Character::Character(GameObject &associated, std::string sprite, std::weak_ptr<T
 
 
     animator->AddAnimation("idle", new Animation(0, 0, 0.1));
-    animator->AddAnimation("up", new Animation(0, 2, 0.1));
-    animator->AddAnimation("down", new Animation(6, 8, 0.1));
-    animator->AddAnimation("right", new Animation(3, 5, 0.1));
-    animator->AddAnimation("left", new Animation(9, 11, 0.1));
+    animator->AddAnimation("down", new Animation(0, 2, 0.1));
+    animator->AddAnimation("downright", new Animation(3, 5, 0.1));
+    animator->AddAnimation("right", new Animation(6, 9, 0.1));
+    animator->AddAnimation("upright", new Animation(10, 12, 0.1));
+    animator->AddAnimation("up", new Animation(13, 15, 0.1));
+    animator->AddAnimation("upleft", new Animation(16, 18, 0.1));
+    animator->AddAnimation("left", new Animation(19, 22, 0.1));
+    animator->AddAnimation("downleft", new Animation(23, 25, 0.1));
+    animator->AddAnimation("lookup", new Animation(26, 28, 0.1));
     animator->SetAnimation("idle");
     flip = false;
 }
@@ -166,16 +170,25 @@ void Character::Update(float dt)
             case c.MOVE:
             {
                 speed = c.pos.normalized() * m_movementSpeed;
-                if(speed.y > 0){
-                    animator->SetAnimation("up");
-                } else if(speed.y < 0) {
+                if (speed.x == 0 && speed.y > 0) {
                     animator->SetAnimation("down");
-                } else if (speed.x > 0){
+                } else if (speed.x > 0 && speed.y > 0) {
+                    animator->SetAnimation("downright");
+                } else if(speed.x > 0 && speed.y == 0) {
                     animator->SetAnimation("right");
-                } else if (speed.x < 0){
+                } else if (speed.x > 0 && speed.y < 0){
+                    animator->SetAnimation("upright");
+                } else if (speed.x == 0 && speed.y < 0){
+                    animator->SetAnimation("up");
+                } else if (speed.x < 0 && speed.y < 0){
+                    animator->SetAnimation("upleft");
+                } else if (speed.x < 0 && speed.y == 0) {
                     animator->SetAnimation("left");
+                } else if (speed.x < 0 && speed.y > 0) {
+                    animator->SetAnimation("downleft");
                 } else {
                     animator->SetAnimation("idle");
+                    LOG_INFO("Character::Update: Moving to {}", speed);
                 }
             }
             break;
