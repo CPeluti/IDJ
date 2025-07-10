@@ -50,7 +50,6 @@ void PlayerController::Update(float dt)
             character->Issue(c);
         }
     }
-
     if (ip.MousePress(RIGHT_MOUSE_BUTTON))
     {
         std::shared_ptr<GameObject> dummy = std::make_shared<GameObject>();
@@ -62,6 +61,14 @@ void PlayerController::Update(float dt)
             s->AddObject(dummy);
 		}
         
+    }
+    if (ip.KeyPress(SPACE_KEY))
+    {
+        LOG_INFO("aqui");
+        Character::Command c = Character::Command(Character::Command::DASH, {0,0});
+        if (auto character = std::dynamic_pointer_cast<Character>(this->associated.GetComponent("Character").lock())) {
+            character->Issue(c);
+        }
     }
 }
 
