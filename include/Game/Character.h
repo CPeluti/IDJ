@@ -17,7 +17,8 @@ public:
         enum CommandType
         {
             MOVE,
-            SHOOT
+            SHOOT,
+            DASH
         };
         Command(CommandType type, Vec2 pos);
         CommandType type;
@@ -44,6 +45,8 @@ public:
     inline bool Is(std::string type) { return type == "Character"; }
 
     void CastSpell(SpellType type, SpellElement element, std::vector<std::shared_ptr<IEffect>>, Vec2 target);
+
+    void SetAnimation(Vec2 direction);
     // COMPONENT_IS("Character");
 
 public:
@@ -66,6 +69,8 @@ private:
     Timer deathTimer;
     int extraProjectiles;
 	std::vector<std::shared_ptr<IEffect>> effects;
+    Vec2 m_lastDirection;
+    Timer m_dashTimer;
 
 	std::weak_ptr<TileMap> tilemap;
 };
