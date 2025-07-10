@@ -36,12 +36,13 @@ Character::Character(GameObject &associated, std::string sprite, std::weak_ptr<T
                                                                                   hp(500),
                                                                                   isDead(false),
                                                                                   deathTimer(5),
+	m_dashTimer(0.4f),
 	tilemap(tilemap)
 
 {
     this->associated.subject.addObserver(this);
 
-    std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(associated, sprite, 6, 5);
+    std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(associated, sprite, 8, 8);
     std::shared_ptr<Animator> animator = std::make_shared<Animator>(associated);
 
     std::shared_ptr<HealthSystem> hs = std::make_shared<HealthSystem>(associated, hp);
@@ -66,16 +67,30 @@ Character::Character(GameObject &associated, std::string sprite, std::weak_ptr<T
     associated.AddComponent(hs);
 
 
+    float dashDuration = m_dashTimer.GetAmount();
+    
     animator->AddAnimation("idle", new Animation(0, 0, 0.1));
+
     animator->AddAnimation("down", new Animation(0, 2, 0.1));
-    animator->AddAnimation("downright", new Animation(3, 5, 0.1));
-    animator->AddAnimation("right", new Animation(6, 9, 0.1));
-    animator->AddAnimation("upright", new Animation(10, 12, 0.1));
-    animator->AddAnimation("up", new Animation(13, 15, 0.1));
-    animator->AddAnimation("upleft", new Animation(16, 18, 0.1));
-    animator->AddAnimation("left", new Animation(19, 22, 0.1));
-    animator->AddAnimation("downleft", new Animation(23, 25, 0.1));
-    animator->AddAnimation("lookup", new Animation(26, 28, 0.1));
+    animator->AddAnimation("downright", new Animation(7, 9, 0.1));
+    animator->AddAnimation("right", new Animation(14, 17, 0.1));
+    animator->AddAnimation("upright", new Animation(22, 24, 0.1));
+    animator->AddAnimation("up", new Animation(29, 31, 0.1));
+    animator->AddAnimation("upleft", new Animation(36, 38, 0.1));
+    animator->AddAnimation("left", new Animation(43, 46, 0.1));
+    animator->AddAnimation("downleft", new Animation(51, 53, 0.1));
+    animator->AddAnimation("lookup", new Animation(58, 60, 0.1));
+
+    animator->AddAnimation("dash_down", new Animation(3, 6, dashDuration));
+    animator->AddAnimation("dash_downright", new Animation(10, 13, dashDuration));
+    animator->AddAnimation("dash_right", new Animation(18, 21, dashDuration));
+    animator->AddAnimation("dash_upright", new Animation(25, 28, dashDuration));
+    animator->AddAnimation("dash_up", new Animation(32, 35, dashDuration));
+    animator->AddAnimation("dash_upleft", new Animation(39, 42, dashDuration));
+    animator->AddAnimation("dash_left", new Animation(47, 50, dashDuration));
+    animator->AddAnimation("dash_downleft", new Animation(54, 57, dashDuration));
+    animator->AddAnimation("dash_lookup", new Animation(61, 64, dashDuration));
+
     animator->SetAnimation("idle");
     flip = false;
 }
@@ -141,11 +156,65 @@ bool Character::OnDamageTaken(OnDamageTakenEvent &evt)
     }
     return true;
 }
+
+void Character::SetAnimation(Vec2 direction)
+{
+    if (auto animator = std::dynamic_pointer_cast<Animator>(this->associated.GetComponent("Animator").lock()))
+    {
+        if (direction.x == 0 && direction.y > 0) {
+            animator->SetAnimation("down");
+        }
+        else if (direction.x > 0 && direction.y > 0) {
+            animator->SetAnimation("downright");
+        }
+        else if (direction.x > 0 && direction.y == 0) {
+            animator->SetAnimation("right");
+        }
+        else if (direction.x > 0 && direction.y < 0) {
+            animator->SetAnimation("upright");
+        }
+        else if (direction.x == 0 && direction.y < 0) {
+            animator->SetAnimation("up");
+        }
+        else if (direction.x < 0 && direction.y < 0) {
+            animator->SetAnimation("upleft");
+        }
+        else if (direction.x < 0 && direction.y == 0) {
+            animator->SetAnimation("left");
+        }
+        else if (direction.x < 0 && direction.y > 0) {
+            animator->SetAnimation("downleft");
+        }
+        else {
+            animator->SetAnimation("idle");
+            LOG_INFO("Character::Update: Moving to {}", direction);
+        }
+    }
+}
+
 void Character::Update(float dt)
 {
     Vec2 speed = {0, 0};
     this->associated.SetSpeed({0, 0});
     this->UpdateEffects(dt);
+	m_dashTimer.Update(dt);
+    if (!m_dashTimer.Expired()) {
+        LOG_INFO("AQUI");
+        speed = (m_lastDirection).normalized() *m_movementSpeed;
+        if (speed.x || speed.y)
+        {
+            Vec2 newSpeed = (speed * dt);
+            Vec2 currentPos = associated.box.GetPos();
+            if (shared_from_this() == this->player.lock())
+            {
+                associated.SetSpeed(newSpeed);
+            }
+        }
+        return;
+    } else if(m_dashTimer.JustExpired()){
+		SetAnimation(m_lastDirection);
+        return;
+    }
     if (auto animator = std::dynamic_pointer_cast<Animator>(this->associated.GetComponent("Animator").lock()))
     {
         if (isDead)
@@ -168,50 +237,67 @@ void Character::Update(float dt)
             switch (c.type)
             {
             case c.MOVE:
-            {
-                speed = c.pos.normalized() * m_movementSpeed;
-                if (speed.x == 0 && speed.y > 0) {
-                    animator->SetAnimation("down");
-                } else if (speed.x > 0 && speed.y > 0) {
-                    animator->SetAnimation("downright");
-                } else if(speed.x > 0 && speed.y == 0) {
-                    animator->SetAnimation("right");
-                } else if (speed.x > 0 && speed.y < 0){
-                    animator->SetAnimation("upright");
-                } else if (speed.x == 0 && speed.y < 0){
-                    animator->SetAnimation("up");
-                } else if (speed.x < 0 && speed.y < 0){
-                    animator->SetAnimation("upleft");
-                } else if (speed.x < 0 && speed.y == 0) {
-                    animator->SetAnimation("left");
-                } else if (speed.x < 0 && speed.y > 0) {
-                    animator->SetAnimation("downleft");
-                } else {
-                    animator->SetAnimation("idle");
-                    LOG_INFO("Character::Update: Moving to {}", speed);
+                {
+                    m_lastDirection = c.pos;
+                    speed = c.pos.normalized() * m_movementSpeed;
+					SetAnimation(m_lastDirection);
+
                 }
-            }
-            break;
+                break;
 
             case c.SHOOT:
-            {
-                if (auto shared = tilemap.lock()) {
-                    auto res = associated.CastRaycast(this->associated.box.center(), c.pos, 100, 1);
-                    if (res.intersects) {
-                        //LOG_INFO("Raycast hit something at x: {} y:{}, not shooting.", res.intersectionPoint.x, res.intersectionPoint.y);
-						std::shared_ptr<GameObject> go = std::make_shared<GameObject>();
-						std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(*go, "resources/img/fire_placeholder.png", 1, 1);
-						go->AddComponent(sr);
-                        go->box.Move(res.intersectionPoint * 16);
-						Game::GetInstance().GetCurrentState()->AddObject(go);
-                    }
-                    else {
-                        //LOG_INFO("Raycast missed.");
+                {
+                    if (auto shared = tilemap.lock()) {
+                        auto res = associated.CastRaycast(this->associated.box.center(), c.pos, 100, 1);
+                        if (res.intersects) {
+                            //LOG_INFO("Raycast hit something at x: {} y:{}, not shooting.", res.intersectionPoint.x, res.intersectionPoint.y);
+						    std::shared_ptr<GameObject> go = std::make_shared<GameObject>();
+						    std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(*go, "resources/img/fire_placeholder.png", 1, 1);
+						    go->AddComponent(sr);
+                            go->box.Move(res.intersectionPoint * 16);
+						    Game::GetInstance().GetCurrentState()->AddObject(go);
+                        }
+                        else {
+                            //LOG_INFO("Raycast missed.");
 
+                        }
                     }
                 }
-            }
-            break;
+                break;
+            case c.DASH:
+                {
+                    speed = m_lastDirection * m_movementSpeed;
+                    LOG_INFO("Character::Update: dashing to {}", m_lastDirection);
+                    if (m_lastDirection.x == 0 && m_lastDirection.y > 0) {
+                        animator->SetAnimation("dash_down");
+                    }
+                    else if (m_lastDirection.x > 0 && m_lastDirection.y > 0) {
+                        animator->SetAnimation("dash_downright");
+                    }
+                    else if (m_lastDirection.x > 0 && m_lastDirection.y == 0) {
+                        animator->SetAnimation("dash_right");
+                    }
+                    else if (m_lastDirection.x > 0 && m_lastDirection.y < 0) {
+                        animator->SetAnimation("dash_upright");
+                    }
+                    else if (m_lastDirection.x == 0 && m_lastDirection.y < 0) {
+                        animator->SetAnimation("dash_up");
+                    }
+                    else if (m_lastDirection.x < 0 && m_lastDirection.y < 0) {
+                        animator->SetAnimation("dash_upleft");
+                    }
+                    else if (m_lastDirection.x < 0 && m_lastDirection.y == 0) {
+                        animator->SetAnimation("dash_left");
+                    }
+                    else if (m_lastDirection.x < 0 && m_lastDirection.y > 0) {
+                        animator->SetAnimation("dash_downleft");
+                    }
+                    else {
+                        animator->SetAnimation("dash_down");
+                    }
+					m_dashTimer.Restart();
+                }
+                break;
             }
             taskQueue.pop();
             if (speed.x || speed.y)
