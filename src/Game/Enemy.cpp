@@ -1,6 +1,6 @@
 #include "Game/Enemy.h"
 
-Enemy::Start() {
+void Enemy::Start() {
     std::vector<std::string> layers, interactionLayers;
     layers.push_back("layer0");
     interactionLayers.push_back("interaction0, phys0");
@@ -90,10 +90,6 @@ void Enemy::Update(float dt)
             {
                 Vec2 newSpeed = (speed * dt);
                 Vec2 currentPos = associated.box.GetPos();
-                if (shared_from_this() == this->player.lock())
-                {
-                    associated.SetSpeed(newSpeed);
-                }
             }
         }
     }
@@ -163,7 +159,7 @@ bool Enemy::OnInteraction(OnInteractionEvent& evt)
     return true;
 }
 
-bool Character::OnEffect(OnEffectEvent<Entity>& evt)
+bool Enemy::OnEffect(OnEffectEvent<Entity>& evt)
 {
     std::vector<std::weak_ptr<Effect<Entity>>> effects = evt.GetEffects();
     for (auto& effect : effects)
@@ -172,3 +168,5 @@ bool Character::OnEffect(OnEffectEvent<Entity>& evt)
     }
     return true;
 }
+
+int Enemy::enemyCounter = 0;
