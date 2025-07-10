@@ -24,6 +24,8 @@ private:
     bool OnInteraction(OnInteractionEvent &evt);
 
 private:
+    std::weak_ptr<GameObject> exclamation;
+    bool playerFound = false;
     bool moving = false;
     Vec2 characterBreadcrumb;
     int hitpoints;

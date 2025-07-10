@@ -98,11 +98,26 @@ Dummy::~Dummy()
 {
     dummyCounter--;
 }
-void Dummy::Start() {}
+void Dummy::Start() {
+    std::shared_ptr<GameObject> exclamation = std::make_shared<GameObject>();
+    std::shared_ptr<SpriteRenderer> exclamationSprite = std::make_shared<SpriteRenderer>(*exclamation, "resources/img/exclamation.png", 6, 1);
+    std::shared_ptr<Animator> exclamationAnimator = std::make_shared<Animator>(*exclamation, false);
+    exclamationAnimator->AddAnimation("exclamation", new Animation(0, 5, 0.025));
+    exclamation->AddComponent(exclamationSprite);
+    exclamation->AddComponent(exclamationAnimator);
+    Game::GetInstance().GetCurrentState()->AddObject(exclamation);
+    this->exclamation = exclamation;
+    exclamation->box.Move(this->associated.box.center() - Vec2{30, 30});
+	exclamationSprite->enabled = false;
+
+}
 
 void Dummy::Update(float dt)
 {
     //LOG_INFO("dummies: {}", dummyCounter);
+    if (auto e = exclamation.lock()) {
+		e->box.Move(this->associated.box.center() - Vec2{ 30, 30 });
+    }
     if(auto animator = std::dynamic_pointer_cast<Animator>(associated.GetComponent("Animator").lock()))
     {// this->Damage(1);
         hitTimer.Update(dt);
@@ -138,15 +153,36 @@ void Dummy::Update(float dt)
         auto raycast = this->associated.CastRaycast(charPos, this->associated.box.center(), 5000, 1);
         LOG_INFO("Raycast: {}", raycast);
         if (!raycast.intersects && !raycast.maxDistanceExceeded && !moving) {
-            moving = true;
+
+            //moving = true;
             LOG_INFO("Character breadcrumb: {}", charPos);
             this->characterBreadcrumb = charPos;
-            this->associated.SetSpeed((this->characterBreadcrumb-this->associated.box.center()).normalized() * 100 * dt);
+            if (auto e = exclamation.lock()) {
+                std::dynamic_pointer_cast<SpriteRenderer>(e->GetComponent("SpriteRenderer").lock())->enabled = true;
+                if (!playerFound) {
+                    std::dynamic_pointer_cast<Animator>(e->GetComponent("Animator").lock())->SetAnimation("exclamation");
+                    playerFound = true;
+                }
+            }
+        }
+        else {
+            if (auto e = exclamation.lock()) {
+                std::dynamic_pointer_cast<SpriteRenderer>(e->GetComponent("SpriteRenderer").lock())->enabled = false;
+                playerFound = false;
+            }
         }
     }
-    if (Vec2::Distance(this->characterBreadcrumb, this->associated.box.center())<10) {
-		this->associated.SetSpeed(Vec2::Zero);
-        moving = false;
+  //  if (Vec2::Distance(this->characterBreadcrumb, this->associated.box.center())<10) {
+		//this->associated.SetSpeed(Vec2::Zero);
+  //      moving = false;
+  //      if (auto e = exclamation.lock()) {
+  //          std::dynamic_pointer_cast<SpriteRenderer>(e->GetComponent("SpriteRenderer").lock())->enabled = false;
+		//}
+  //  }
+    else {
+        if (this->characterBreadcrumb.x && this->characterBreadcrumb.y) {
+            //this->associated.SetSpeed((this->characterBreadcrumb - this->associated.box.center()).normalized() * 100 * dt);
+        }
     }
 }
 
