@@ -12,7 +12,7 @@
 
 class Enemy : public Component, public Observer, public Entity {
 public:
-    Enemy(GameObject* associated, std::string sprite) : Component(*associated),
+    Enemy(GameObject& associated, std::string sprite) : Component(associated),
         Entity(140),
         hp(500),
         isDead(false),
@@ -26,9 +26,9 @@ public:
 
 		Enemy::enemyCounter++;
         
-        associated->AddComponent(sr);
-        associated->AddComponent(animator);
-        associated->AddComponent(hs);
+        associated.AddComponent(sr);
+        associated.AddComponent(animator);
+        associated.AddComponent(hs);
 
         animator->AddAnimation("walking", new Animation(0, 3, 0.3));
         animator->AddAnimation("r_walking", new Animation(0, 3, 0.3, SDL_FLIP_HORIZONTAL));
