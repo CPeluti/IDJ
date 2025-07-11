@@ -112,9 +112,6 @@ Character::~Character()
 
 void Character::Start()
 {
-    std::vector<std::string> layers, interactionLayers;
-    layers.push_back("layer0");
-    interactionLayers.push_back("interaction0, phys0");
     Vec2 colliderSize = associated.box.GetSize();
     Vec2 colliderOffset = (colliderSize - associated.box.GetSize());
     std::shared_ptr<Collider> interactionEffectCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"phys0"}, "entity", new OnInteractionEvent(associated, InteractionType::Effect), colliderSize, Vec2{1, 1}, colliderOffset);
@@ -194,6 +191,17 @@ void Character::SetAnimation(Vec2 direction)
 
 void Character::Update(float dt)
 {
+    std::weak_ptr<Entity> enemy = Entity::GetClosestEnemy(this->associated.box.center(), 200);
+    if (auto e = enemy.lock()) {
+        if (auto te = targetedEnemy.lock()) {
+            if (te != e) {
+                targetedEnemy.lock()->SetTargeted(false);
+                e->SetTargeted(true);
+            }
+        }
+        targetedEnemy = enemy;
+    }
+
     Vec2 speed = {0, 0};
     this->associated.SetSpeed({0, 0});
     this->UpdateEffects(dt);
@@ -246,23 +254,15 @@ void Character::Update(float dt)
                 break;
 
             case c.SHOOT:
-                {
-                    if (auto shared = tilemap.lock()) {
-                        auto res = associated.CastRaycast(this->associated.box.center(), c.pos, 100, 1);
-                        if (res.intersects) {
-                            //LOG_INFO("Raycast hit something at x: {} y:{}, not shooting.", res.intersectionPoint.x, res.intersectionPoint.y);
-						    std::shared_ptr<GameObject> go = std::make_shared<GameObject>();
-						    std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(*go, "resources/img/fire_placeholder.png", 1, 1);
-						    go->AddComponent(sr);
-                            go->box.Move(res.intersectionPoint * 16);
-						    Game::GetInstance().GetCurrentState()->AddObject(go);
-                        }
-                        else {
-                            //LOG_INFO("Raycast missed.");
+            {
 
-                        }
-                    }
+                if (auto shared = targetedEnemy.lock()) {
+                    CastSpell(SpellType::projectile, SpellElement::fire, {}, shared->GetPosition());
                 }
+                else {
+                    LOG_ERROR("Character::Update: No enemy found to shoot at");
+                }
+            }
                 break;
             case c.DASH:
                 {
@@ -357,7 +357,7 @@ void Character::CastSpell(SpellType type, SpellElement element, std::vector<std:
         case SpellType::projectile:
         {
             std::shared_ptr<ProjectileSpell> spell = std::make_shared<ProjectileSpell>(this->associated.box.center(), target);
-			spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared<MoreProjectileEffect>(10)));
+			//spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared<MoreProjectileEffect>(10)));
             spell->CastSpell();
         }
         

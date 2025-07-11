@@ -72,5 +72,7 @@ private:
     Vec2 m_lastDirection;
     Timer m_dashTimer;
 
+	std::weak_ptr<Entity> targetedEnemy;
+
 	std::weak_ptr<TileMap> tilemap;
 };
