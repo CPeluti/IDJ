@@ -21,23 +21,17 @@
 #include "Game/Effect.h"
 #include "Game/SpellEffects.h"
 
-void update_color_shader(float r, float g, float b, float a, int color_loc)
-{
-    float fcolor[4] = {r, g, b, a};
-    GPU_SetUniformfv(color_loc, 4, 1, fcolor);
-}
-
 std::weak_ptr<Character> Character::player;
 int Character::npcCounter = 0;
 Character::Character(GameObject &associated, std::string sprite, std::weak_ptr<TileMap> tilemap, bool isPlayer) : Component(associated),
-                                                                                  gun(),
-                                                                                  taskQueue(),
-                                                                                  Entity(140),
-                                                                                  hp(500),
-                                                                                  isDead(false),
-                                                                                  deathTimer(5),
-	m_dashTimer(0.4f),
-	tilemap(tilemap)
+                                                                                                                  gun(),
+                                                                                                                  taskQueue(),
+                                                                                                                  Entity(140),
+                                                                                                                  hp(500),
+                                                                                                                  isDead(false),
+                                                                                                                  deathTimer(5),
+                                                                                                                  m_dashTimer(0.4f),
+                                                                                                                  tilemap(tilemap)
 
 {
     this->associated.subject.addObserver(this);
@@ -66,9 +60,8 @@ Character::Character(GameObject &associated, std::string sprite, std::weak_ptr<T
     associated.AddComponent(animator);
     associated.AddComponent(hs);
 
-
     float dashDuration = m_dashTimer.GetAmount();
-    
+
     animator->AddAnimation("idle", new Animation(0, 0, 0.1));
 
     animator->AddAnimation("down", new Animation(0, 2, 0.1));
@@ -158,31 +151,40 @@ void Character::SetAnimation(Vec2 direction)
 {
     if (auto animator = std::dynamic_pointer_cast<Animator>(this->associated.GetComponent("Animator").lock()))
     {
-        if (direction.x == 0 && direction.y > 0) {
+        if (direction.x == 0 && direction.y > 0)
+        {
             animator->SetAnimation("down");
         }
-        else if (direction.x > 0 && direction.y > 0) {
+        else if (direction.x > 0 && direction.y > 0)
+        {
             animator->SetAnimation("downright");
         }
-        else if (direction.x > 0 && direction.y == 0) {
+        else if (direction.x > 0 && direction.y == 0)
+        {
             animator->SetAnimation("right");
         }
-        else if (direction.x > 0 && direction.y < 0) {
+        else if (direction.x > 0 && direction.y < 0)
+        {
             animator->SetAnimation("upright");
         }
-        else if (direction.x == 0 && direction.y < 0) {
+        else if (direction.x == 0 && direction.y < 0)
+        {
             animator->SetAnimation("up");
         }
-        else if (direction.x < 0 && direction.y < 0) {
+        else if (direction.x < 0 && direction.y < 0)
+        {
             animator->SetAnimation("upleft");
         }
-        else if (direction.x < 0 && direction.y == 0) {
+        else if (direction.x < 0 && direction.y == 0)
+        {
             animator->SetAnimation("left");
         }
-        else if (direction.x < 0 && direction.y > 0) {
+        else if (direction.x < 0 && direction.y > 0)
+        {
             animator->SetAnimation("downleft");
         }
-        else {
+        else
+        {
             animator->SetAnimation("idle");
             LOG_INFO("Character::Update: Moving to {}", direction);
         }
@@ -192,23 +194,27 @@ void Character::SetAnimation(Vec2 direction)
 void Character::Update(float dt)
 {
     std::weak_ptr<Entity> enemy = Entity::GetClosestEnemy(this->associated.box.center(), 200);
-    if (auto e = enemy.lock()) {
-        if (auto te = targetedEnemy.lock()) {
-            if (te != e) {
+    if (auto e = enemy.lock())
+    {
+        if (auto te = targetedEnemy.lock())
+        {
+            if (te != e)
+            {
                 targetedEnemy.lock()->SetTargeted(false);
-                e->SetTargeted(true);
             }
         }
         targetedEnemy = enemy;
+        e->SetTargeted(true);
     }
 
     Vec2 speed = {0, 0};
     this->associated.SetSpeed({0, 0});
     this->UpdateEffects(dt);
-	m_dashTimer.Update(dt);
-    if (!m_dashTimer.Expired()) {
+    m_dashTimer.Update(dt);
+    if (!m_dashTimer.Expired())
+    {
         LOG_INFO("AQUI");
-        speed = (m_lastDirection).normalized() *m_movementSpeed;
+        speed = (m_lastDirection).normalized() * m_movementSpeed;
         if (speed.x || speed.y)
         {
             Vec2 newSpeed = (speed * dt);
@@ -219,8 +225,10 @@ void Character::Update(float dt)
             }
         }
         return;
-    } else if(m_dashTimer.JustExpired()){
-		SetAnimation(m_lastDirection);
+    }
+    else if (m_dashTimer.JustExpired())
+    {
+        SetAnimation(m_lastDirection);
         return;
     }
     if (auto animator = std::dynamic_pointer_cast<Animator>(this->associated.GetComponent("Animator").lock()))
@@ -245,59 +253,69 @@ void Character::Update(float dt)
             switch (c.type)
             {
             case c.MOVE:
-                {
-                    m_lastDirection = c.pos;
-                    speed = c.pos.normalized() * m_movementSpeed;
-					SetAnimation(m_lastDirection);
-
-                }
-                break;
+            {
+                m_lastDirection = c.pos;
+                speed = c.pos.normalized() * m_movementSpeed;
+                SetAnimation(m_lastDirection);
+            }
+            break;
 
             case c.SHOOT:
             {
 
-                if (auto shared = targetedEnemy.lock()) {
+                if (auto shared = targetedEnemy.lock())
+                {
                     CastSpell(SpellType::projectile, SpellElement::fire, {}, shared->GetPosition());
                 }
-                else {
+                else
+                {
                     LOG_ERROR("Character::Update: No enemy found to shoot at");
                 }
             }
-                break;
+            break;
             case c.DASH:
+            {
+                speed = m_lastDirection * m_movementSpeed;
+                LOG_INFO("Character::Update: dashing to {}", m_lastDirection);
+                if (m_lastDirection.x == 0 && m_lastDirection.y > 0)
                 {
-                    speed = m_lastDirection * m_movementSpeed;
-                    LOG_INFO("Character::Update: dashing to {}", m_lastDirection);
-                    if (m_lastDirection.x == 0 && m_lastDirection.y > 0) {
-                        animator->SetAnimation("dash_down");
-                    }
-                    else if (m_lastDirection.x > 0 && m_lastDirection.y > 0) {
-                        animator->SetAnimation("dash_downright");
-                    }
-                    else if (m_lastDirection.x > 0 && m_lastDirection.y == 0) {
-                        animator->SetAnimation("dash_right");
-                    }
-                    else if (m_lastDirection.x > 0 && m_lastDirection.y < 0) {
-                        animator->SetAnimation("dash_upright");
-                    }
-                    else if (m_lastDirection.x == 0 && m_lastDirection.y < 0) {
-                        animator->SetAnimation("dash_up");
-                    }
-                    else if (m_lastDirection.x < 0 && m_lastDirection.y < 0) {
-                        animator->SetAnimation("dash_upleft");
-                    }
-                    else if (m_lastDirection.x < 0 && m_lastDirection.y == 0) {
-                        animator->SetAnimation("dash_left");
-                    }
-                    else if (m_lastDirection.x < 0 && m_lastDirection.y > 0) {
-                        animator->SetAnimation("dash_downleft");
-                    }
-                    else {
-                        animator->SetAnimation("dash_down");
-                    }
-					m_dashTimer.Restart();
+                    animator->SetAnimation("dash_down");
                 }
-                break;
+                else if (m_lastDirection.x > 0 && m_lastDirection.y > 0)
+                {
+                    animator->SetAnimation("dash_downright");
+                }
+                else if (m_lastDirection.x > 0 && m_lastDirection.y == 0)
+                {
+                    animator->SetAnimation("dash_right");
+                }
+                else if (m_lastDirection.x > 0 && m_lastDirection.y < 0)
+                {
+                    animator->SetAnimation("dash_upright");
+                }
+                else if (m_lastDirection.x == 0 && m_lastDirection.y < 0)
+                {
+                    animator->SetAnimation("dash_up");
+                }
+                else if (m_lastDirection.x < 0 && m_lastDirection.y < 0)
+                {
+                    animator->SetAnimation("dash_upleft");
+                }
+                else if (m_lastDirection.x < 0 && m_lastDirection.y == 0)
+                {
+                    animator->SetAnimation("dash_left");
+                }
+                else if (m_lastDirection.x < 0 && m_lastDirection.y > 0)
+                {
+                    animator->SetAnimation("dash_downleft");
+                }
+                else
+                {
+                    animator->SetAnimation("dash_down");
+                }
+                m_dashTimer.Restart();
+            }
+            break;
             }
             taskQueue.pop();
             if (speed.x || speed.y)
@@ -353,25 +371,26 @@ bool Character::OnEffect(OnEffectEvent<Entity> &evt)
 
 void Character::CastSpell(SpellType type, SpellElement element, std::vector<std::shared_ptr<IEffect>> effects, Vec2 target)
 {
-    switch (type) {
-        case SpellType::projectile:
-        {
-            std::shared_ptr<ProjectileSpell> spell = std::make_shared<ProjectileSpell>(this->associated.box.center(), target);
-			//spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared<MoreProjectileEffect>(10)));
-            spell->CastSpell();
-        }
-        
-            break;
-        case SpellType::area:
-        {
-            //std::shared_ptr<GameObject> spellObj = std::make_shared<GameObject>();
-            //std::shared_ptr<FireAreaSpell> spell = std::make_shared<FireAreaSpell>(*spellObj, this->associated.box.center());
-            //spellObj->AddComponent(spell);
-            //if (auto s = Game::GetInstance().GetCurrentState())
-            //    s->AddObject(spellObj);
-            break;
-        }
-        default:
-			break;
+    switch (type)
+    {
+    case SpellType::projectile:
+    {
+        std::shared_ptr<ProjectileSpell> spell = std::make_shared<ProjectileSpell>(this->associated.box.center(), target);
+        // spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared<MoreProjectileEffect>(10)));
+        spell->CastSpell();
+    }
+
+    break;
+    case SpellType::area:
+    {
+        // std::shared_ptr<GameObject> spellObj = std::make_shared<GameObject>();
+        // std::shared_ptr<FireAreaSpell> spell = std::make_shared<FireAreaSpell>(*spellObj, this->associated.box.center());
+        // spellObj->AddComponent(spell);
+        // if (auto s = Game::GetInstance().GetCurrentState())
+        //     s->AddObject(spellObj);
+        break;
+    }
+    default:
+        break;
     }
 }
