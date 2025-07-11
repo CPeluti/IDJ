@@ -26,6 +26,8 @@ Dummy::Dummy(GameObject &associated) : Component(associated),
                                          hitTimer(0.5),
                                          deathTimer(5)
 {
+    this->type = Entity::EnemyType::Enemy;
+    this->m_associated = &associated;
     this->associated.subject.addObserver(this);
 
     std::shared_ptr<SpriteRenderer> srDummy = std::make_shared<SpriteRenderer>(associated, "resources/img/Enemy.png", 3, 2);
@@ -97,8 +99,27 @@ bool Dummy::OnDamageTaken(OnDamageTakenEvent &evt)
 Dummy::~Dummy()
 {
     dummyCounter--;
+    for(auto it = m_enemies.begin(); it != m_enemies.end();)
+    {
+        if (auto e = it->lock())
+        {
+            if (e.get() == this)
+            {
+                it = m_enemies.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
+        else
+        {
+            it = m_enemies.erase(it);
+        }
+	}
 }
 void Dummy::Start() {
+    this->m_enemies.push_back(shared_from_this());
     std::shared_ptr<GameObject> exclamation = std::make_shared<GameObject>();
     std::shared_ptr<SpriteRenderer> exclamationSprite = std::make_shared<SpriteRenderer>(*exclamation, "resources/img/exclamation.png", 6, 1);
     std::shared_ptr<Animator> exclamationAnimator = std::make_shared<Animator>(*exclamation, false);
@@ -194,6 +215,11 @@ bool Dummy::Is(std::string type)
 void Dummy::Render() {
     if (auto c = Character::player.lock())
     {
+         Shader *shader = sr->GetShader();
+         shader->Load("resources/shaders/common.vert", "resources/shaders/teste.frag");
+         int color_loc = shader->GetLocation("myColor");
+         float t = SDL_GetTicks() / 1000.0f;
+         update_color_shader((1 + sin(t)) / 2, (1 + sin(t + 1)) / 2, (1 + sin(t + 2)) / 2, 1.0f, color_loc);
         Vec2 charPos = (c->getAssociated()->box.center() * Camera::zoom) - Camera::pos;
         Vec2 dummyPos = (this->associated.box.center() * Camera::zoom) - Camera::pos;
         auto raycast = this->associated.CastRaycast(c->getAssociated()->box.center(), this->associated.box.center(), 5000, 1);

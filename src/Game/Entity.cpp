@@ -2,6 +2,8 @@
 
 #include "Game/Entity.h"
 
+std::vector<std::weak_ptr<Entity>> Entity::m_enemies = std::vector<std::weak_ptr<Entity>>();
+
 Entity::Entity() : deathTimer(5)
 {
   m_movementSpeed = 0;
