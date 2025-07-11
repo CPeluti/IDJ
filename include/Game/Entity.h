@@ -3,14 +3,21 @@
 #include "Core/Timer.h"
 #include "Core/GameObject.h"
 #include "Effect.h"
+#include "SDL_gpu.h"
 #include <vector>
 #include <memory>
 
+inline void update_color_shader(float r, float g, float b, float a, int color_loc)
+{
+	float fcolor[4] = {r, g, b, a};
+	GPU_SetUniformfv(color_loc, 4, 1, fcolor);
+}
 
 class Entity
 {
 public:
-	enum class EnemyType {
+	enum class EnemyType
+	{
 		None,
 		Enemy,
 	};
@@ -22,13 +29,17 @@ public:
 	inline virtual float GetMovementSpeed() const { return m_movementSpeed; };
 	inline Vec2 GetPosition() const { return m_associated->box.center(); };
 	inline void SetTargeted(bool targeted) { m_targeted = targeted; }
-	inline static std::weak_ptr<Entity> GetClosestEnemy(Vec2 reference, float range) {
+	inline static std::weak_ptr<Entity> GetClosestEnemy(Vec2 reference, float range)
+	{
 		float minDistance = std::numeric_limits<float>::max();
 		std::weak_ptr<Entity> closestEnemy;
-		for(auto &enemy : m_enemies) {
-			if (auto e = enemy.lock()) {
+		for (auto &enemy : m_enemies)
+		{
+			if (auto e = enemy.lock())
+			{
 				auto distance = Vec2::Distance(e->m_associated->box.center(), reference);
-				if (e->type == EnemyType::Enemy && !e->isDead && distance <= minDistance && distance <= range) {
+				if (e->type == EnemyType::Enemy && !e->isDead && distance <= minDistance && distance <= range)
+				{
 					minDistance = distance;
 					closestEnemy = e;
 				}
@@ -36,9 +47,10 @@ public:
 		}
 		return closestEnemy;
 	}
+
 protected:
-	bool m_targeted;
-	GameObject* m_associated;
+	bool m_targeted = false;
+	GameObject *m_associated;
 	float m_movementSpeed;
 	int damage;
 	bool isDead;
