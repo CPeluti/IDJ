@@ -137,6 +137,23 @@ void Dummy::Start()
 void Dummy::Update(float dt)
 {
     // LOG_INFO("dummies: {}", dummyCounter);
+    if (auto sr = std::dynamic_pointer_cast<SpriteRenderer>(this->associated.GetComponent("SpriteRenderer").lock()))
+    {
+        if (auto shader = sr->GetShader().lock())
+        {
+            if (this->m_targeted)
+            {
+                shader->Load("resources/shaders/common.vert", "resources/shaders/teste.frag");
+                int color_loc = shader->GetLocation("myColor");
+                float t = SDL_GetTicks() / 1000.0f;
+                update_color_shader((1 + sin(t)) / 2, (1 + sin(t + 1)) / 2, (1 + sin(t + 2)) / 2, 1.0f, color_loc);
+            }
+            else
+            {
+                shader->Reset();
+            }
+        }
+    }
     if (auto e = exclamation.lock())
     {
         e->box.Move(this->associated.box.center() - Vec2{30, 30});
@@ -174,12 +191,10 @@ void Dummy::Update(float dt)
     {
         Vec2 charPos = c->getAssociated()->box.center();
         auto raycast = this->associated.CastRaycast(charPos, this->associated.box.center(), 5000, 1);
-        LOG_INFO("Raycast: {}", raycast);
         if (!raycast.intersects && !raycast.maxDistanceExceeded && !moving)
         {
 
             // moving = true;
-            LOG_INFO("Character breadcrumb: {}", charPos);
             this->characterBreadcrumb = charPos;
             if (auto e = exclamation.lock())
             {
@@ -225,41 +240,26 @@ void Dummy::Render()
 {
     if (auto c = Character::player.lock())
     {
-        if (auto sr = std::dynamic_pointer_cast<SpriteRenderer>(this->associated.GetComponent("SpriteRenderer").lock()))
-        {
-            if (auto shader = sr->GetShader().lock())
-            {
-                if (this->m_targeted)
-                {
-                    shader->Load("resources/shaders/common.vert", "resources/shaders/teste.frag");
-                    int color_loc = shader->GetLocation("myColor");
-                    float t = SDL_GetTicks() / 1000.0f;
-                    update_color_shader((1 + sin(t)) / 2, (1 + sin(t + 1)) / 2, (1 + sin(t + 2)) / 2, 1.0f, color_loc);
-                }
-                else
-                {
-                    shader->Reset();
-                }
-            };
-        }
+
         Vec2 charPos = (c->getAssociated()->box.center() * Camera::zoom) - Camera::pos;
         Vec2 dummyPos = (this->associated.box.center() * Camera::zoom) - Camera::pos;
         auto raycast = this->associated.CastRaycast(c->getAssociated()->box.center(), this->associated.box.center(), 5000, 1);
         if (!raycast.intersects && !raycast.maxDistanceExceeded)
         {
+            LOG_INFO("AQUI");
             GPU_Line(Game::GetInstance().GetGPUTarget(), charPos.x, charPos.y, dummyPos.x, dummyPos.y, {255, 0, 0, 255});
         }
     }
-    GPU_Image *light = GPU_CreateImage(100, 100, GPU_FORMAT_RGBA);
-    GPU_SetBlending(light, true);
-    GPU_LoadTarget(light);
+    //GPU_Image *light = GPU_CreateImage(100, 100, GPU_FORMAT_RGBA);
+    //GPU_SetBlending(light, true);
+    //GPU_LoadTarget(light);
 
-    GPU_ClearRGBA(light->target, 255, 0, 0, 155);
+    //GPU_ClearRGBA(light->target, 255, 0, 0, 155);
 
-    float radius = 5 * Camera::zoom / 2.0f;
-    SDL_Color color = {255, 255, 0, 128};
+    //float radius = 5 * Camera::zoom / 2.0f;
+    //SDL_Color color = {255, 255, 0, 128};
 
-    GPU_CircleFilled(Game::GetInstance().GetGPUTarget(), (this->characterBreadcrumb.x * Camera::zoom) - Camera::pos.x, (this->characterBreadcrumb.y * Camera::zoom) - Camera::pos.y, radius, color);
+    //GPU_CircleFilled(Game::GetInstance().GetGPUTarget(), (this->characterBreadcrumb.x * Camera::zoom) - Camera::pos.x, (this->characterBreadcrumb.y * Camera::zoom) - Camera::pos.y, radius, color);
 }
 
 int Dummy::GetDamage()
