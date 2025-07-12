@@ -21,28 +21,22 @@
 #include "Game/Effect.h"
 #include "Game/SpellEffects.h"
 
-void update_color_shader(float r, float g, float b, float a, int color_loc)
-{
-    float fcolor[4] = {r, g, b, a};
-    GPU_SetUniformfv(color_loc, 4, 1, fcolor);
-}
-
 std::weak_ptr<Character> Character::player;
 int Character::npcCounter = 0;
 Character::Character(GameObject &associated, std::string sprite, std::weak_ptr<TileMap> tilemap, bool isPlayer) : Component(associated),
-                                                                                  gun(),
-                                                                                  taskQueue(),
-                                                                                  Entity(140),
-                                                                                  hp(500),
-                                                                                  isDead(false),
-                                                                                  deathTimer(5),
-                                                                                  extraProjectiles(0),
-	tilemap(tilemap)
+                                                                                                                  gun(),
+                                                                                                                  taskQueue(),
+                                                                                                                  Entity(140),
+                                                                                                                  hp(500),
+                                                                                                                  isDead(false),
+                                                                                                                  deathTimer(5),
+                                                                                                                  m_dashTimer(0.4f),
+                                                                                                                  tilemap(tilemap)
 
 {
     this->associated.subject.addObserver(this);
 
-    std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(associated, sprite, 4, 4);
+    std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(associated, sprite, 8, 8);
     std::shared_ptr<Animator> animator = std::make_shared<Animator>(associated);
 
     std::shared_ptr<HealthSystem> hs = std::make_shared<HealthSystem>(associated, hp);
@@ -66,12 +60,30 @@ Character::Character(GameObject &associated, std::string sprite, std::weak_ptr<T
     associated.AddComponent(animator);
     associated.AddComponent(hs);
 
+    float dashDuration = m_dashTimer.GetAmount();
 
     animator->AddAnimation("idle", new Animation(0, 0, 0.1));
-    animator->AddAnimation("up", new Animation(0, 2, 0.1));
-    animator->AddAnimation("down", new Animation(6, 8, 0.1));
-    animator->AddAnimation("right", new Animation(3, 5, 0.1));
-    animator->AddAnimation("left", new Animation(9, 11, 0.1));
+
+    animator->AddAnimation("down", new Animation(0, 2, 0.1));
+    animator->AddAnimation("downright", new Animation(7, 9, 0.1));
+    animator->AddAnimation("right", new Animation(14, 17, 0.1));
+    animator->AddAnimation("upright", new Animation(22, 24, 0.1));
+    animator->AddAnimation("up", new Animation(29, 31, 0.1));
+    animator->AddAnimation("upleft", new Animation(36, 38, 0.1));
+    animator->AddAnimation("left", new Animation(43, 46, 0.1));
+    animator->AddAnimation("downleft", new Animation(51, 53, 0.1));
+    animator->AddAnimation("lookup", new Animation(58, 60, 0.1));
+
+    animator->AddAnimation("dash_down", new Animation(3, 6, dashDuration));
+    animator->AddAnimation("dash_downright", new Animation(10, 13, dashDuration));
+    animator->AddAnimation("dash_right", new Animation(18, 21, dashDuration));
+    animator->AddAnimation("dash_upright", new Animation(25, 28, dashDuration));
+    animator->AddAnimation("dash_up", new Animation(32, 35, dashDuration));
+    animator->AddAnimation("dash_upleft", new Animation(39, 42, dashDuration));
+    animator->AddAnimation("dash_left", new Animation(47, 50, dashDuration));
+    animator->AddAnimation("dash_downleft", new Animation(54, 57, dashDuration));
+    animator->AddAnimation("dash_lookup", new Animation(61, 64, dashDuration));
+
     animator->SetAnimation("idle");
     flip = false;
 }
@@ -93,9 +105,6 @@ Character::~Character()
 
 void Character::Start()
 {
-    std::vector<std::string> layers, interactionLayers;
-    layers.push_back("layer0");
-    interactionLayers.push_back("interaction0, phys0");
     Vec2 colliderSize = associated.box.GetSize();
     Vec2 colliderOffset = (colliderSize - associated.box.GetSize());
     std::shared_ptr<Collider> interactionEffectCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"phys0"}, "entity", new OnInteractionEvent(associated, InteractionType::Effect), colliderSize, Vec2{1, 1}, colliderOffset);
@@ -137,11 +146,94 @@ bool Character::OnDamageTaken(OnDamageTakenEvent &evt)
     }
     return true;
 }
+
+void Character::SetAnimation(Vec2 direction)
+{
+    if (auto animator = std::dynamic_pointer_cast<Animator>(this->associated.GetComponent("Animator").lock()))
+    {
+        if (direction.x == 0 && direction.y > 0)
+        {
+            animator->SetAnimation("down");
+        }
+        else if (direction.x > 0 && direction.y > 0)
+        {
+            animator->SetAnimation("downright");
+        }
+        else if (direction.x > 0 && direction.y == 0)
+        {
+            animator->SetAnimation("right");
+        }
+        else if (direction.x > 0 && direction.y < 0)
+        {
+            animator->SetAnimation("upright");
+        }
+        else if (direction.x == 0 && direction.y < 0)
+        {
+            animator->SetAnimation("up");
+        }
+        else if (direction.x < 0 && direction.y < 0)
+        {
+            animator->SetAnimation("upleft");
+        }
+        else if (direction.x < 0 && direction.y == 0)
+        {
+            animator->SetAnimation("left");
+        }
+        else if (direction.x < 0 && direction.y > 0)
+        {
+            animator->SetAnimation("downleft");
+        }
+        else
+        {
+            animator->SetAnimation("idle");
+        }
+    }
+}
+
 void Character::Update(float dt)
 {
+    std::weak_ptr<Entity> enemy = Entity::GetClosestEnemy(this->associated.box.center(), 200);
+    if (auto e = enemy.lock())
+    {
+        auto raycast = this->associated.CastRaycast(e->GetPosition(), this->associated.box.center(), 5000, 1);
+
+        if (!raycast.intersects) {
+            if (auto te = targetedEnemy.lock())
+            {
+                if (te != e)
+                {
+                    targetedEnemy.lock()->SetTargeted(false);
+                }
+            }
+            targetedEnemy = enemy;
+            e->SetTargeted(true);
+        }
+    }
+
     Vec2 speed = {0, 0};
     this->associated.SetSpeed({0, 0});
     this->UpdateEffects(dt);
+    m_dashTimer.Update(dt);
+    if (!m_dashTimer.Expired())
+    {
+        LOG_INFO("AQUI");
+        speed = (m_lastDirection).normalized() * m_movementSpeed;
+        if (speed.x || speed.y)
+        {
+            Vec2 newSpeed = (speed * dt);
+            Vec2 currentPos = associated.box.GetPos();
+            if (shared_from_this() == this->player.lock())
+            {
+                associated.SetSpeed(newSpeed);
+            }
+        }
+        return;
+    }
+    else if (m_dashTimer.JustExpired())
+    {
+        SetAnimation(m_lastDirection);
+        return;
+    }
     if (auto animator = std::dynamic_pointer_cast<Animator>(this->associated.GetComponent("Animator").lock()))
     {
         if (isDead)
@@ -165,38 +257,66 @@ void Character::Update(float dt)
             {
             case c.MOVE:
             {
+                m_lastDirection = c.pos;
                 speed = c.pos.normalized() * m_movementSpeed;
-                if(speed.y > 0){
-                    animator->SetAnimation("up");
-                } else if(speed.y < 0) {
-                    animator->SetAnimation("down");
-                } else if (speed.x > 0){
-                    animator->SetAnimation("right");
-                } else if (speed.x < 0){
-                    animator->SetAnimation("left");
-                } else {
-                    animator->SetAnimation("idle");
-                }
+                SetAnimation(m_lastDirection);
             }
             break;
 
             case c.SHOOT:
             {
-                if (auto shared = tilemap.lock()) {
-                    auto res = associated.CastRaycast(this->associated.box.center(), c.pos, 100, 1);
-                    if (res.intersects) {
-                        //LOG_INFO("Raycast hit something at x: {} y:{}, not shooting.", res.intersectionPoint.x, res.intersectionPoint.y);
-						std::shared_ptr<GameObject> go = std::make_shared<GameObject>();
-						std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(*go, "resources/img/fire_placeholder.png", 1, 1);
-						go->AddComponent(sr);
-                        go->box.Move(res.intersectionPoint * 16);
-						Game::GetInstance().GetCurrentState()->AddObject(go);
-                    }
-                    else {
-                        //LOG_INFO("Raycast missed.");
 
-                    }
+                if (auto shared = targetedEnemy.lock())
+                {
+                    CastSpell(SpellType::projectile, SpellElement::fire, {}, shared->GetPosition());
                 }
+                else
+                {
+                    LOG_ERROR("Character::Update: No enemy found to shoot at");
+                }
+            }
+            break;
+            case c.DASH:
+            {
+                speed = m_lastDirection * m_movementSpeed;
+                LOG_INFO("Character::Update: dashing to {}", m_lastDirection);
+                if (m_lastDirection.x == 0 && m_lastDirection.y > 0)
+                {
+                    animator->SetAnimation("dash_down");
+                }
+                else if (m_lastDirection.x > 0 && m_lastDirection.y > 0)
+                {
+                    animator->SetAnimation("dash_downright");
+                }
+                else if (m_lastDirection.x > 0 && m_lastDirection.y == 0)
+                {
+                    animator->SetAnimation("dash_right");
+                }
+                else if (m_lastDirection.x > 0 && m_lastDirection.y < 0)
+                {
+                    animator->SetAnimation("dash_upright");
+                }
+                else if (m_lastDirection.x == 0 && m_lastDirection.y < 0)
+                {
+                    animator->SetAnimation("dash_up");
+                }
+                else if (m_lastDirection.x < 0 && m_lastDirection.y < 0)
+                {
+                    animator->SetAnimation("dash_upleft");
+                }
+                else if (m_lastDirection.x < 0 && m_lastDirection.y == 0)
+                {
+                    animator->SetAnimation("dash_left");
+                }
+                else if (m_lastDirection.x < 0 && m_lastDirection.y > 0)
+                {
+                    animator->SetAnimation("dash_downleft");
+                }
+                else
+                {
+                    animator->SetAnimation("dash_down");
+                }
+                m_dashTimer.Restart();
             }
             break;
             }
@@ -254,25 +374,26 @@ bool Character::OnEffect(OnEffectEvent<Entity> &evt)
 
 void Character::CastSpell(SpellType type, SpellElement element, std::vector<std::shared_ptr<IEffect>> effects, Vec2 target)
 {
-    switch (type) {
-        case SpellType::projectile:
-        {
-            std::shared_ptr<ProjectileSpell> spell = std::make_shared<ProjectileSpell>(this->associated.box.center(), target);
-			spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared<MoreProjectileEffect>(10)));
-            spell->CastSpell();
-        }
-        
-            break;
-        case SpellType::area:
-        {
-            //std::shared_ptr<GameObject> spellObj = std::make_shared<GameObject>();
-            //std::shared_ptr<FireAreaSpell> spell = std::make_shared<FireAreaSpell>(*spellObj, this->associated.box.center());
-            //spellObj->AddComponent(spell);
-            //if (auto s = Game::GetInstance().GetCurrentState())
-            //    s->AddObject(spellObj);
-            break;
-        }
-        default:
-			break;
+    switch (type)
+    {
+    case SpellType::projectile:
+    {
+        std::shared_ptr<ProjectileSpell> spell = std::make_shared<ProjectileSpell>(this->associated.box.center(), target);
+        spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared<MoreProjectileEffect>(5)));
+        spell->CastSpell();
+    }
+
+    break;
+    case SpellType::area:
+    {
+        // std::shared_ptr<GameObject> spellObj = std::make_shared<GameObject>();
+        // std::shared_ptr<FireAreaSpell> spell = std::make_shared<FireAreaSpell>(*spellObj, this->associated.box.center());
+        // spellObj->AddComponent(spell);
+        // if (auto s = Game::GetInstance().GetCurrentState())
+        //     s->AddObject(spellObj);
+        break;
+    }
+    default:
+        break;
     }
 }

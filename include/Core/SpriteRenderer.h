@@ -1,5 +1,5 @@
 #pragma once
-
+#include <memory>
 #include "GameObject.h"
 #include "Animation.h"
 #include "Sprite.h"
@@ -14,16 +14,19 @@ public:
     void SetFrameCount(int frameCountW, int frameCountH);
     void Update(float dt);
     void Render();
-    
-    inline Shader* GetShader(){
-        return &m_shader;
+
+    inline std::weak_ptr<Shader> GetShader()
+    {
+        return m_shader;
     }
 
     bool Is(std::string type);
     void SetCameraFollower(bool state);
     void SetScale(float scaleX, float scaleY);
     void SetFrame(int frame, SDL_RendererFlip flip);
+    bool enabled = true;
+
 private:
-    Sprite sprite;
-    Shader m_shader;
+    Sprite *sprite;
+    std::shared_ptr<Shader> m_shader;
 };

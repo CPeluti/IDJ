@@ -17,26 +17,28 @@
 int Dummy::dummyCounter = 0;
 
 Dummy::Dummy(GameObject &associated) : Component(associated),
-                                         isDead(false),
-                                         hitpoints(600),
-                                         damageSound("resources/audio/Hit1.wav"),
-                                         deathSound("resources/audio/Dead.wav"),
-                                         hit(false),
-                                         damage(50),
-                                         hitTimer(0.5),
-                                         deathTimer(5)
+                                       isDead(false),
+                                       hitpoints(600),
+                                       damageSound("resources/audio/Hit1.wav"),
+                                       deathSound("resources/audio/Dead.wav"),
+                                       hit(false),
+                                       damage(50),
+                                       hitTimer(0.5),
+                                       deathTimer(5)
 {
+    this->type = Entity::EnemyType::Enemy;
+    this->m_associated = &associated;
     this->associated.subject.addObserver(this);
 
     std::shared_ptr<SpriteRenderer> srDummy = std::make_shared<SpriteRenderer>(associated, "resources/img/Enemy.png", 3, 2);
-    std::shared_ptr<Collider> collider = std::make_shared<Collider>(associated, std::vector<std::string>{"phys0"}, "Dummy", new OnCollisionEvent(associated), Vec2{100,100});
-    //std::shared_ptr<Collider> interactionEffectCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"phys0"}, "entity", new OnInteractionEvent(associated, InteractionType::Effect), colliderSize, Vec2{ 1, 1 }, colliderOffset);
-    //std::shared_ptr<Collider> interactionCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"layer0"}, new OnInteractionEvent(associated, InteractionType::None), Vec2{ 100, 100 });
+    std::shared_ptr<Collider> collider = std::make_shared<Collider>(associated, std::vector<std::string>{"phys0"}, "Dummy", new OnCollisionEvent(associated), Vec2{100, 100});
+    // std::shared_ptr<Collider> interactionEffectCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"phys0"}, "entity", new OnInteractionEvent(associated, InteractionType::Effect), colliderSize, Vec2{ 1, 1 }, colliderOffset);
+    // std::shared_ptr<Collider> interactionCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"layer0"}, new OnInteractionEvent(associated, InteractionType::None), Vec2{ 100, 100 });
     std::shared_ptr<Animator> animator = std::make_shared<Animator>(associated);
-    std::shared_ptr<HealthSystem> healthSystem = std::make_shared<HealthSystem, GameObject&, int&>(associated, hitpoints);
+    std::shared_ptr<HealthSystem> healthSystem = std::make_shared<HealthSystem, GameObject &, int &>(associated, hitpoints);
     associated.AddComponent(srDummy);
     associated.AddComponent(collider);
-    //associated.AddComponent(interactionCollider);
+    // associated.AddComponent(interactionCollider);
 
     animator->AddAnimation("walking", new Animation(0, 3, 0.3));
     animator->AddAnimation("r_walking", new Animation(0, 3, 0.3, SDL_FLIP_HORIZONTAL));
@@ -55,15 +57,15 @@ Dummy::Dummy(GameObject &associated) : Component(associated),
 
     animator->SetAnimation("walking");
 
-    //m_Effects.push_back(std::make_unique<SlowMotionEffect>(0.5, 2));
+    // m_Effects.push_back(std::make_unique<SlowMotionEffect>(0.5, 2));
 
     dummyCounter++;
 }
 
 bool Dummy::OnDamageTaken(OnDamageTakenEvent &evt)
 {
-    if(auto animator = std::dynamic_pointer_cast<Animator>(this->associated.GetComponent("Animator").lock())){
-
+    if (auto animator = std::dynamic_pointer_cast<Animator>(this->associated.GetComponent("Animator").lock()))
+    {
 
         damageSound.Play(1);
         hit = true;
@@ -73,8 +75,9 @@ bool Dummy::OnDamageTaken(OnDamageTakenEvent &evt)
             animator->SetAnimation("r_hit");
         else
             animator->SetAnimation("hit");
-        if(auto hs = std::dynamic_pointer_cast<HealthSystem>(this->associated.GetComponent("HealthSystem").lock())){
-            
+        if (auto hs = std::dynamic_pointer_cast<HealthSystem>(this->associated.GetComponent("HealthSystem").lock()))
+        {
+
             if (hs->GetHp() <= 0 && !isDead)
             {
                 this->associated.RemoveComponent(this->associated.GetComponent("Collider").lock());
@@ -89,22 +92,74 @@ bool Dummy::OnDamageTaken(OnDamageTakenEvent &evt)
     return true;
 }
 
-//bool checkClickInsideBox(int x, int y, float boxX, float boxY, float boxW, float boxH)
+// bool checkClickInsideBox(int x, int y, float boxX, float boxY, float boxW, float boxH)
 //{
-//    return (x > boxX && x < boxX + boxW) && (y > boxY && y < boxY + boxH);
-//}
+//     return (x > boxX && x < boxX + boxW) && (y > boxY && y < boxY + boxH);
+// }
 
 Dummy::~Dummy()
 {
     dummyCounter--;
+    for (auto it = m_enemies.begin(); it != m_enemies.end();)
+    {
+        if (auto e = it->lock())
+        {
+            if (e.get() == this)
+            {
+                it = m_enemies.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
+        else
+        {
+            it = m_enemies.erase(it);
+        }
+    }
 }
-void Dummy::Start() {}
+void Dummy::Start()
+{
+    this->m_enemies.push_back(shared_from_this());
+    std::shared_ptr<GameObject> exclamation = std::make_shared<GameObject>();
+    std::shared_ptr<SpriteRenderer> exclamationSprite = std::make_shared<SpriteRenderer>(*exclamation, "resources/img/exclamation.png", 6, 1);
+    std::shared_ptr<Animator> exclamationAnimator = std::make_shared<Animator>(*exclamation, false);
+    exclamationAnimator->AddAnimation("exclamation", new Animation(0, 5, 0.025));
+    exclamation->AddComponent(exclamationSprite);
+    exclamation->AddComponent(exclamationAnimator);
+    Game::GetInstance().GetCurrentState()->AddObject(exclamation);
+    this->exclamation = exclamation;
+    exclamation->box.Move(this->associated.box.center() - Vec2{30, 30});
+    exclamationSprite->enabled = false;
+}
 
 void Dummy::Update(float dt)
 {
-    //LOG_INFO("dummies: {}", dummyCounter);
-    if(auto animator = std::dynamic_pointer_cast<Animator>(associated.GetComponent("Animator").lock()))
-    {// this->Damage(1);
+    // LOG_INFO("dummies: {}", dummyCounter);
+    if (auto sr = std::dynamic_pointer_cast<SpriteRenderer>(this->associated.GetComponent("SpriteRenderer").lock()))
+    {
+        if (auto shader = sr->GetShader().lock())
+        {
+            if (this->m_targeted)
+            {
+                shader->Load("resources/shaders/common.vert", "resources/shaders/teste.frag");
+                int color_loc = shader->GetLocation("myColor");
+                float t = SDL_GetTicks() / 1000.0f;
+                update_color_shader((1 + sin(t)) / 2, (1 + sin(t + 1)) / 2, (1 + sin(t + 2)) / 2, 1.0f, color_loc);
+            }
+            else
+            {
+                shader->Reset();
+            }
+        }
+    }
+    if (auto e = exclamation.lock())
+    {
+        e->box.Move(this->associated.box.center() - Vec2{30, 30});
+    }
+    if (auto animator = std::dynamic_pointer_cast<Animator>(associated.GetComponent("Animator").lock()))
+    { // this->Damage(1);
         hitTimer.Update(dt);
         if (isDead)
         {
@@ -130,23 +185,49 @@ void Dummy::Update(float dt)
 
                 hit = false;
             }
-
         }
     }
-    if (auto c = Character::player.lock()) {
+    if (auto c = Character::player.lock())
+    {
         Vec2 charPos = c->getAssociated()->box.center();
         auto raycast = this->associated.CastRaycast(charPos, this->associated.box.center(), 5000, 1);
-        LOG_INFO("Raycast: {}", raycast);
-        if (!raycast.intersects && !raycast.maxDistanceExceeded && !moving) {
-            moving = true;
-            LOG_INFO("Character breadcrumb: {}", charPos);
+        if (!raycast.intersects && !raycast.maxDistanceExceeded && !moving)
+        {
+
+            // moving = true;
             this->characterBreadcrumb = charPos;
-            this->associated.SetSpeed((this->characterBreadcrumb-this->associated.box.center()).normalized() * 100 * dt);
+            if (auto e = exclamation.lock())
+            {
+                std::dynamic_pointer_cast<SpriteRenderer>(e->GetComponent("SpriteRenderer").lock())->enabled = true;
+                if (!playerFound)
+                {
+                    std::dynamic_pointer_cast<Animator>(e->GetComponent("Animator").lock())->SetAnimation("exclamation");
+                    playerFound = true;
+                }
+            }
+        }
+        else
+        {
+            if (auto e = exclamation.lock())
+            {
+                std::dynamic_pointer_cast<SpriteRenderer>(e->GetComponent("SpriteRenderer").lock())->enabled = false;
+                playerFound = false;
+            }
         }
     }
-    if (Vec2::Distance(this->characterBreadcrumb, this->associated.box.center())<10) {
-		this->associated.SetSpeed(Vec2::Zero);
-        moving = false;
+    //  if (Vec2::Distance(this->characterBreadcrumb, this->associated.box.center())<10) {
+    // this->associated.SetSpeed(Vec2::Zero);
+    //      moving = false;
+    //      if (auto e = exclamation.lock()) {
+    //          std::dynamic_pointer_cast<SpriteRenderer>(e->GetComponent("SpriteRenderer").lock())->enabled = false;
+    //}
+    //  }
+    else
+    {
+        if (this->characterBreadcrumb.x && this->characterBreadcrumb.y)
+        {
+            // this->associated.SetSpeed((this->characterBreadcrumb - this->associated.box.center()).normalized() * 100 * dt);
+        }
     }
 }
 
@@ -155,28 +236,30 @@ bool Dummy::Is(std::string type)
     return type == "Dummy";
 }
 
-void Dummy::Render() {
+void Dummy::Render()
+{
     if (auto c = Character::player.lock())
     {
+
         Vec2 charPos = (c->getAssociated()->box.center() * Camera::zoom) - Camera::pos;
         Vec2 dummyPos = (this->associated.box.center() * Camera::zoom) - Camera::pos;
         auto raycast = this->associated.CastRaycast(c->getAssociated()->box.center(), this->associated.box.center(), 5000, 1);
-        if (!raycast.intersects && !raycast.maxDistanceExceeded) {
-            GPU_Line(Game::GetInstance().GetGPUTarget(), charPos.x, charPos.y, dummyPos.x, dummyPos.y, { 255, 0, 0, 255 });
+        if (!raycast.intersects && !raycast.maxDistanceExceeded)
+        {
+            LOG_INFO("AQUI");
+            GPU_Line(Game::GetInstance().GetGPUTarget(), charPos.x, charPos.y, dummyPos.x, dummyPos.y, {255, 0, 0, 255});
         }
     }
-    GPU_Image* light = GPU_CreateImage(100, 100, GPU_FORMAT_RGBA);
-    GPU_SetBlending(light, true);
-    GPU_LoadTarget(light);
+    //GPU_Image *light = GPU_CreateImage(100, 100, GPU_FORMAT_RGBA);
+    //GPU_SetBlending(light, true);
+    //GPU_LoadTarget(light);
 
-    GPU_ClearRGBA(light->target, 255, 0, 0, 155);
+    //GPU_ClearRGBA(light->target, 255, 0, 0, 155);
 
-    float radius = 5* Camera::zoom / 2.0f;
-    SDL_Color color = { 255,255,0,128 };
+    //float radius = 5 * Camera::zoom / 2.0f;
+    //SDL_Color color = {255, 255, 0, 128};
 
-
-    GPU_CircleFilled(Game::GetInstance().GetGPUTarget(), (this->characterBreadcrumb.x * Camera::zoom) - Camera::pos.x, (this->characterBreadcrumb.y * Camera::zoom) - Camera::pos.y, radius, color);
-
+    //GPU_CircleFilled(Game::GetInstance().GetGPUTarget(), (this->characterBreadcrumb.x * Camera::zoom) - Camera::pos.x, (this->characterBreadcrumb.y * Camera::zoom) - Camera::pos.y, radius, color);
 }
 
 int Dummy::GetDamage()
@@ -184,7 +267,7 @@ int Dummy::GetDamage()
     return damage;
 }
 
-void Dummy::OnEvent(Event& evt)
+void Dummy::OnEvent(Event &evt)
 {
     EventDispatcher dispatcher(evt);
 
@@ -193,9 +276,9 @@ void Dummy::OnEvent(Event& evt)
     dispatcher.Dispatch<OnInteractionEvent>(BIND_EVENT_FN(Dummy::OnInteraction));
 }
 
-bool Dummy::OnCollision(OnCollisionEvent& evt)
+bool Dummy::OnCollision(OnCollisionEvent &evt)
 {
-    GameObject& go = evt.GetGameObject();
+    GameObject &go = evt.GetGameObject();
     OnDamageTakenEvent e = OnDamageTakenEvent(this->associated, this->damage);
 
     if (go.GetComponent("HealthSystem").lock())

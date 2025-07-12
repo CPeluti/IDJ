@@ -5,9 +5,22 @@ class Timer{
     public:
         inline Timer(float amount):m_Amount(amount),m_Time(amount){};
         
-        inline void Update(float dt) {m_Time += dt;};
+
+        inline void Update(float dt) {
+            bool already = Expired();
+            m_Time += dt;
+            if( Expired() && !already) {
+                m_justExpired = true;
+            } else if(Expired() && already) {
+                m_justExpired = false;
+			}
+        };
         inline void Restart() {m_Time = 0;};
         inline bool Expired() {return m_Time >= m_Amount;};
+
+        inline bool JustExpired() {
+            return m_justExpired;
+        }
 
         inline float GetTime() { return m_Time; };
         inline float GetAmount() { return m_Amount; };
@@ -23,6 +36,7 @@ class Timer{
     private:
         float m_Amount;
         float m_Time;
+		bool m_justExpired = false;
 };
 
 inline std::string format_as(Timer& e){
