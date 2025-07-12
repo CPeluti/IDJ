@@ -4,7 +4,10 @@
 #include <memory>
 std::shared_ptr<spdlog::logger> Log::s_Logger;
 
-void Log::Init(){
+void Log::Init()
+{
+
+#ifdef _WIN32
 
     // Create a shared pointer to the msvc sink
     auto sink = std::make_shared<spdlog::sinks::msvc_sink_mt>();
@@ -21,4 +24,10 @@ void Log::Init(){
 
     spdlog::set_pattern("%n: %v %$");
     s_Logger->set_level(spdlog::level::trace);
+#endif
+#ifdef __linux__
+    spdlog::set_pattern("%n: %v %$");
+    s_Logger = spdlog::stdout_color_mt("Logger");
+    s_Logger->set_level(spdlog::level::trace);
+#endif
 }
