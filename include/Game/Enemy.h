@@ -12,15 +12,17 @@
 
 class Enemy : public Component, public Observer, public Entity {
 public:
-    Enemy(GameObject& associated, std::string sprite) : Component(associated),
+    Enemy(GameObject& associated, std::string sprite, int frameCountW, int frameCountH) : Component(associated),
         Entity(140),
         hp(500),
         isDead(false),
-        deathTimer(5)
+        deathTimer(5),
+		frameCountW(frameCountW),
+		frameCountH(frameCountH)
     {
         this->associated.subject.addObserver(this);
 
-        std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(associated, sprite, 4, 4);
+        std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(associated, sprite, frameCountW, frameCountH);
         std::shared_ptr<HealthSystem> hs = std::make_shared<HealthSystem>(associated, hp);
         std::shared_ptr<Animator> animator = std::make_shared<Animator>(associated);
 
@@ -30,18 +32,27 @@ public:
         associated.AddComponent(animator);
         associated.AddComponent(hs);
 
-        animator->AddAnimation("walking", new Animation(0, 3, 0.3));
-        animator->AddAnimation("r_walking", new Animation(0, 3, 0.3, SDL_FLIP_HORIZONTAL));
-        animator->AddAnimation("dead", new Animation(5, 5, 0));
-        animator->AddAnimation("hit", new Animation(4, 4, 0));
-        animator->AddAnimation("r_hit", new Animation(4, 4, 0, SDL_FLIP_HORIZONTAL));
+        animator->AddAnimation("idle", new Animation(48, 53, 0.5));
 
-        /*animator->AddAnimation("idle", new Animation(0, 0, 0.1));
-        animator->AddAnimation("up", new Animation(0, 2, 0.1));
-        animator->AddAnimation("down", new Animation(6, 8, 0.1));
-        animator->AddAnimation("right", new Animation(3, 5, 0.1));
-        animator->AddAnimation("left", new Animation(9, 11, 0.1));
-        animator->SetAnimation("idle");*/
+        animator->AddAnimation("down_walking", new Animation(40, 43, 0.3));
+        animator->AddAnimation("up_walking", new Animation(44, 47, 0.3));
+        animator->AddAnimation("r_walking", new Animation(32, 35, 0.3));
+        animator->AddAnimation("l_walking", new Animation(32, 35, 0.3, SDL_FLIP_HORIZONTAL));
+        animator->AddAnimation("r_up_walking", new Animation(36, 39, 0.3));
+        animator->AddAnimation("l_up_walking", new Animation(36, 39, 0.3, SDL_FLIP_HORIZONTAL));
+
+        animator->AddAnimation("r_down_attack", new Animation(8, 13, 0.1));
+        animator->AddAnimation("l_down_attack", new Animation(8, 13, 0.1, SDL_FLIP_HORIZONTAL));
+        animator->AddAnimation("r_up_attack", new Animation(14, 19, 0.1));
+        animator->AddAnimation("l_up_attack", new Animation(14, 19, 0.1, SDL_FLIP_HORIZONTAL));
+        animator->AddAnimation("down_attack", new Animation(20, 25, 0.1));
+        animator->AddAnimation("up_attack", new Animation(26, 31, 0.1));
+
+        animator->AddAnimation("r_aggro", new Animation(0, 7, 0.09));
+        animator->AddAnimation("l_aggro", new Animation(0, 7, 0.09, SDL_FLIP_HORIZONTAL));
+
+        animator->SetAnimation("idle");
+
         flip = false;
     }
     ~Enemy() {
@@ -85,6 +96,8 @@ private:
     bool isDead;
     Subject subject;
     Timer deathTimer;
+    int frameCountW;
+    int frameCountH;
     std::queue<Command> taskQueue;
     std::weak_ptr<TileMap> tilemap;
     std::vector<std::shared_ptr<IEffect>> effects;
