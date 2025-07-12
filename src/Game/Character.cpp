@@ -195,15 +195,19 @@ void Character::Update(float dt)
     std::weak_ptr<Entity> enemy = Entity::GetClosestEnemy(this->associated.box.center(), 200);
     if (auto e = enemy.lock())
     {
-        if (auto te = targetedEnemy.lock())
-        {
-            if (te != e)
+        auto raycast = this->associated.CastRaycast(e->GetPosition(), this->associated.box.center(), 5000, 1);
+
+        if (!raycast.intersects) {
+            if (auto te = targetedEnemy.lock())
             {
-                targetedEnemy.lock()->SetTargeted(false);
+                if (te != e)
+                {
+                    targetedEnemy.lock()->SetTargeted(false);
+                }
             }
+            targetedEnemy = enemy;
+            e->SetTargeted(true);
         }
-        targetedEnemy = enemy;
-        e->SetTargeted(true);
     }
 
     Vec2 speed = {0, 0};
