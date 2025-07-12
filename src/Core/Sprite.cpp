@@ -72,7 +72,19 @@ void Sprite::Render(Vec2 pos, Vec2 size, float angle)
         dstRect.x -= Camera::pos.x;
     }
     // std::cout << "x: " << x << std::endl << " y: " << y << std::endl << " w: " << w << std::endl << " h: " << h << std::endl;
+    
+    if(auto shader = m_shader.lock())
+    {
+        shader->Apply();
+    }
+    else {
+        GPU_ActivateShaderProgram(0, NULL);
+    }
     GPU_BlitRectX(texture, &clipRect, Game::GetInstance().GetGPUTarget(), &dstRect, angle, clipRect.x + (clipRect.w / 2), clipRect.y + (clipRect.h / 2), flip);
+    if (auto shader = m_shader.lock())
+    {
+        shader->Remove();
+    }
 }
 int Sprite::GetWidth()
 {
@@ -95,4 +107,9 @@ void Sprite::SetScale(float scaleX, float scaleY)
 void Sprite::SetFlip(SDL_RendererFlip flip)
 {
     this->flip = flip;
+}
+
+void Sprite::SetShader(std::shared_ptr<Shader> shader)
+{
+    m_shader = shader;
 }
