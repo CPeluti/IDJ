@@ -5,13 +5,14 @@ class Animation;
 
 class Animator: public Component {
     public:
-        Animator(GameObject &associated);
+        Animator(GameObject &associated, bool loop = true);
         void Update(float dt);
         void Render();
         inline bool Is(std::string type) {return type == "Animator";}
         void SetAnimation(std::string name);
         void AddAnimation(std::string name, Animation *animation);
     private:
+        bool loop = true;
         std::string current;
         std::unordered_map<std::string, Animation*> animations;
         int frameStart;
