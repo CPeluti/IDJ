@@ -5,6 +5,7 @@
 #include "SDL_include.h"
 #include "Vec2.h"
 #include "Shader.h"
+#include <memory>
 class Sprite{
     public:
         Sprite();
@@ -15,6 +16,7 @@ class Sprite{
         void Render(Vec2 pos, Vec2 size, float angle = 0);
         void SetFrame (int frame);
         void SetFrameCount (int frameCountW, int frameCountH);
+		void SetShader(std::shared_ptr<Shader> shader);
         int GetWidth();
         int GetHeight();
         bool IsOpen();
@@ -31,4 +33,5 @@ class Sprite{
         GPU_Rect clipRect;
         SDL_RendererFlip flip;
         Vec2 scale;
+		std::weak_ptr<Shader> m_shader;
 };
