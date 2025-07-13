@@ -26,7 +26,7 @@ void Animator::Update(float dt) {
 }
 void Animator::Render() {}
 void Animator::SetAnimation(std::string name) {
-    if (animations.find(name) != animations.end() && (name != current || currentFrame+1 > frameEnd)) {
+    if (animations.find(name) != animations.end() && (name != current || currentFrame > frameEnd)) {
         current = name;
         Animation *animation = animations[name];
         frameStart = animation->frameStart;
