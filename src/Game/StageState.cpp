@@ -102,7 +102,7 @@ StageState::~StageState()
 }
 void StageState::LoadAssets()
 {
-    backgroundMusic = Music("resources/audio/BGM.wav");
+    //backgroundMusic = Music("resources/audio/BGM.wav");
 }
 void StageState::Update(float dt)
 {
@@ -182,7 +182,7 @@ void StageState::Start()
     LoadAssets();
     StartArray();
     started = true;
-    backgroundMusic.Play();
+    //backgroundMusic.Play();
 }
 
 void StageState::Resume() {}

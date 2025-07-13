@@ -156,17 +156,29 @@ int &TileMap::At(int x, int y, int z)
 
 void TileMap::RenderLayer(int layer)
 {
+    int amountToRenderX = Game::GetInstance().GetWindowSize().x / (tileSet->GetTileWidth() * Camera::zoom);
+    int amountToRenderY = Game::GetInstance().GetWindowSize().y / (tileSet->GetTileHeight() * Camera::zoom);
+	Vec2 cameraPos = Camera::pos/Camera::zoom;
     int spaceX = tileSet->GetTileWidth();
     int spaceY = tileSet->GetTileHeight();
     Vec2 offset = associated.box.GetPos();
-    Vec2 factor = layer<=1 ? Vec2::Zero : Camera::pos * 0.5;
+    Vec2 factor = layer<=1 ? Vec2::Zero : Vec2::Zero;
     int count = 0;
-    for (int x = 0; x < GetWidth(); x++)
+    amountToRenderX -= this->associated.box.GetPos().x / tileSet->GetTileWidth();
+    amountToRenderY -= this->associated.box.GetPos().y / tileSet->GetTileHeight();
+    int startX = cameraPos.x < 0 ? 0 : floor(cameraPos.x / tileSet->GetTileWidth());
+    int startY = cameraPos.y < 0 ? 0 : floor(cameraPos.y / tileSet->GetTileHeight());
+    
+    for (int x = 0; x <= amountToRenderX+1; x++)
     {
-        for (int y = 0; y < GetHeight(); y++)
+		int currentX = startX + x;
+        if (currentX >= GetWidth()) break;
+        for (int y = 0; y <= amountToRenderY+1; y++)
         {
-            if (At(x, y, layer) >= 0)
-                tileSet->RenderTile(At(x, y, layer), (spaceX * x + offset.x + factor.x), spaceY * y + offset.y + factor.y);
+            int currentY = startY + y;
+            if (currentY >= GetHeight()) break;
+            if (At(currentX, currentY, layer) >= 0)
+                tileSet->RenderTile(At(currentX, currentY, layer), (spaceX * currentX + offset.x + factor.x), (spaceY * currentY + offset.y + factor.y));
             count++;
             //if (count > 900)
                 //break;
