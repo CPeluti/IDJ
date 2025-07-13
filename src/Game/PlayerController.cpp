@@ -64,7 +64,6 @@ void PlayerController::Update(float dt)
     }
     if (ip.KeyPress(SPACE_KEY))
     {
-        LOG_INFO("aqui");
         Character::Command c = Character::Command(Character::Command::DASH, {0,0});
         if (auto character = std::dynamic_pointer_cast<Character>(this->associated.GetComponent("Character").lock())) {
             character->Issue(c);
