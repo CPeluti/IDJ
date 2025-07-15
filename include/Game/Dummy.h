@@ -3,7 +3,7 @@
 #include "Core/Timer.h"
 #include "Core/GameObject.h"
 #include "Entity.h"
-class Dummy : public Component, public Observer, public Entity
+class Dummy : public Component, public Observer, public Entity, public std::enable_shared_from_this<Dummy>
 {
 public:
     Dummy(GameObject &associated);
@@ -24,6 +24,8 @@ private:
     bool OnInteraction(OnInteractionEvent &evt);
 
 private:
+    std::weak_ptr<GameObject> exclamation;
+    bool playerFound = false;
     bool moving = false;
     Vec2 characterBreadcrumb;
     int hitpoints;
