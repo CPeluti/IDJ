@@ -165,7 +165,9 @@ public:
         }
         for(int i = 0; i < this->GetElementCount(); i++)
         {
-            float angleStep = 10*i;
+			int halfCount = this->GetElementCount() / 2;
+            float angleStep = 10 * (i - halfCount);
+            //float angleStep = 10*i;
             float startingAngle = Vec2::Angle(m_initialPos, m_target);
             std::shared_ptr<GameObject> spellObj = std::make_shared<GameObject>();
 		    spellObj->box.Move(m_initialPos);
