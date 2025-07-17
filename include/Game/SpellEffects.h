@@ -14,7 +14,7 @@ public:
 	}
 	void Update(float dt){}
 	bool IsExpired() { return false; };
-	EFFECT_TYPE(Projectile);
+	EFFECT_TYPE(Projectile, MoreProjectileEffect);
 	std::string ToString() const { return GetName(); }
 	int getExtraProjectiles() const {
 		return m_extraProjectiles;
@@ -23,6 +23,70 @@ protected:
 	int m_extraProjectiles;
 	bool applied = false;
 };
+
+class ChainEffect : public Effect<Spell<Projectile>> {
+public:
+	ChainEffect(int amount) : m_chainAmount(amount) {}
+	void Apply(Spell<Projectile>& spell) {
+		if (!applied) {
+			spell.SetChainAmount(m_chainAmount);
+ 		}
+		applied = true;
+	}
+	void Update(float dt) {}
+	bool IsExpired() { return false; };
+	EFFECT_TYPE(Projectile, ChainEffect);
+	std::string ToString() const { return GetName(); }
+	int GetChainAmount() const {
+		return m_chainAmount;
+	}
+protected:
+	int m_chainAmount;
+	bool applied = false;
+};
+
+class PierceEffect : public Effect<Spell<Projectile>> {
+public:
+	PierceEffect(int amount) : m_pierceAmount(amount) {}
+	void Apply(Spell<Projectile>& spell) {
+		if (!applied) {
+			spell.SetPierceAmount(m_pierceAmount);
+		}
+		applied = true;
+	}
+	void Update(float dt) {}
+	bool IsExpired() { return false; };
+	EFFECT_TYPE(Projectile, ChainEffect);
+	std::string ToString() const { return GetName(); }
+	int GetChainAmount() const {
+		return m_pierceAmount;
+	}
+protected:
+	int m_pierceAmount;
+	bool applied = false;
+};
+
+class SpeedEffect : public Effect<Spell<Projectile>> {
+public:
+	SpeedEffect(int amount) : m_speedFactor(amount) {}
+	void Apply(Spell<Projectile>& spell) {
+		if (!applied) {
+			spell.ApplySpeedFactor(m_speedFactor);
+		}
+		applied = true;
+	}
+	void Update(float dt) {}
+	bool IsExpired() { return false; };
+	EFFECT_TYPE(Projectile, ChainEffect);
+	std::string ToString() const { return GetName(); }
+	int GetChainAmount() const {
+		return m_speedFactor;
+	}
+protected:
+	int m_speedFactor;
+	bool applied = false;
+};
+
 
 inline std::string format_as(const MoreProjectileEffect& e)
 {

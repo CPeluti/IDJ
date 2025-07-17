@@ -2,10 +2,10 @@
 // #include "Spell.h"
 #include <string>
 
-#define EFFECT_TYPE(type)                                              \
+#define EFFECT_TYPE(type, name)                                              \
   static EffectType GetStaticType() { return EffectType::type; }                \
   virtual EffectType GetEffectType() const override { return GetStaticType(); } \
-  virtual const char *GetName() const override { return #type; }
+  virtual const char *GetName() const override { return #name; }
 
 enum class EffectType{
   None,
