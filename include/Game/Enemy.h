@@ -96,7 +96,8 @@ public:
         IDLE,
         MOVING,
         ATTACKING,
-        DYING
+        DYING,
+        FREEZE
     };
 
     void Start();
