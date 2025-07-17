@@ -11,6 +11,7 @@
 #include "Events/BasicEvent.h"
 #include "Game/Effect.h"
 #include "Game/Entity.h"
+#include "Game/ManaSystem.h"
 
 #define SPELL_TYPE(type, element)                                                        \
     static SpellType GetStaticType() { return SpellType::type; }                         \
@@ -255,13 +256,17 @@ public:
     ~ProjectileSpell() {}
     SPELL_TYPE(projectile, fire);
 
-
     inline float GetDamage() { return m_currentDamage; };
     inline void CastSpell(GameObject *caster)
     {
         for (auto e : this->spellEffects) {
             //if(auto shared = e.lock())
 				e->Apply(*this);
+        }
+        if (auto ms = std::dynamic_pointer_cast<ManaSystem>(caster->GetComponent("ManaSystem").lock())) {
+            if (ms->GetMana() < this->GetManaCost()) {
+                return;
+            }
         }
         for(int i = 0; i < this->GetElementCount(); i++)
         {
@@ -440,6 +445,11 @@ public:
     SPELL_TYPE(area, fire);
 	inline float GetDamage() { return this->baseDamage; }
     inline void CastSpell(GameObject* caster) {
+        if (auto ms = std::dynamic_pointer_cast<ManaSystem>(caster->GetComponent("ManaSystem").lock())) {
+            if (ms->GetMana() < this->GetManaCost()) {
+                return;
+            }
+        }
         std::shared_ptr<GameObject> spellObj = std::make_shared<GameObject>();
         std::shared_ptr<Animator> animator = std::make_shared<Animator>(*spellObj, false);
         spellObj->box.Move(m_pos);
