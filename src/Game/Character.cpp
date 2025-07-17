@@ -104,6 +104,28 @@ Character::Character(GameObject &associated, std::string sprite, std::weak_ptr<T
 
     animator->SetAnimation("idle_down");
     flip = false;
+
+    SpellAssets fireProjectile = {
+        "resources/img/fogo_projetil.png",
+        "resources/audio/FireBall_Cast.wav",
+        "resources/audio/FireBall_Hit_Strong",
+        new Animation(0, 7, 0.1f),
+        8,
+        1
+    };
+	std::tuple<SpellElement, SpellType, SpellAssets> fireProjectileTuple = std::make_tuple(SpellElement::fire, SpellType::projectile, fireProjectile);
+	m_spellAssets.push_back(fireProjectileTuple);
+
+    SpellAssets fireArea = {
+        "resources/img/fogo_area.png",
+        "resources/audio/FireArea_Explode.wav",
+        "resources/audio/FireBall_Hit_Strong.wav",
+        new Animation(0, 8, 0.1f),
+        9,
+        1
+    };
+    std::tuple<SpellElement, SpellType, SpellAssets> fireAreTuple = std::make_tuple(SpellElement::fire, SpellType::area, fireArea);
+    m_spellAssets.push_back(fireAreTuple);
 }
 
 Character::~Character()
@@ -133,7 +155,7 @@ void Character::Start()
     if (shared_from_this() == Character::player.lock())
     {
         std::shared_ptr<GameObject> textObject = std::make_shared<GameObject>();
-        std::shared_ptr<Text> textComponent = std::make_shared<Text>(*textObject, "resources/font/neodgm.ttf", 30, Text::SOLID, " ", SDL_Color{255, 255, 255}, 0);
+        std::shared_ptr<Text> textComponent = std::make_shared<Text>(*textObject, "resources/font/neodgm.ttf", 30/Camera::zoom, Text::SOLID, " ", SDL_Color{255, 255, 255}, 0);
         textObject->AddComponent(textComponent);
         // textObject->box.SetPos(Game::GetInstance().GetWindowSize() / 2 - this->associated.box.GetSize());
         if (auto s = Game::GetInstance().GetCurrentState())
@@ -145,6 +167,9 @@ void Character::Start()
 }
 bool Character::OnDamageTaken(OnDamageTakenEvent &evt)
 {
+    if (&(this->associated) == &(evt.GetDealer())) {
+        return true;
+    }
     if (auto animator = std::dynamic_pointer_cast<Animator>(associated.GetComponent("Animator").lock()))
     {
         if (auto hs = std::dynamic_pointer_cast<HealthSystem>(associated.GetComponent("HealthSystem").lock()))
@@ -225,6 +250,8 @@ void Character::SetAnimation(Vec2 direction, std::string prefix)
 
 void Character::Update(float dt)
 {
+    TypingSystem& ts = TypingSystem::GetInstance();
+
     std::weak_ptr<Entity> enemy = Entity::GetClosestEnemy(this->associated.box.center(), 200);
     if (auto e = enemy.lock())
     {
@@ -298,15 +325,17 @@ void Character::Update(float dt)
 
             case c.SHOOT:
             {
+                std::vector<std::string> spellText = ts.GetSubmittedText();
 
                 if (auto shared = targetedEnemy.lock())
                 {
-                    CastSpell(SpellType::projectile, SpellElement::fire, {}, shared->GetPosition());
+                    CastSpell({}, shared->GetPosition(), spellText);
                 }
                 else
                 {
                     LOG_ERROR("Character::Update: No enemy found to shoot at");
                 }
+                
             }
             break;
             case c.DASH:
@@ -371,33 +400,56 @@ bool Character::OnEffect(OnEffectEvent<Entity> &evt)
     return true;
 }
 
-void Character::CastSpell(SpellType type, SpellElement element, std::vector<std::shared_ptr<IEffect>> effects, Vec2 target)
+void Character::CastSpell(std::vector<std::shared_ptr<IEffect>> effects, Vec2 target, std::vector<std::string> spellText)
 {
-    switch (type)
-    {
-    case SpellType::projectile:
-    {
-        std::shared_ptr<ProjectileSpell> spell = std::make_shared<ProjectileSpell>(this->associated.box.center(), target);
-        spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared<MoreProjectileEffect>(5)));
-        spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared<PierceEffect>(1)));
-        std::unique_ptr<FreezeEffect> f = std::make_unique<FreezeEffect>(5);
-        spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared <FreezeOnHitEffect>(f.release())));
-        spell->CastSpell(&this->associated);
+    auto itFoundElement = spellElements.end();
+    auto itFoundType = spellType.end();
+    for (std::string s : spellText) {
+        itFoundElement = spellElements.find(s);
+        if (itFoundElement != spellElements.end()) {
+            break;
+		}
     }
+    for (std::string s : spellText) {
+        itFoundType = spellType.find(s);
+        if (itFoundType != spellType.end()) {
+            break;
+		}
+    }
+    if (itFoundElement != spellElements.end() && itFoundType != spellType.end()) {
+        
+        SpellAssets assets;
+        for (std::tuple<SpellElement, SpellType, SpellAssets> spellTuple : m_spellAssets) {
+            if (std::get<0>(spellTuple) == itFoundElement->second && std::get<1>(spellTuple) == itFoundType->second)
+            {
+			    assets = std::get<2>(spellTuple);
+                break;
+		    }
+        }
 
-    break;
-    case SpellType::area:
-    {
-        std::shared_ptr<AreaSpell> spell = std::make_shared<AreaSpell>(target);
-        spell->CastSpell(&this->associated);
-        // std::shared_ptr<GameObject> spellObj = std::make_shared<GameObject>();
-        // std::shared_ptr<FireAreaSpell> spell = std::make_shared<FireAreaSpell>(*spellObj, this->associated.box.center());
-        // spellObj->AddComponent(spell);
-        // if (auto s = Game::GetInstance().GetCurrentState())
-        //     s->AddObject(spellObj);
+        switch (itFoundType->second)
+        {
+        case SpellType::projectile:
+        {
+            std::shared_ptr<ProjectileSpell> spell = std::make_shared<ProjectileSpell>(this->associated.box.center(), target, assets);
+            spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared<MoreProjectileEffect>(5)));
+            spell->CastSpell(&this->associated);
+        }
+
         break;
-    }
-    default:
-        break;
+        case SpellType::area:
+        {
+            std::shared_ptr<AreaSpell> spell = std::make_shared<AreaSpell>(target, assets);
+            spell->CastSpell(&this->associated);
+            // std::shared_ptr<GameObject> spellObj = std::make_shared<GameObject>();
+            // std::shared_ptr<FireAreaSpell> spell = std::make_shared<FireAreaSpell>(*spellObj, this->associated.box.center());
+            // spellObj->AddComponent(spell);
+            // if (auto s = Game::GetInstance().GetCurrentState())
+            //     s->AddObject(spellObj);
+            break;
+        }
+        default:
+            break;
+        }
     }
 }
