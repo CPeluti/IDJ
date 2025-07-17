@@ -75,8 +75,8 @@ void Sprite::Render(Vec2 pos, Vec2 size, float angle)
  //       return; // Outside camera view
 	//}
     GPU_Rect dstRect = {(float)pos.x * Camera::zoom, (float)pos.y * Camera::zoom, (float)(clipRect.w * scale.x * Camera::zoom), (float)(clipRect.h * scale.y * Camera::zoom)};
-    if(cameraFollower)
-        LOG_INFO(cameraFollower);
+    //if(cameraFollower)
+    //    LOG_INFO(cameraFollower);
     if (!cameraFollower)
     {
         dstRect.y -= Camera::pos.y;
@@ -91,9 +91,9 @@ void Sprite::Render(Vec2 pos, Vec2 size, float angle)
     else {
         GPU_ActivateShaderProgram(0, NULL);
     }
-    if (angle != 0) {
+    /*if (angle != 0) {
         LOG_INFO("AQUI");
-    }
+    }*/
     float pivot_x = (float)(clipRect.w ) / 2.0f;
     float pivot_y = (float)(clipRect.h ) / 2.0f;
     GPU_BlitRectX(texture, &clipRect, Game::GetInstance().GetGPUTarget(), &dstRect, angle, pivot_x, pivot_y, flip);

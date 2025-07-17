@@ -26,7 +26,11 @@ void ParticleSystem::Update(float dt){
 
         if(particle.LifeTimeRemaining <= 0.0f){
             particle.Active = false;
+			emmiting = false;
             continue;
+        }
+        else {
+			emmiting = true;
         }
 
         particle.LifeTimeRemaining -= dt;
@@ -46,7 +50,7 @@ void ParticleSystem::Render(){
     for(auto& particle : m_ParticlePool){
         if(!particle.Active) continue;
         float current = particle.LifeTimeRemaining/particle.LifeTime;
-        float size = Vec2::lerp(particle.SizeBegin, particle.SizeEnd, current);
+        float size = Vec2::lerp(particle.SizeEnd,particle.SizeBegin, current);
         m_Sprite->SetScale(size,size);
         m_Sprite->Render(particle.Position, associated.box.GetSize() + Vec2(size,size), particle.Rotation);
     }

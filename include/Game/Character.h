@@ -70,6 +70,7 @@ private:
     std::queue<Command> taskQueue;
     Vec2 speed;
     float hp;
+    float mana;
     bool isDead;
     Timer deathTimer;
     int extraProjectiles;
@@ -81,6 +82,8 @@ private:
 	std::weak_ptr<Entity> targetedEnemy;
 
 	std::weak_ptr<TileMap> tilemap;
+
+    //std::map<OnHitEffects, std::shared_ptr<Effect<Entity>>> m_onHitEffects;
 };
 
 
