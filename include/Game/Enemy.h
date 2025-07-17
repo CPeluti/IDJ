@@ -3,6 +3,7 @@
 #include "Core/Component.h"
 #include "Core/SpriteRenderer.h"
 #include "Core/Animator.h"
+#include "Core/ParticleSystem.h"
 
 #include "Game/HealthSystem.h"
 #include "Game/Character.h"
@@ -17,16 +18,20 @@ public:
         Entity(140),
         hp(500),
         damage(10),
-        deathTimer(5),
+        deathTimer(1),
         m_attackTimer(1),
 		frameCountW(frameCountW),
 		frameCountH(frameCountH),
 		m_movementSpeed(50)
     {
+
+		//Basic initilization
 		this->type = Entity::EnemyType::Enemy;
 		this->m_associated = &associated;
         this->associated.subject.addObserver(this);
 
+
+        //
         std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(associated, sprite, frameCountW, frameCountH);
         std::shared_ptr<HealthSystem> hs = std::make_shared<HealthSystem>(associated, hp);
         std::shared_ptr<Animator> animator = std::make_shared<Animator>(associated);
@@ -37,7 +42,8 @@ public:
         Vec2 colliderOffset = (colliderSize - associated.box.GetSize());
         std::shared_ptr<Collider> hitboxCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"layer0"}, "enemy", new OnCollisionEvent(associated), colliderSize, Vec2{ 1, 1 }, colliderOffset, true);
         std::shared_ptr<Collider> hurtboxCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"layer0"}, "enemy", new OnCollisionEvent(associated), colliderSize, Vec2{ 1, 1 }, colliderOffset, true);
-        attackCollider = hitboxCollider;
+        m_attackCollider = hitboxCollider;
+		m_hurtboxCollider = hurtboxCollider;
         
         associated.AddComponent(sr);
         associated.AddComponent(animator);
@@ -46,6 +52,7 @@ public:
         associated.AddComponent(hurtboxCollider);
 
         animator->AddAnimation("idle", new Animation(48, 53, 0.5));
+        animator->AddAnimation("death", new Animation(48, 48, 0));
 
         animator->AddAnimation("down_walking", new Animation(40, 43, 0.3));
         animator->AddAnimation("up_walking", new Animation(44, 47, 0.3));
@@ -89,7 +96,8 @@ public:
         IDLE,
         MOVING,
         ATTACKING,
-        DYING
+        DYING,
+        FREEZE
     };
 
     void Start();
@@ -134,5 +142,10 @@ private:
     std::queue<Command> taskQueue;
     std::weak_ptr<TileMap> tilemap;
     std::vector<std::shared_ptr<IEffect>> effects;
-    std::weak_ptr<Collider> attackCollider;
+    std::weak_ptr<Collider> m_attackCollider;
+    std::weak_ptr<Collider> m_hurtboxCollider;
+
+    ParticleData m_Particle;
+    std::weak_ptr<GameObject> particlesSystem;
+
 };
