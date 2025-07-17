@@ -65,7 +65,18 @@ void Sprite::SetFrameCount(int frameCountW, int frameCountH)
 }
 void Sprite::Render(Vec2 pos, Vec2 size, float angle)
 {
+	//Vec2 screenSize = Game::GetInstance().GetWindowSize();
+ //   Vec2 ul_corner = Camera::pos/Camera::zoom;
+ //   Vec2 ur_corner = { Camera::pos.x / Camera::zoom + screenSize.x, Camera::pos.y / Camera::zoom };
+ //   Vec2 dl_corner = { Camera::pos.x / Camera::zoom, Camera::pos.y / Camera::zoom + screenSize.y};
+ //   Vec2 dr_corner = Camera::pos / Camera::zoom + screenSize;
+ //   if (pos.x < ul_corner.x || pos.x > dr_corner.x || pos.y < ul_corner.y || pos.y > dr_corner.y)
+ //   {
+ //       return; // Outside camera view
+	//}
     GPU_Rect dstRect = {(float)pos.x * Camera::zoom, (float)pos.y * Camera::zoom, (float)(clipRect.w * scale.x * Camera::zoom), (float)(clipRect.h * scale.y * Camera::zoom)};
+    if(cameraFollower)
+        LOG_INFO(cameraFollower);
     if (!cameraFollower)
     {
         dstRect.y -= Camera::pos.y;
@@ -80,7 +91,12 @@ void Sprite::Render(Vec2 pos, Vec2 size, float angle)
     else {
         GPU_ActivateShaderProgram(0, NULL);
     }
-    GPU_BlitRectX(texture, &clipRect, Game::GetInstance().GetGPUTarget(), &dstRect, angle, clipRect.x + (clipRect.w / 2), clipRect.y + (clipRect.h / 2), flip);
+    if (angle != 0) {
+        LOG_INFO("AQUI");
+    }
+    float pivot_x = (float)(clipRect.w ) / 2.0f;
+    float pivot_y = (float)(clipRect.h ) / 2.0f;
+    GPU_BlitRectX(texture, &clipRect, Game::GetInstance().GetGPUTarget(), &dstRect, angle, pivot_x, pivot_y, flip);
     if (auto shader = m_shader.lock())
     {
         shader->Remove();

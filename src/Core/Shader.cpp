@@ -1,18 +1,20 @@
 #include "Core/Shader.h"
+#include "Core/Resources.h"
 
 GPU_ShaderBlock load_shader_program(int* p, const char* vertex_shader_file, const char* fragment_shader_file, int *v, int *f)
 {
-    *v = GPU_LoadShader(GPU_VERTEX_SHADER, vertex_shader_file);
+    *v = Resources::GetVertex(vertex_shader_file);
     
     if(!v)
         GPU_LogError("Failed to load vertex shader (%s): %s\n", vertex_shader_file, GPU_GetShaderMessage());
     
-    *f = GPU_LoadShader(GPU_FRAGMENT_SHADER, fragment_shader_file);
+    *f = Resources::GetFragment(fragment_shader_file);
     
     if(!*f)
         GPU_LogError("Failed to load fragment shader (%s): %s\n", fragment_shader_file, GPU_GetShaderMessage());
     
-    *p = GPU_LinkShaders(*v, *f);
+	if (!v || !f) return { -1, -1, -1, -1 };
+    *p = Resources::GetShaderBlock(vertex_shader_file, fragment_shader_file);
     
     if(!*p)
     {
@@ -34,9 +36,9 @@ Shader::Shader(std::string vert, std::string frag){
 }
 
 Shader::~Shader(){
-    GPU_FreeShaderProgram(m_shader);
-    GPU_FreeShader(m_vert);
-    GPU_FreeShader(m_frag);
+    //GPU_FreeShaderProgram(m_shader);
+    //GPU_FreeShader(m_vert);
+    //GPU_FreeShader(m_frag);
 }
 
 void Shader::Load(std::string vert, std::string frag){
@@ -44,9 +46,9 @@ void Shader::Load(std::string vert, std::string frag){
 }
 
 void Shader::Reset(){
-    GPU_FreeShaderProgram(m_shader);
-    GPU_FreeShader(m_vert);
-    GPU_FreeShader(m_frag);
+    //GPU_FreeShaderProgram(m_shader);
+    //GPU_FreeShader(m_vert);
+    //GPU_FreeShader(m_frag);
     
     m_vert = 0;
     m_frag = 0;

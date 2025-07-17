@@ -121,6 +121,7 @@ Dummy::~Dummy()
 }
 void Dummy::Start()
 {
+    LOG_INFO(dummyCounter);
     this->m_enemies.push_back(shared_from_this());
     std::shared_ptr<GameObject> exclamation = std::make_shared<GameObject>();
     std::shared_ptr<SpriteRenderer> exclamationSprite = std::make_shared<SpriteRenderer>(*exclamation, "resources/img/exclamation.png", 6, 1);
@@ -246,8 +247,7 @@ void Dummy::Render()
         auto raycast = this->associated.CastRaycast(c->getAssociated()->box.center(), this->associated.box.center(), 5000, 1);
         if (!raycast.intersects && !raycast.maxDistanceExceeded)
         {
-            LOG_INFO("AQUI");
-            GPU_Line(Game::GetInstance().GetGPUTarget(), charPos.x, charPos.y, dummyPos.x, dummyPos.y, {255, 0, 0, 255});
+            //GPU_Line(Game::GetInstance().GetGPUTarget(), charPos.x, charPos.y, dummyPos.x, dummyPos.y, {255, 0, 0, 255});
         }
     }
     //GPU_Image *light = GPU_CreateImage(100, 100, GPU_FORMAT_RGBA);
