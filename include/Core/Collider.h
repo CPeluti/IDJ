@@ -21,7 +21,7 @@ enum class ColliderFunctionType
 class Collider : public Component, public std::enable_shared_from_this<Collider>
 {
 public:
-    Collider(GameObject &associated, std::vector<std::string> collisionLayers, std::string tag, Event *event, Vec2 size = {0, 0}, Vec2 scale = {1, 1}, Vec2 offset = {0, 0}, float weight = 0.5f);
+    Collider(GameObject &associated, std::vector<std::string> collisionLayers, std::string tag, Event *event, Vec2 size = {0, 0}, Vec2 scale = {1, 1}, Vec2 offset = {0, 0}, float weight = 0.5f, bool disabled = false);
     ~Collider();
     Rect box;
     void Update(float dt);
@@ -34,7 +34,8 @@ public:
     void SetOffset(Vec2 scale);
     inline Vec2 GetSize(){return size;}
     inline Vec2 GetOffset(){return offset;}
-    inline void SetSize(Vec2 newSize){size = newSize;}
+    inline void SetSize(Vec2 newSize) { size = newSize; }
+    inline void SetDisable(bool value){disabled = value;}
     Event *GetEvent() { return m_event; };
     std::string GetTag();
     // ColliderFunctionType GetColliderFunctionType(ColliderFunctionType functionType) { return m_functionType; };
@@ -44,6 +45,7 @@ public:
     }
     float weight;
     void registerCollider();
+    bool disabled;
 private:
     Vec2 scale;
     Vec2 offset;
@@ -52,7 +54,6 @@ private:
     std::string m_tag;
     // ColliderFunctionType m_functionType;
     Event *m_event;
-    
 };
 
 
