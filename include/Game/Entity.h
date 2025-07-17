@@ -13,6 +13,7 @@ inline void update_color_shader(float r, float g, float b, float a, int color_lo
 	GPU_SetUniformfv(color_loc, 4, 1, fcolor);
 }
 
+
 class Entity
 {
 public:
@@ -29,7 +30,7 @@ public:
 	inline virtual float GetMovementSpeed() const { return m_movementSpeed; };
 	inline Vec2 GetPosition() const { return m_associated->box.center(); };
 	inline void SetTargeted(bool targeted) { m_targeted = targeted; }
-	inline static std::weak_ptr<Entity> GetClosestEnemy(Vec2 reference, float range)
+	inline static std::weak_ptr<Entity> GetClosestEnemy(Vec2 reference, float range, std::vector<GameObject*> ignore = {})
 	{
 		float minDistance = std::numeric_limits<float>::max();
 		std::weak_ptr<Entity> closestEnemy;
@@ -37,6 +38,8 @@ public:
 		{
 			if (auto e = enemy.lock())
 			{
+				if (!e->m_associated) continue;
+				if(std::find(ignore.begin(), ignore.end(), e->m_associated) != ignore.end()) continue;
 				auto distance = Vec2::Distance(e->m_associated->box.center(), reference);
 				if (e->type == EnemyType::Enemy && !e->isDead && distance <= minDistance && distance <= range)
 				{
