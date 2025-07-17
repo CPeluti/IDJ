@@ -6,6 +6,8 @@
 #include "Core/Collider.h"
 #include "Core/Camera.h"
 #include "Core/Game.h"
+#include "Core/Animator.h"
+#include "Core/Sound.h"
 #include "Game/Effect.h"
 
 #define SPELL_TYPE(type, element)                                                        \
@@ -83,17 +85,15 @@ protected:
 class Projectile : public Component, public Observer
 {
 public:
-    Projectile(GameObject& associated, std::string sprite, float speed, float distanceLeft, float damage) : Component(associated), m_baseSpeed(speed), m_currentSpeed(speed), m_distanceLeft(distanceLeft), m_baseDamage(damage) {
+    Projectile(GameObject& associated, float speed, float distanceLeft, float damage) : Component(associated), m_baseSpeed(speed), m_currentSpeed(speed), m_distanceLeft(distanceLeft), m_baseDamage(damage) {
         this->associated.subject.addObserver(this);
-        
-        std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(associated, sprite, 1, 1);
-        this->associated.AddComponent(sr);
 
         std::vector<std::string> layers;
         std::shared_ptr<Collider> collider = std::make_shared<Collider>(associated, std::vector<std::string>{"layer0"}, "projectile", new OnCollisionEvent(associated), Vec2{10,10});
         associated.AddComponent(collider);
 
     }
+    std::shared_ptr<Sound> m_soundEffect;
 protected:
     //std::vector<std::weak_ptr<Effect>> spellEffects;
     inline void Start() {}
@@ -123,6 +123,9 @@ protected:
     {
         GameObject& go = evt.GetGameObject();
         OnDamageTakenEvent e = OnDamageTakenEvent(this->associated, m_baseDamage);
+        if (go.GetComponent("Character").lock()) {
+            return true;
+        }
         if (go.GetComponent("HealthSystem").lock())
             go.subject.notify(e);
         if (!go.GetComponent("FireProjectileSpell").lock())
@@ -142,6 +145,7 @@ protected:
     float m_baseSpeed;
     float m_distanceLeft;
     float m_baseDamage;
+
 private:
     std::weak_ptr<GameObject> m_particlesSystem;
     ParticleData m_Particle;
@@ -150,7 +154,8 @@ private:
 class ProjectileSpell : public Spell<Projectile>
 {
 public:
-    ProjectileSpell(Vec2 initialPos, Vec2 target) : Spell({}, 10, "resources/img/fire_placeholder.png"), m_initialPos(initialPos), m_target(target){}
+    ProjectileSpell(Vec2 initialPos, Vec2 target) : Spell({}, 10, "resources/img/fogo_projetil.png"), m_initialPos(initialPos), m_target(target) {
+    }
     
     ~ProjectileSpell() {}
     SPELL_TYPE(projectile, fire);
@@ -170,11 +175,20 @@ public:
             //float angleStep = 10*i;
             float startingAngle = Vec2::Angle(m_initialPos, m_target);
             std::shared_ptr<GameObject> spellObj = std::make_shared<GameObject>();
+            std::shared_ptr<Animator> animator = std::make_shared<Animator>(*spellObj);
 		    spellObj->box.Move(m_initialPos);
 		    spellObj->angleDeg = startingAngle+90+angleStep;
-            std::shared_ptr<Projectile> spell = std::make_shared<Projectile>(*spellObj, baseSprite, 50.0f, 300.0f, this->GetDamage());
+            std::shared_ptr<Projectile> spell = std::make_shared<Projectile>(*spellObj, 50.0f, 300.0f, this->GetDamage());
+            std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(*spellObj, baseSprite, 8, 2, -90);
+            spell->m_soundEffect = std::make_shared<Sound>("resources/audio/FireBall_Cast.wav");
+            spell->m_soundEffect->Play();
+
+            spellObj->AddComponent(sr);
             spellObj->AddComponent(spell);
+            spellObj->AddComponent(animator);
             Game::GetInstance().GetCurrentState()->AddObject(spellObj);
+			animator->AddAnimation("projectile", new Animation(0, 7, 0.1f));
+			animator->SetAnimation("projectile");
 		}
 	}
     inline void AddEffect(std::shared_ptr<Effect<Spell<Projectile>>> e)
@@ -227,27 +241,35 @@ public:
         }
     }
 
-    inline void Render() {};
-    inline void Start() {};
     inline bool Is(std::string type) { return type == "ProjectileSpell"; }
 
 private:
     Vec2 m_initialPos;
 	Vec2 m_target;
-
 };
 
-class AreaSpell
+
+class Area : public Component, public Observer
 {
 public:
-    AreaSpell(Vec2 area, Vec2 size, float duration) : m_area(area), m_size(size), m_duration(duration) {
-		m_duration.Restart();
+    Area(GameObject& associated, float damage, Vec2 pos, Vec2 size, float duration) : Component(associated), m_pos(pos), m_size(size), m_duration(duration), m_baseDamage(damage) {
+        this->associated.subject.addObserver(this);
+
+        std::vector<std::string> layers;
+        std::shared_ptr<Collider> collider = std::make_shared<Collider>(associated, std::vector<std::string>{"layer0"}, "area", new OnCollisionEvent(associated), size, Vec2{1,1});
+        associated.AddComponent(collider);
+
     }
+    std::shared_ptr<Sound> m_soundEffect;
 protected:
-    inline void SpellTypeStrategy(GameObject& associated, float dt)
+    //std::vector<std::weak_ptr<Effect>> spellEffects;
+    inline void Start() {
+        m_duration.Restart();
+    }
+    inline void Update(float dt)
     {
 
-        associated.box.SetPos(m_area);
+        associated.box.Move(m_pos);
         associated.box.SetSize(m_size);
 
         if (m_duration.Expired())
@@ -257,48 +279,109 @@ protected:
         else
         {
             m_duration.Update(dt);
-		}
+        }
     }
-    Vec2 m_area;
+    inline void Render()
+    {
+    }
+    inline bool Is(std::string type) { return type == "Area"; }
+    inline bool OnCollision(OnCollisionEvent& evt)
+    {
+        GameObject& go = evt.GetGameObject();
+        OnDamageTakenEvent e = OnDamageTakenEvent(this->associated, this->m_baseDamage);
+        if (go.GetComponent("HealthSystem").lock())
+            go.subject.notify(e);
+
+        return true;
+    }
+
+    inline void OnEvent(Event& evt)
+    {
+        EventDispatcher dispatcher(evt);
+
+        dispatcher.Dispatch<OnCollisionEvent>(BIND_EVENT_FN(Area::OnCollision));
+    };
+
+    float m_baseDamage;
+    Vec2 m_pos;
     Vec2 m_size;
     Timer m_duration;
+
+private:
+    std::weak_ptr<GameObject> m_particlesSystem;
+    ParticleData m_Particle;
 };
 
-//class FireAreaSpell : public Spell<AreaSpell>, public AreaSpell, public Observer {
-//public:
-//    FireAreaSpell(GameObject& associated, Vec2 pos) : Spell(associated, {}, 10, "resources/img/fire_placeholder.png"),
-//        AreaSpell(pos, { 100, 100 }, 5.0f)
-//    {
-//
-//
-//    }
-//	~FireAreaSpell() {}
-//    SPELL_TYPE(area, fire);
-//	inline float GetDamage() { return this->baseDamage; }
-//    inline void Update(float dt)
-//    {
-//        //this->SpellTypeStrategy(this->associated, dt);
-//    };
-//    inline void Render() {};
-//    inline void Start() {};
-//    inline bool Is(std::string type) { return type == "FireAreaSpell"; }
-//    inline void OnEvent(Event& evt)
-//    {
-//        EventDispatcher dispatcher(evt);
-//
-//        dispatcher.Dispatch<OnCollisionEvent>(BIND_EVENT_FN(FireAreaSpell::OnCollision));
-//    };
-//    bool targetsPlayer = false;
-//private:
-//    inline bool OnCollision(OnCollisionEvent& evt)
-//    {
-//        GameObject& go = evt.GetGameObject();
-//        OnDamageTakenEvent e = OnDamageTakenEvent(this->associated, this->baseDamage);
-//        if (go.GetComponent("HealthSystem").lock())
-//            go.subject.notify(e);
-//
-//        return true;
-//    }
-//	std::weak_ptr<GameObject> m_particlesSystem;
-//    ParticleData m_Particle;
-//};
+
+class AreaSpell : public Spell<Area> {
+public:
+    AreaSpell(Vec2 pos) : Spell({}, 10, "resources/img/fogo_area.png"), m_pos(pos)
+    {}
+	~AreaSpell() {}
+    SPELL_TYPE(area, fire);
+	inline float GetDamage() { return this->baseDamage; }
+    inline void CastSpell() {
+        std::shared_ptr<GameObject> spellObj = std::make_shared<GameObject>();
+        std::shared_ptr<Animator> animator = std::make_shared<Animator>(*spellObj, false);
+        spellObj->box.Move(m_pos);
+        spellObj->z = 2;
+        std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(*spellObj, baseSprite, 10, 1);
+        std::shared_ptr<Area> spell = std::make_shared<Area>(*spellObj, 10, m_pos, spellObj->box.GetSize(), 1.0f);
+        spell->m_soundEffect = std::make_shared<Sound>("resources/audio/FireArea_Explode.wav");
+        spell->m_soundEffect->Play();
+
+        spellObj->AddComponent(sr);
+        spellObj->AddComponent(spell);
+        spellObj->AddComponent(animator);
+        Game::GetInstance().GetCurrentState()->AddObject(spellObj);
+        animator->AddAnimation("area", new Animation(0, 9, 0.1f));
+        animator->SetAnimation("area");
+    }
+    inline bool Is(std::string type) { return type == "FireAreaSpell"; }
+    inline void AddEffect(std::shared_ptr<Effect<Spell<Area>>> e) override {
+        if (e) {
+            for (const auto& effect : spellEffects) {
+                if (effect->GetName() == e->GetName()) {
+                    return; // já existe
+                }
+            }
+            spellEffects.push_back(e);
+        }
+    }
+
+    inline void RemoveEffect(std::string effectName) override {
+        for (auto it = spellEffects.begin(); it != spellEffects.end(); ) {
+            if ((*it)->GetName() == effectName) {
+                it = spellEffects.erase(it);
+            }
+            else {
+                ++it;
+            }
+        }
+    }
+
+    inline void UpdateEffect(float dt) override {
+        for (auto it = spellEffects.begin(); it != spellEffects.end(); ) {
+            if (auto e = *it) {
+                e->Update(dt);
+                if (e->IsExpired()) {
+                    it = spellEffects.erase(it);
+                }
+                else {
+                    ++it;
+                }
+            }
+            else {
+                it = spellEffects.erase(it);
+            }
+        }
+    }
+
+
+    bool targetsPlayer = false;
+private:
+   
+	std::weak_ptr<GameObject> m_particlesSystem;
+    ParticleData m_Particle;
+    Vec2 m_pos;
+};

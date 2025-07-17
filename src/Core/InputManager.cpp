@@ -76,10 +76,11 @@ void InputManager::Update()
             }
             if (event.key.keysym.sym == SDLK_ESCAPE)
             {
+                Game::GetInstance().Menu();
                 // popRequested = true;
-                if(auto s = Game::GetInstance().GetCurrentState())
-                    s->SetPopRequested(true);
-                Game::GetInstance().Push(std::make_unique<TitleState>());
+                //if(auto s = )
+                    //s->SetPopRequested(true);
+                //Game::GetInstance().Push(std::make_unique<TitleState>());
             }
             break;
         case SDL_QUIT:
