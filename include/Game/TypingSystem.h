@@ -54,11 +54,17 @@ public:
     this->textComponent = textComponent;
   };
 
+  std::vector<std::string> GetSubmittedText()
+  {
+    return this->submittedText;
+  };
+
 private:
   TypingSystem(Text *textComponent, bool enableCursor = true, bool isTypingMode = true);
 
   std::shared_ptr<Text> textComponent;
   std::string text;
+  std::vector<std::string> submittedText;
   bool isTypingMode;
   bool enableCursor;
   bool cursorVisible;
