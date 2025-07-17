@@ -51,11 +51,13 @@ public:
     virtual const char* GetElement() const = 0;
     virtual std::string ToString() const = 0;
     virtual float GetDamage() = 0;
+	virtual float GetManaCost() = 0;
     virtual int GetElementCount() = 0;
     //virtual void ApplyEffects() = 0;
-	virtual void IncreaseElementCount(int count) = 0;
+    virtual void IncreaseElementCount(int count) = 0;
+    virtual void IncreaseManaCost(float factor) = 0;
 
-    virtual void CastSpell() = 0;
+    virtual void CastSpell(GameObject* caster) = 0;
 
     virtual void UpdateEffect(float dt) = 0;
     virtual void RemoveEffect(std::string effectName) = 0;
@@ -66,7 +68,7 @@ template <typename SpellStrategy>
 class Spell
 {
 public:
-    Spell(std::vector<std::string> modifiers, float baseDamage, float baseSpeed, std::string baseSprite) : modifiers(modifiers), baseDamage(baseDamage), m_baseSpeed(baseSpeed), baseSprite(baseSprite) {}
+    Spell(std::vector<std::string> modifiers, float baseManaCost,float baseDamage, float baseSpeed, std::string baseSprite) : modifiers(modifiers), baseDamage(baseDamage), m_baseSpeed(baseSpeed), baseSprite(baseSprite), m_baseManaCost(baseManaCost){}
     ~Spell() {};
     virtual SpellType GetSpellType() const = 0;
     virtual SpellElement GetSpellElement() const = 0;
@@ -74,7 +76,11 @@ public:
     virtual const char *GetElement() const = 0;
     virtual std::string ToString() const { return GetName(); }
     virtual float GetDamage() = 0;
-    virtual void CastSpell() = 0;
+    inline float GetManaCost() { return this->m_currentManaCost; };
+    inline void IncreaseManaCost(float factor) {
+        m_currentManaCost *= factor;
+	}
+    virtual void CastSpell(GameObject* caster) = 0;
 
 	inline int GetElementCount() const{ return m_baseElementCount; }
     inline void IncreaseElementCount(int count)
@@ -110,6 +116,8 @@ protected:
 	std::vector<std::shared_ptr<Effect<Spell<SpellStrategy>>>> spellEffects;
 	std::vector<Effect<Entity>*> m_onHitEffects;
     std::vector<std::string> modifiers;
+    float m_baseManaCost;
+    float m_currentManaCost = m_baseManaCost;
     float baseDamage;
 	float m_currentDamage = baseDamage;
     std::string baseSprite;
@@ -243,7 +251,7 @@ private:
 class ProjectileSpell : public Spell<Projectile>
 {
 public:
-    ProjectileSpell(Vec2 initialPos, Vec2 target) : Spell({}, 60, 200, "resources/img/fogo_projetil.png"), m_initialPos(initialPos), m_target(target) {
+    ProjectileSpell(Vec2 initialPos, Vec2 target) : Spell({}, 10,60, 200, "resources/img/fogo_projetil.png"), m_initialPos(initialPos), m_target(target) {
     }
     
     ~ProjectileSpell() {}
@@ -251,7 +259,7 @@ public:
 
 
     inline float GetDamage() { return m_currentDamage; };
-    inline void CastSpell()
+    inline void CastSpell(GameObject *caster)
     {
         for (auto e : this->spellEffects) {
             //if(auto shared = e.lock())
@@ -290,6 +298,9 @@ public:
             Game::GetInstance().GetCurrentState()->AddObject(spellObj);
 			animator->AddAnimation("projectile", new Animation(0, 7, 0.1f));
 			animator->SetAnimation("projectile");
+            OnCastSpellEvent* newEvt = new OnCastSpellEvent(this->GetManaCost());
+			caster->subject.notify(*newEvt);
+
 		}
 	}
     inline void AddEffect(std::shared_ptr<Effect<Spell<Projectile>>> e)
@@ -418,12 +429,12 @@ private:
 
 class AreaSpell : public Spell<Area> {
 public:
-    AreaSpell(Vec2 pos) : Spell({}, 0,10, "resources/img/fogo_area.png"), m_pos(pos)
+    AreaSpell(Vec2 pos) : Spell({}, 10,0,10, "resources/img/fogo_area.png"), m_pos(pos)
     {}
 	~AreaSpell() {}
     SPELL_TYPE(area, fire);
 	inline float GetDamage() { return this->baseDamage; }
-    inline void CastSpell() {
+    inline void CastSpell(GameObject* caster) {
         std::shared_ptr<GameObject> spellObj = std::make_shared<GameObject>();
         std::shared_ptr<Animator> animator = std::make_shared<Animator>(*spellObj, false);
         spellObj->box.Move(m_pos);
