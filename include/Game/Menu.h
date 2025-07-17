@@ -8,6 +8,7 @@
 #include "Core/Animator.h"
 #include "Core/Text.h"
 #include "Core/Game.h"
+#include "Game/TitleState.h"
 #include "Core/Camera.h"
 enum MenuStates {
 	INITIAL,
@@ -32,10 +33,14 @@ public:
 	}
 	virtual ~Menu() = default;
 	inline void Start() {
+		cursorCoordinates = 0;
+		elementOrder[INITIAL] = std::vector < std::string>({ "continue", "quit"});
+		elementOrder[SETTINGS] = std::vector < std::string>({ "resolution:option", "music:option", "effects:option", "back"});
+
 		this->elements = std::map < std::string, std::shared_ptr<GameObject>>();
-		std::shared_ptr<Animation> buttonAnimation = std::make_shared<Animation>(0, 0, 0.0f);
-		std::shared_ptr<Animation> buttonAnimationHover = std::make_shared<Animation>(1, 1, 0.0f);
-		std::shared_ptr<Animation> buttonAnimationClick = std::make_shared<Animation>(2, 2, 0.0f);
+		Animation* buttonAnimation = new Animation(0, 0, 0.0f);
+		Animation* buttonAnimationHover = new Animation(1, 1, 0.0f);
+		Animation* buttonAnimationClick = new Animation(2, 2, 0.0f);
 		
 		//Util
 		std::shared_ptr<GameObject> uiCursor = std::make_shared<GameObject>();
@@ -48,7 +53,7 @@ public:
 		titleBgRenderer->SetCameraFollower(true);
 		uiCursorRenderer->SetCameraFollower(true);
 		tabCursorRenderer->SetCameraFollower(true);
-
+		titleBg->AddComponent(titleBgRenderer);
 		elementsStateMap["uiCursor"] = ALL;
 		elementsStateMap["tabCursor"] = ALL;
 		elementsStateMap["titleBg"] = ALL;
@@ -77,34 +82,36 @@ public:
 
 		pauseBg->AddComponent(pauseBgRenderer);
 		continueButton->AddComponent(continueButtonRenderer);
-		settingsButton->AddComponent(settingsButtonRenderer);
+		//settingsButton->AddComponent(settingsButtonRenderer);
 		quitButton->AddComponent(quitButtonRenderer);
 		continueButton->AddComponent(continueButtonAnimator);
-		settingsButton->AddComponent(settingsButtonAnimator);
+		//settingsButton->AddComponent(settingsButtonAnimator);
 		quitButton->AddComponent(quitButtonAnimator);
 
 
-		continueButtonAnimator->AddAnimation("default", buttonAnimation.get());
-		continueButtonAnimator->AddAnimation("hover", buttonAnimationHover.get());
-		continueButtonAnimator->AddAnimation("click", buttonAnimationClick.get());
-		settingsButtonAnimator->AddAnimation("default", buttonAnimation.get());
-		settingsButtonAnimator->AddAnimation("hover", buttonAnimationHover.get());
-		settingsButtonAnimator->AddAnimation("click", buttonAnimationClick.get());
-		quitButtonAnimator->AddAnimation("default", buttonAnimation.get());
-		quitButtonAnimator->AddAnimation("hover", buttonAnimationHover.get());
-		quitButtonAnimator->AddAnimation("click", buttonAnimationClick.get());
+		continueButtonAnimator->AddAnimation("default", buttonAnimation);
+		continueButtonAnimator->AddAnimation("hover", buttonAnimationHover);
+		continueButtonAnimator->AddAnimation("click", buttonAnimationClick);
+		settingsButtonAnimator->AddAnimation("default", buttonAnimation);
+		settingsButtonAnimator->AddAnimation("hover", buttonAnimationHover);
+		settingsButtonAnimator->AddAnimation("click", buttonAnimationClick);
+		quitButtonAnimator->AddAnimation("default", buttonAnimation);
+		quitButtonAnimator->AddAnimation("hover", buttonAnimationHover);
+		quitButtonAnimator->AddAnimation("click", buttonAnimationClick);
 
 		continueButtonAnimator->SetAnimation("default");
 		settingsButtonAnimator->SetAnimation("default");
 		quitButtonAnimator->SetAnimation("default");
 		
-
 		pauseBg->box.Move(Game::GetInstance().GetWindowSize() / 2 / Camera::zoom);
+		titleBg->box.RawMove(pauseBg->box.GetPos());
+		titleBg->box.Move({ pauseBg->box.center().x,titleBg->box.center().y });
+		titleBg->box.MoveToPos({ 0.,-12-titleBg->box.GetSize().y});
 		continueButton->box.RawMove(pauseBg->box.GetPos());
 		continueButton->box.MoveToPos({ 16,16  });
-		settingsButton->box.RawMove(continueButton->box.GetPos() + Vec2{0.0,continueButton->box.GetSize().y});
-		settingsButton->box.MoveToPos({ 0,6  });
-		quitButton->box.RawMove(settingsButton->box.GetPos() + Vec2{ 0.0,settingsButton->box.GetSize().y });
+		//settingsButton->box.RawMove(continueButton->box.GetPos() + Vec2{0.0,continueButton->box.GetSize().y});
+		//settingsButton->box.MoveToPos({ 0,6  });
+		quitButton->box.RawMove(continueButton->box.GetPos() + Vec2{ 0.0,continueButton->box.GetSize().y });
 		quitButton->box.MoveToPos({ 0,6  });
 
 		pauseBg->z=0;
@@ -142,7 +149,7 @@ public:
 			elementsStateMap["plusResolution:button"] = SETTINGS;
 			elementsStateMap["minusResolution:button"] = SETTINGS;
 			elementsStateMap["plusMusic:button"] = SETTINGS;
-			elementsStateMap["minusResolution:button"] = SETTINGS;
+			elementsStateMap["minusMusic:button"] = SETTINGS;
 			elementsStateMap["plusEffects:button"] = SETTINGS;
 			elementsStateMap["minusEffects:button"] = SETTINGS;
 			elementsStateMap["back:button"] = SETTINGS;
@@ -165,6 +172,15 @@ public:
 			minusEffectsButtonRenderer->SetCameraFollower(true);
 			backButtonRenderer->SetCameraFollower(true);
 
+			settingsBg->AddComponent(settingsBgRenderer);
+			plusResolutionButton->AddComponent(plusResolutionButtonRenderer);
+			minusResolutionButton->AddComponent(minusResolutionButtonRenderer);
+			plusMusicButton->AddComponent(plusMusicButtonRenderer);
+			minusMusicButton->AddComponent(minusMusicButtonRenderer);
+			plusEffectsButton->AddComponent(plusEffectsButtonRenderer);
+			minusEffectsButton->AddComponent(minusEffectsButtonRenderer);
+			backButton->AddComponent(backButtonRenderer);
+
 			std::shared_ptr<Animator> plusResolutionButtonAnimator = std::make_shared<Animator>(*plusResolutionButton);
 			std::shared_ptr<Animator> minusResolutionButtonAnimator = std::make_shared<Animator>(*minusResolutionButton);
 			std::shared_ptr<Animator> plusMusicButtonAnimator = std::make_shared<Animator>(*plusMusicButton);
@@ -172,56 +188,73 @@ public:
 			std::shared_ptr<Animator> plusEffectsButtonAnimator = std::make_shared<Animator>(*plusEffectsButton);
 			std::shared_ptr<Animator> minusEffectsButtonAnimator = std::make_shared<Animator>(*minusEffectsButton);
 			std::shared_ptr<Animator> backButtonAnimator = std::make_shared<Animator>(*backButton);
+			plusResolutionButton->AddComponent(plusResolutionButtonAnimator);
+			minusResolutionButton->AddComponent(minusResolutionButtonAnimator);
+			plusMusicButton->AddComponent(plusMusicButtonAnimator);
+			minusMusicButton->AddComponent(minusMusicButtonAnimator);
+			plusEffectsButton->AddComponent(plusEffectsButtonAnimator);
+			minusEffectsButton->AddComponent(minusEffectsButtonAnimator);
+			backButton->AddComponent(backButtonAnimator);
 
-			plusResolutionButtonAnimator->AddAnimation("default", buttonAnimation.get());
-			plusResolutionButtonAnimator->AddAnimation("hover", buttonAnimationHover.get());
-			plusResolutionButtonAnimator->AddAnimation("click", buttonAnimationClick.get());
-			minusResolutionButtonAnimator->AddAnimation("default", buttonAnimation.get());
-			minusResolutionButtonAnimator->AddAnimation("hover", buttonAnimationHover.get());
-			minusResolutionButtonAnimator->AddAnimation("click", buttonAnimationClick.get());
-			plusMusicButtonAnimator->AddAnimation("default", buttonAnimation.get());
-			plusMusicButtonAnimator->AddAnimation("hover", buttonAnimationHover.get());
-			plusMusicButtonAnimator->AddAnimation("click", buttonAnimationClick.get());
-			minusMusicButtonAnimator->AddAnimation("default", buttonAnimation.get());
-			minusMusicButtonAnimator->AddAnimation("hover", buttonAnimationHover.get());
-			minusMusicButtonAnimator->AddAnimation("click", buttonAnimationClick.get());
-			plusEffectsButtonAnimator->AddAnimation("default", buttonAnimation.get());
-			plusEffectsButtonAnimator->AddAnimation("hover", buttonAnimationHover.get());
-			plusEffectsButtonAnimator->AddAnimation("click", buttonAnimationClick.get());
-			minusEffectsButtonAnimator->AddAnimation("default", buttonAnimation.get());
-			minusEffectsButtonAnimator->AddAnimation("hover", buttonAnimationHover.get());
-			minusEffectsButtonAnimator->AddAnimation("click", buttonAnimationClick.get());
-			backButtonAnimator->AddAnimation("default", buttonAnimation.get());
-			backButtonAnimator->AddAnimation("hover", buttonAnimationHover.get());
-			backButtonAnimator->AddAnimation("click", buttonAnimationClick.get());
+			plusResolutionButtonAnimator->AddAnimation("default", buttonAnimation);
+			plusResolutionButtonAnimator->AddAnimation("hover", buttonAnimationHover);
+			plusResolutionButtonAnimator->AddAnimation("click", buttonAnimationClick);
+			minusResolutionButtonAnimator->AddAnimation("default", buttonAnimation);
+			minusResolutionButtonAnimator->AddAnimation("hover", buttonAnimationHover);
+			minusResolutionButtonAnimator->AddAnimation("click", buttonAnimationClick);
+			plusMusicButtonAnimator->AddAnimation("default", buttonAnimation);
+			plusMusicButtonAnimator->AddAnimation("hover", buttonAnimationHover);
+			plusMusicButtonAnimator->AddAnimation("click", buttonAnimationClick);
+			minusMusicButtonAnimator->AddAnimation("default", buttonAnimation);
+			minusMusicButtonAnimator->AddAnimation("hover", buttonAnimationHover);
+			minusMusicButtonAnimator->AddAnimation("click", buttonAnimationClick);
+			plusEffectsButtonAnimator->AddAnimation("default", buttonAnimation);
+			plusEffectsButtonAnimator->AddAnimation("hover", buttonAnimationHover);
+			plusEffectsButtonAnimator->AddAnimation("click", buttonAnimationClick);
+			minusEffectsButtonAnimator->AddAnimation("default", buttonAnimation);
+			minusEffectsButtonAnimator->AddAnimation("hover", buttonAnimationHover);
+			minusEffectsButtonAnimator->AddAnimation("click", buttonAnimationClick);
+			backButtonAnimator->AddAnimation("default", buttonAnimation);
+			backButtonAnimator->AddAnimation("hover", buttonAnimationHover);
+			backButtonAnimator->AddAnimation("click", buttonAnimationClick);
+
+
+			//settingsBg->box.Move(Game::GetInstance().GetWindowSize() / 2 / Camera::zoom);
+			//continueButton->box.RawMove(pauseBg->box.GetPos());
+			//continueButton->box.MoveToPos({ 16,16 });
+			//settingsButton->box.RawMove(continueButton->box.GetPos() + Vec2{ 0.0,continueButton->box.GetSize().y });
+			//settingsButton->box.MoveToPos({ 0,6 });
+			//quitButton->box.RawMove(settingsButton->box.GetPos() + Vec2{ 0.0,settingsButton->box.GetSize().y });
+			//quitButton->box.MoveToPos({ 0,6 });
 		}
 
+		
 		//initial texts
 		{
 			std::shared_ptr<GameObject> pause = std::make_shared<GameObject>();
-			std::shared_ptr<Text> pauseText = std::make_shared<Text>(*pause, "resources/font/neodgm.ttf", 30, Text::SOLID, "Pausa", SDL_Color{ 255, 255, 255 }, 0, true);
+			std::shared_ptr<Text> pauseText = std::make_shared<Text>(*pause, "resources/font/neodgm.ttf", 14, Text::SOLID, "Pausa", SDL_Color{ 79, 38, 16 }, 0, true);
 			pause->AddComponent(pauseText);
 			elements["pause:text"] = pause;
 
 			std::shared_ptr<GameObject> continuar = std::make_shared<GameObject>();
-			std::shared_ptr<Text> continuarText = std::make_shared<Text>(*continuar, "resources/font/neodgm.ttf", 30, Text::SOLID, "Continuar", SDL_Color{ 255, 255, 255 }, 0, true);
+			std::shared_ptr<Text> continuarText = std::make_shared<Text>(*continuar, "resources/font/neodgm.ttf", 7, Text::SOLID, "Continuar", SDL_Color{ 132, 58, 19 }, 0, true);
 			continuar->AddComponent(continuarText);
 			elements["continuar:text"] = continuar;
 
 			std::shared_ptr<GameObject> settings = std::make_shared<GameObject>();
-			std::shared_ptr<Text> settingsText = std::make_shared<Text>(*settings, "resources/font/neodgm.ttf", 30, Text::SOLID, "Opcoes", SDL_Color{ 255, 255, 255 }, 0, true);
-			settings->AddComponent(settingsText);
+			std::shared_ptr<Text> settingsText = std::make_shared<Text>(*settings, "resources/font/neodgm.ttf", 7, Text::SOLID, "Opcoes", SDL_Color{ 132, 58, 19 }, 0, true);
 			elements["settings:text"] = settings;
 
 			std::shared_ptr<GameObject> quit = std::make_shared<GameObject>();
-			std::shared_ptr<Text> quitText = std::make_shared<Text>(*quit, "resources/font/neodgm.ttf", 30, Text::SOLID, "Sair", SDL_Color{ 255, 255, 255 }, 0, true);
+			std::shared_ptr<Text> quitText = std::make_shared<Text>(*quit, "resources/font/neodgm.ttf", 7, Text::SOLID, "Sair", SDL_Color{ 132, 58, 19 }, 0, true);
 			quit->AddComponent(quitText);
 			elements["quit:text"] = quit;
 
-			//pause->box.Move();
+			pause->box.Move(titleBg->box.center());
 			continuar->box.Move(continueButton->box.center());
 			settings->box.Move(settingsButton->box.center());
 			quit->box.Move(quitButton->box.center());
+			pause->z = 2;
 			continuar->z = 2;
 			settings->z = 2;
 			quit->z = 2;
@@ -233,10 +266,10 @@ public:
 
 		//Setting texts
 		{
-			std::shared_ptr<GameObject> settings = std::make_shared<GameObject>();
-			std::shared_ptr<Text> settingsText = std::make_shared<Text>(*settings, "resources/font/neodgm.ttf", 30, Text::SOLID, "Opções", SDL_Color{ 255, 255, 255 }, 0);
-			settings->AddComponent(settingsText);
-			elements["settings:text"] = settings;
+			std::shared_ptr<GameObject> settingsTitle = std::make_shared<GameObject>();
+			std::shared_ptr<Text> settingsText = std::make_shared<Text>(*settingsTitle, "resources/font/neodgm.ttf", 30, Text::SOLID, "Opções", SDL_Color{ 255, 255, 255 }, 0);
+			settingsTitle->AddComponent(settingsText);
+			elements["settingsTitle:text"] = settingsTitle;
 
 			std::shared_ptr<GameObject> resolution = std::make_shared<GameObject>();
 			std::shared_ptr<Text> resolutionText = std::make_shared<Text>(*resolution, "resources/font/neodgm.ttf", 30, Text::SOLID, "Resolução", SDL_Color{ 255, 255, 255 }, 0);
@@ -266,14 +299,14 @@ public:
 			std::shared_ptr<GameObject> currentMusicVolumeGO = std::make_shared<GameObject>();
 			std::shared_ptr<Text> currentMusicVolumeText = std::make_shared<Text>(*currentMusicVolumeGO, "resources/font/neodgm.ttf", 30, Text::SOLID, fmt::format("{}", currentMusicVolume), SDL_Color{ 255, 255, 255 }, 0);
 			currentMusicVolumeGO->AddComponent(currentMusicVolumeText);
-			elements["currentMusicVolumeGO:text"] = currentMusicVolumeGO;
+			elements["currentMusicVolume:text"] = currentMusicVolumeGO;
 
 			std::shared_ptr<GameObject> currentEffectVolumeGO = std::make_shared<GameObject>();
 			std::shared_ptr<Text> currentEffectVolumeText = std::make_shared<Text>(*currentEffectVolumeGO, "resources/font/neodgm.ttf", 30, Text::SOLID, fmt::format("{}",currentEffectVolume), SDL_Color{255, 255, 255}, 0);
 			currentEffectVolumeGO->AddComponent(currentEffectVolumeText);
 			elements["currentEffectVolume:text"] = currentEffectVolumeGO;
 
-			elementsStateMap["settings:text"] = SETTINGS;
+			elementsStateMap["settingsTitle:text"] = SETTINGS;
 			elementsStateMap["resolution:text"] = SETTINGS;
 			elementsStateMap["music:text"] = SETTINGS;
 			elementsStateMap["effects:text"] = SETTINGS;
@@ -288,10 +321,12 @@ public:
 	}
 	inline void Update(float dt){
 		auto oldState = currentState;
+		
 		InputManager& inputManager = InputManager::GetInstance();
 		for (auto& element : elements) {
 			if ((element.first.find(":button")) != std::string::npos) {
 				std::string token = element.first.substr(0, element.first.find(":"));
+				//std::string token = element.first;
 				clickTimers[token].Update(dt);
 				if(clickTimers[token].Expired()) {
 					if (auto locked = std::dynamic_pointer_cast<Animator>(element.second->GetComponent("Animator").lock())) {
@@ -306,39 +341,32 @@ public:
 				}
 			}
 		}
-		if (inputManager.KeyPress(LEFT_ARROW_KEY)) { 
-			cursorCoordinates.first -= cursorCoordinates.first >= 0 ? 1 : 0; 
-		}
-		else if (inputManager.KeyPress(RIGHT_ARROW_KEY)){
-			cursorCoordinates.first += cursorCoordinates.first < interactOrder[cursorCoordinates.second].size() ? 1 : 0;
-		}
-		else if(inputManager.KeyPress(UP_ARROW_KEY)){
-			cursorCoordinates.second -= cursorCoordinates.second >= 0 ? 1 : 0;
+		//if (inputManager.KeyPress(LEFT_ARROW_KEY)) { 
+		//	cursorCoordinates.first -= cursorCoordinates.first >= 0 ? 1 : 0; 
+		//}
+		//else if (inputManager.KeyPress(RIGHT_ARROW_KEY)){
+		//	cursorCoordinates.first += cursorCoordinates.first < interactOrder[cursorCoordinates.second].size() ? 1 : 0;
+		//}
+		if(inputManager.KeyPress(UP_ARROW_KEY)){
+			cursorCoordinates -= cursorCoordinates >= 1 ? 1 : 0;
 		}
 		else if(inputManager.KeyPress(DOWN_ARROW_KEY)){
-			cursorCoordinates.second += cursorCoordinates.second < interactOrder.size() ? 1 : 0;
+			cursorCoordinates += cursorCoordinates < elementOrder[currentState].size() - 1 ? 1 : 0;
 		}
 		else if(inputManager.KeyPress(RETURN_KEY)){
 			click(cursorCoordinates);
 		}
-		if(oldState != currentState) {
-			for (const auto& element : elements) {
-				if (elementsStateMap[element.first] == oldState) {
-					if (auto locked = std::dynamic_pointer_cast<Animator>(element.second->GetComponent("Animator").lock())) {
-						locked->SetAnimation("default");
-						elementsState[element.first] = "default";
-					}
-				}
-			}
-		}
+		currentHovered = elementOrder[currentState][cursorCoordinates];
+
 	}
 	inline void Render() {
 		std::vector < std::shared_ptr<GameObject>> renderOrder;
-		if (!enabled) return;
+ 		if (!enabled) return;
 		for (const auto& element : elements) {
-			if(currentState == elementsStateMap[element.first] || elementsStateMap[element.first] == ALL)
+			if (currentState == elementsStateMap[element.first] || elementsStateMap[element.first] == ALL) {
 				LOG_INFO("Rendering element: " + element.first);
 				renderOrder.push_back(element.second);
+			}
 		}
 		std::stable_sort(renderOrder.begin(), renderOrder.end(), z_sort);
 		for (const auto& element : renderOrder) {
@@ -349,35 +377,37 @@ public:
 	inline MenuStates GetCurrentState() const { return currentState; }
 	inline void SetCurrentState(MenuStates state) { currentState = state; }
 	virtual bool Is(std::string type) { return type == "Menu"; }
-	inline std::string click(std::pair<int,int> pos) {
-		std::string clickedElement = "";
-		for(const auto& element : elements) {
-			if ((element.first.find(":button")) != std::string::npos) {
-				if (auto locked = std::dynamic_pointer_cast<Animator>(element.second->GetComponent("Animator").lock())) {
-					locked->SetAnimation("click");
-					std::string token = element.first.substr(0, element.first.find(":"));
-					currentClicked = token;
-					elementsState[currentClicked] = "click";
-					clickTimers[currentClicked].Restart();
-				}
-			}
-		}
-
+	inline std::string click(int pos) {
+		std::string clickedElement = elementOrder[currentState][cursorCoordinates];
+		//for(const auto& element : elements) {
+		//	if ((element.first.find(":button")) != std::string::npos) {
+		//		if (auto locked = std::dynamic_pointer_cast<Animator>(element.second->GetComponent("Animator").lock())) {
+		//			locked->SetAnimation("click");
+		//			std::string token = element.first.substr(0, element.first.find(":"));
+		//			currentClicked = token;
+		//			elementsState[currentClicked] = "click";
+		//			clickTimers[currentClicked].Restart();
+		//		}
+		//	}
+		//}
+		
 		if(clickedElement == "settings")
 		{
 			currentState = SETTINGS;
-				
+			cursorCoordinates = 0;
 		}
 		else if(clickedElement == "continue")
 		{
 			currentState = INITIAL;
+			Game::GetInstance().GetCurrentState()->Resume();
 				
 		}
-		else if(clickedElement == "exit")
+		else if(clickedElement == "quit")
 		{
-				
+			Game::GetInstance().GetCurrentState()->SetPopRequested(true);
+			Game::GetInstance().Push(std::make_unique<TitleState>());
 		}
-		else if(clickedElement == "backSettings")
+		else if(clickedElement == "back")
 		{
 			currentState = INITIAL;
 				
@@ -452,8 +482,8 @@ protected:
 	int currentMusicVolume = 5;
 	int currentEffectVolume = 5;
 
-	std::pair<int,int> cursorCoordinates = { 0, 0 };
-	std::vector<std::vector<std::string>> elementOrder;
+	int cursorCoordinates = 0;
+	std::map<MenuStates,std::vector<std::string>> elementOrder;
 	std::vector<std::vector<std::string>> interactOrder;
 	MenuStates currentState;
 
