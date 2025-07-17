@@ -11,19 +11,20 @@
 
 #include <queue>
 
-class Enemy : public Component, public Observer, public Entity {
+class Enemy : public Component, public Observer, public Entity, public std::enable_shared_from_this<Enemy> {
 public:
     Enemy(GameObject& associated, std::string sprite, int frameCountW, int frameCountH) : Component(associated),
         Entity(140),
         hp(500),
         damage(10),
-        isDead(false),
         deathTimer(5),
         m_attackTimer(1),
 		frameCountW(frameCountW),
 		frameCountH(frameCountH),
 		m_movementSpeed(50)
     {
+		this->type = Entity::EnemyType::Enemy;
+		this->m_associated = &associated;
         this->associated.subject.addObserver(this);
 
         std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(associated, sprite, frameCountW, frameCountH);
@@ -35,12 +36,14 @@ public:
         Vec2 colliderSize = associated.box.GetSize();
         Vec2 colliderOffset = (colliderSize - associated.box.GetSize());
         std::shared_ptr<Collider> hitboxCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"layer0"}, "enemy", new OnCollisionEvent(associated), colliderSize, Vec2{ 1, 1 }, colliderOffset, true);
+        std::shared_ptr<Collider> hurtboxCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"layer0"}, "enemy", new OnCollisionEvent(associated), colliderSize, Vec2{ 1, 1 }, colliderOffset, true);
         attackCollider = hitboxCollider;
         
         associated.AddComponent(sr);
         associated.AddComponent(animator);
         associated.AddComponent(hs);
         associated.AddComponent(hitboxCollider);
+        associated.AddComponent(hurtboxCollider);
 
         animator->AddAnimation("idle", new Animation(48, 53, 0.5));
 
@@ -85,7 +88,8 @@ public:
     {
         IDLE,
         MOVING,
-        ATTACKING
+        ATTACKING,
+        DYING
     };
 
     void Start();
@@ -112,7 +116,6 @@ private:
     float hp;
     bool flip;
     Vec2 speed;
-    bool isDead;
     float damage;
     Subject subject;
     Timer deathTimer;

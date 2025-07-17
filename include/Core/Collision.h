@@ -111,8 +111,10 @@ class Collision {
 				j /= invTotal;
 
 				Vec2 impulse = m.normal * j;
-				A->getAssociated()->SetSpeed(A->getAssociated()->GetSpeed() - impulse * invweightA);
-				B->getAssociated()->SetSpeed(B->getAssociated()->GetSpeed() + impulse * invweightB);
+				if (!(A->GetTag() == "projectile" || A->GetTag() == "area" || B->GetTag() == "projectile" || B->GetTag() == "area")) {
+					A->getAssociated()->SetSpeed(A->getAssociated()->GetSpeed() - impulse * invweightA);
+					B->getAssociated()->SetSpeed(B->getAssociated()->GetSpeed() + impulse * invweightB);
+				}
 				OnCollisionEvent* evtA = dynamic_cast<OnCollisionEvent*>(A->GetEvent());
 				OnCollisionEvent* evtB = dynamic_cast<OnCollisionEvent*>(B->GetEvent());
 
