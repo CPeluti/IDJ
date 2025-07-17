@@ -359,7 +359,7 @@ bool Character::OnCollision(OnCollisionEvent &evt)
 
 bool Character::OnEffect(OnEffectEvent<Entity> &evt)
 {
-    std::vector<std::weak_ptr<Effect<Entity>>> effects = evt.GetEffects();
+    std::vector<Effect<Entity>*> effects = evt.GetEffects();
     for (auto &effect : effects)
     {
         this->AddEffect(effect);
@@ -376,6 +376,8 @@ void Character::CastSpell(SpellType type, SpellElement element, std::vector<std:
         std::shared_ptr<ProjectileSpell> spell = std::make_shared<ProjectileSpell>(this->associated.box.center(), target);
         spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared<MoreProjectileEffect>(5)));
         spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared<PierceEffect>(1)));
+        std::unique_ptr<FreezeEffect> f = std::make_unique<FreezeEffect>(5);
+        spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared <FreezeOnHitEffect>(f.release())));
         spell->CastSpell();
     }
 

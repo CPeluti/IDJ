@@ -1,11 +1,15 @@
 #pragma once
 #include "Effect.h"
+#include "EntityEffects.h"
 #include "Spell.h"
 #include "spdlog/fmt/fmt.h"
 
 class MoreProjectileEffect : public Effect<Spell<Projectile>>{
 public:
 	MoreProjectileEffect(int amount): m_extraProjectiles(amount) {}
+	Effect<Spell<Projectile>>* Clone() const override {
+		return new MoreProjectileEffect(*this);
+	}
 	void Apply(Spell<Projectile> &spell) {
 		if(!applied){
 			spell.IncreaseElementCount(m_extraProjectiles);
@@ -27,6 +31,9 @@ protected:
 class ChainEffect : public Effect<Spell<Projectile>> {
 public:
 	ChainEffect(int amount) : m_chainAmount(amount) {}
+	Effect<Spell<Projectile>>* Clone() const override {
+		return new ChainEffect(*this);
+	}
 	void Apply(Spell<Projectile>& spell) {
 		if (!applied) {
 			spell.SetChainAmount(m_chainAmount);
@@ -48,6 +55,9 @@ protected:
 class PierceEffect : public Effect<Spell<Projectile>> {
 public:
 	PierceEffect(int amount) : m_pierceAmount(amount) {}
+	Effect<Spell<Projectile>>* Clone() const override {
+		return new PierceEffect(*this);
+	}
 	void Apply(Spell<Projectile>& spell) {
 		if (!applied) {
 			spell.SetPierceAmount(m_pierceAmount);
@@ -69,6 +79,9 @@ protected:
 class SpeedEffect : public Effect<Spell<Projectile>> {
 public:
 	SpeedEffect(int amount) : m_speedFactor(amount) {}
+	Effect<Spell<Projectile>>* Clone() const override {
+		return new SpeedEffect(*this);
+	}
 	void Apply(Spell<Projectile>& spell) {
 		if (!applied) {
 			spell.ApplySpeedFactor(m_speedFactor);
@@ -84,6 +97,30 @@ public:
 	}
 protected:
 	int m_speedFactor;
+	bool applied = false;
+};
+
+class FreezeOnHitEffect : public Effect<Spell<Projectile>> {
+public:
+	FreezeOnHitEffect(Effect<Entity>* freezeEffect): m_freezeEffect(freezeEffect) {}
+	Effect<Spell<Projectile>>* Clone() const override {
+		return new FreezeOnHitEffect(*this);
+	}
+	void Apply(Spell<Projectile>& spell) {
+		if (!applied) {
+			spell.AddOnHitEffect(m_freezeEffect);
+		}
+		applied = true;
+	}
+	void Update(float dt) {}
+	bool IsExpired() { return false; };
+	EFFECT_TYPE(Projectile, FreezeEffect);
+	std::string ToString() const { return GetName(); }
+	Effect<Entity>* GetFreezeEffect() const {
+		return m_freezeEffect;
+	}
+protected:
+	Effect<Entity>* m_freezeEffect;
 	bool applied = false;
 };
 
