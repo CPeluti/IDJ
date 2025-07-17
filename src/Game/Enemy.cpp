@@ -18,11 +18,96 @@ void Enemy::Start() {
     associated.AddComponent(interactionEffectCollider);
 }
 
+void Enemy::SetAnimation(Vec2 direction, Enemy::Command::CommandType type)
+{
+    if (auto animator = std::dynamic_pointer_cast<Animator>(this->associated.GetComponent("Animator").lock()))
+    {
+        if (type == Enemy::Command::MOVE) {
+            if (direction.x == 0 && direction.y > 0)
+            {
+                animator->SetAnimation("down_walking");
+            }
+            else if (direction.x > 0 && direction.y > 0)
+            {
+                //animator->SetAnimation("downright");
+                animator->SetAnimation("r_walking");
+            }
+            else if (direction.x > 0 && direction.y == 0)
+            {
+                animator->SetAnimation("r_walking");
+            }
+            else if (direction.x > 0 && direction.y < 0)
+            {
+                animator->SetAnimation("r_up_walking");
+            }
+            else if (direction.x == 0 && direction.y < 0)
+            {
+                animator->SetAnimation("up_walking");
+            }
+            else if (direction.x < 0 && direction.y < 0)
+            {
+                animator->SetAnimation("l_up_walking");
+            }
+            else if (direction.x < 0 && direction.y == 0)
+            {
+                animator->SetAnimation("l_walking");
+            }
+            else if (direction.x < 0 && direction.y > 0)
+            {
+                //animator->SetAnimation("downleft");
+                animator->SetAnimation("l_walking");
+            }
+        }
+        else if (type == Enemy::Command::ATTACK) {
+            if (direction.x == 0 && direction.y > 0)
+            {
+                animator->SetAnimation("down_attack");
+            }
+            else if (direction.x > 0 && direction.y > 0)
+            {
+                //animator->SetAnimation("downright");
+                animator->SetAnimation("r_down_attack");
+            }
+            else if (direction.x > 0 && direction.y == 0)
+            {
+                animator->SetAnimation("r_walking");
+            }
+            else if (direction.x > 0 && direction.y < 0)
+            {
+                animator->SetAnimation("r_up_attack");
+            }
+            else if (direction.x == 0 && direction.y < 0)
+            {
+                animator->SetAnimation("up_attack");
+            }
+            else if (direction.x < 0 && direction.y < 0)
+            {
+                animator->SetAnimation("l_up_attack");
+            }
+            else if (direction.x < 0 && direction.y == 0)
+            {
+                animator->SetAnimation("l_walking");
+            }
+            else if (direction.x < 0 && direction.y > 0)
+            {
+                //animator->SetAnimation("downleft");
+                animator->SetAnimation("l_down_attack");
+            }
+        }
+        else
+        {
+            animator->SetAnimation("idle");
+        }
+    }
+}
+
 void Enemy::Update(float dt)
 {
     Vec2 speed = { 0, 0 };
     this->associated.SetSpeed({ 0, 0 });
     this->UpdateEffects(dt);
+	this->m_attackTimer.Update(dt);
+
     if (auto animator = std::dynamic_pointer_cast<Animator>(this->associated.GetComponent("Animator").lock()))
     {
         if (isDead)
@@ -36,37 +121,36 @@ void Enemy::Update(float dt)
         }
         if (taskQueue.size() == 0 && animator)
         {
-            animator->SetAnimation("idle");
+            //animator->SetAnimation("idle");
         }
         while (taskQueue.size() > 0)
         {
             speed = { 0, 0 };
+			m_movementSpeed = 50;
             Command c = taskQueue.front();
             switch (c.type)
             {
             case c.MOVE:
             {
+                //if (m_attackTimer.Expired()) {
+                m_lastDirection = c.pos;
                 speed = c.pos.normalized() * m_movementSpeed;
-                if (speed.y > 0) {
-                    animator->SetAnimation("up");
-                }
-                else if (speed.y < 0) {
-                    animator->SetAnimation("down");
-                }
-                else if (speed.x > 0) {
-                    animator->SetAnimation("right");
-                }
-                else if (speed.x < 0) {
-                    animator->SetAnimation("left");
-                }
-                else {
-                    animator->SetAnimation("idle");
-                }
+                SetAnimation(m_lastDirection, c.type);
+                //}
             }
             break;
 
-            case c.SHOOT:
+            case c.ATTACK:
             {
+				/*SetState(StateType::ATTACKING);
+                m_attackTimer.Restart();
+                if (auto c = attackCollider.lock()) {
+                    c->SetDisable(false);
+                }*/
+                speed = m_lastDirection * m_movementSpeed * 2;
+				m_movementSpeed = 0;
+                SetAnimation(m_lastDirection, c.type);
+
                 //if (auto shared = tilemap.lock()) {
                 //    auto res = associated.CastRaycast(this->associated.box.center(), c.pos, 100, 1);
                 //    if (res.intersects) {
@@ -90,7 +174,76 @@ void Enemy::Update(float dt)
             {
                 Vec2 newSpeed = (speed * dt);
                 Vec2 currentPos = associated.box.GetPos();
+				this->associated.SetSpeed(newSpeed);
             }
+        }
+		Raycast res;
+        if (auto character = Character::player.lock()) {
+            Vec2 playerPos = character->GetPos();
+            res = associated.CastRaycast(this->associated.box.center(), playerPos, 100, 1);
+            if (!res.intersects) {
+                m_lastSeenPlayerPosition = playerPos;
+            }
+        }
+        switch (state) {
+            case StateType::IDLE: {
+                /*if (auto character = Character::player.lock()) {
+                    Vec2 playerPos = character->GetPos();
+                    Vec2 distance = (playerPos - associated.box.center()).normalized();
+                    if (auto enemy = std::dynamic_pointer_cast<Enemy>(this->associated.GetComponent("Enemy").lock())) {
+                        enemy->Issue(Enemy::Command(Enemy::Command::MOVE, distance));
+                    }
+                }*/
+                if (res.intersects) {
+                    animator->SetAnimation("idle");
+                }
+                else {
+                    SetState(StateType::MOVING);
+                }
+            }
+            break;
+            case StateType::ATTACKING: {
+
+                if (auto c = attackCollider.lock()) {
+                    c->SetDisable(false);
+                }
+                if (auto character = Character::player.lock()) {
+                    if (!res.intersects) {
+                        Vec2 playerPos = character->GetPos();
+                        this->Issue(Enemy::Command(Enemy::Command::ATTACK, playerPos));
+                    }
+                }
+                if (m_attackTimer.Expired()) {
+					m_attackTimer.Restart();
+                    attacked = false;
+                }
+                if (m_attackTimer.JustExpired())
+                {
+                    if (auto c = attackCollider.lock()) {
+                        c->SetDisable(true);
+                    }
+                    SetState(StateType::IDLE);
+                }
+            }
+            break;
+            case StateType::MOVING: {
+                if (auto character = Character::player.lock()) {
+                    Vec2 playerPos = character->GetPos();
+                    Vec2 distance = (m_lastSeenPlayerPosition - associated.box.center()).normalized();
+                    if (res.intersects && Vec2::Distance(m_lastSeenPlayerPosition, this->associated.box.center()) < 50) {
+                        SetState(StateType::IDLE);
+                    }
+                    else if (auto enemy = std::dynamic_pointer_cast<Enemy>(this->associated.GetComponent("Enemy").lock())) {
+                        if (Vec2::Distance(playerPos, this->associated.box.center()) < 80) {
+                            SetState(StateType::ATTACKING);
+                        }
+                        else {
+                            enemy->Issue(Enemy::Command(Enemy::Command::MOVE, distance));
+                        }
+                    }
+                }
+            }
+            break;
         }
     }
 }
@@ -129,8 +282,10 @@ bool Enemy::OnCollision(OnCollisionEvent& evt) {
     GameObject& go = evt.GetGameObject();
     OnDamageTakenEvent e = OnDamageTakenEvent(this->associated, this->damage);
 
-    if (go.GetComponent("HealthSystem").lock())
+    if (go.GetComponent("HealthSystem").lock() && !attacked) {
         go.subject.notify(e);
+		attacked = true;
+    }
 
     return true;
 }
