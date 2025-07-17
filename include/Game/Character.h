@@ -1,3 +1,4 @@
+#pragma once
 #include "Core/GameObject.h"
 #include "Core/Subject.h"
 #include "Core/Timer.h"

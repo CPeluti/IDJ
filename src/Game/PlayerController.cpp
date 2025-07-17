@@ -2,6 +2,7 @@
 
 #include "Game/Character.h"
 #include "Game/Dummy.h"
+#include "Game/Enemy.h"
 #include "Game/PlayerController.h"
 #include "Game/TypingSystem.h"
 
@@ -52,15 +53,23 @@ void PlayerController::Update(float dt)
     }
     if (ip.MousePress(RIGHT_MOUSE_BUTTON))
     {
-        std::shared_ptr<GameObject> dummy = std::make_shared<GameObject>();
+        /*std::shared_ptr<GameObject> dummy = std::make_shared<GameObject>();
         std::shared_ptr<Dummy> dummyComponent = std::make_shared<Dummy>(*dummy);
 		dummy->box.Move({ ip.GetMouseX(), ip.GetMouseY() });
         dummy->AddComponent(dummyComponent);
         if(auto s = Game::GetInstance().GetCurrentState())
         {
             s->AddObject(dummy);
-		}
-        
+		}*/
+
+        std::shared_ptr<GameObject> enemy = std::make_shared<GameObject>();
+        std::shared_ptr<Enemy> enemyComponent = std::make_shared<Enemy>(*enemy, "resources/img/Axolote.png", 8, 7);
+        enemy->box.Move({ ip.GetMouseX(), ip.GetMouseY() });
+        enemy->AddComponent(enemyComponent);
+        if (auto s = Game::GetInstance().GetCurrentState())
+        {
+            s->AddObject(enemy);
+        }
     }
     if (ip.KeyPress(SPACE_KEY))
     {
