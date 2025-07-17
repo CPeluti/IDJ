@@ -136,11 +136,11 @@ float Game::GetDeltaTime()
 
 void Game::Menu() {
 	LOG_INFO("Menu requested");
+	m_menuIsOpen = !m_menuIsOpen;
     if(m_menuIsOpen)
 		this->GetCurrentState()->Resume();
     else
         this->GetCurrentState()->Pause();
-	m_menuIsOpen = !m_menuIsOpen;
     return;
 }
 
