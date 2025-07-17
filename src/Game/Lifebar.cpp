@@ -8,7 +8,7 @@
 #include "Game/Lifebar.h"
 #include "Game/Character.h"
 
-Lifebar::Lifebar(GameObject &associated, float max, Vec2 size, Vec2 offset) : Component(associated), total(max), size(size), offset(offset)
+Lifebar::Lifebar(GameObject &associated, float max, Vec2 size, Vec2 offset, SDL_Color color) : Component(associated), total(max), size(size), offset(offset), m_color(color)
 {
     current = max;
     //LOG_INFO(size);
@@ -55,7 +55,7 @@ void Lifebar::Render()
     // SDL_SetRenderDrawColor(Game::GetInstance().GetRenderer(), 0, 0, 0, 255);
     GPU_RectangleFilled(Game::GetInstance().GetGPUTarget(), bg.x, bg.y, bg.x + bg.w, bg.y + bg.h, {0, 0, 0, 255});
     // SDL_SetRenderDrawColor(Game::GetInstance().GetRenderer(), 255, 0, 0, 255);
-    GPU_RectangleFilled(Game::GetInstance().GetGPUTarget(), barToFill.x, barToFill.y, barToFill.x + barToFill.w, barToFill.y + barToFill.h, {255, 0, 0, 255});
+    GPU_RectangleFilled(Game::GetInstance().GetGPUTarget(), barToFill.x, barToFill.y, barToFill.x + barToFill.w, barToFill.y + barToFill.h, m_color);
 }
 
 void Lifebar::setAmount(float amount)
