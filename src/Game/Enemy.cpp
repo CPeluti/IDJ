@@ -129,13 +129,20 @@ void Enemy::Update(float dt)
     this->associated.SetSpeed({ 0, 0 });
     this->UpdateEffects(dt);
 	this->m_attackTimer.Update(dt);
-    if (state != StateType::DYING) {
-
-        if (auto sr = std::dynamic_pointer_cast<SpriteRenderer>(this->associated.GetComponent("SpriteRenderer").lock()))
-        {
+    if (auto sr = std::dynamic_pointer_cast<SpriteRenderer>(this->associated.GetComponent("SpriteRenderer").lock()))
+    {
+        if (state != StateType::DYING) {
             if (auto shader = sr->GetShader().lock())
             {
-                if (this->m_targeted)
+                if (this->m_freeze)
+                {
+                    shader->Load("resources/shaders/common.vert", "resources/shaders/color_overlay.frag");
+                    int color_loc = shader->GetLocation("colorOverlay");
+                    float t = SDL_GetTicks() / 1000.0f;
+                    update_color_shader(0.0f,.5f,.5f,1.0f, color_loc);
+                    state = StateType::FREEZE;
+                }
+                else if (this->m_targeted)
                 {
                     shader->Load("resources/shaders/common.vert", "resources/shaders/outline.frag");
                     int color_loc = shader->GetLocation("myColor");
@@ -296,8 +303,14 @@ void Enemy::Update(float dt)
                     }
                 }
                 return;
-             
 			}
+            case StateType::FREEZE: {
+                if(m_freeze)
+                    animator->SetAnimation("death");
+                else
+					state = StateType::IDLE;
+                break;
+            }
         }
     }
     if (auto particles = particlesSystem.lock()) {
@@ -364,10 +377,10 @@ bool Enemy::OnInteraction(OnInteractionEvent& evt)
     {
     case InteractionType::Effect:
     {
-        std::vector<std::weak_ptr<Effect<Entity>>> effects;
+        std::vector<Effect<Entity>*> effects;
         for (auto& effect : this->m_Effects)
         {
-            std::weak_ptr<Effect<Entity>> newWeakEffect = effect;
+            Effect<Entity>* newWeakEffect = effect;
             effects.push_back(newWeakEffect);
         }
         OnEffectEvent<Entity> e = OnEffectEvent<Entity>(effects);
@@ -383,7 +396,7 @@ bool Enemy::OnInteraction(OnInteractionEvent& evt)
 
 bool Enemy::OnEffect(OnEffectEvent<Entity>& evt)
 {
-    std::vector<std::weak_ptr<Effect<Entity>>> effects = evt.GetEffects();
+    std::vector<Effect<Entity>*> effects = evt.GetEffects();
     for (auto& effect : effects)
     {
         this->AddEffect(effect);

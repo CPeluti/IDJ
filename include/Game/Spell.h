@@ -8,6 +8,7 @@
 #include "Core/Game.h"
 #include "Core/Animator.h"
 #include "Core/Sound.h"
+#include "Events/BasicEvent.h"
 #include "Game/Effect.h"
 #include "Game/Entity.h"
 
@@ -28,6 +29,16 @@ enum class SpellElement
 {
     fire,
     water
+};
+
+enum class OnHitEffects
+{
+    None = 0,
+    Burn = 1 << 0,
+    Freeze = 1 << 1,
+    Poison = 1 << 2,
+    Slow = 1 << 4,
+	Stun = 1 << 5,
 };
 
 class ISpell {
@@ -73,6 +84,9 @@ public:
     virtual void AddEffect(std::shared_ptr<Effect<Spell<SpellStrategy>>> e) = 0;
     virtual void RemoveEffect(std::string effectName) = 0;
     virtual void UpdateEffect(float dt) = 0;
+    virtual void AddOnHitEffect(Effect<Entity>* effect) {
+        m_onHitEffects.push_back(effect);
+	}
     inline void ApplyDamageFactor(float factor) {
 		m_currentDamage = baseDamage * factor;
     }
@@ -94,6 +108,7 @@ public:
 
 protected:
 	std::vector<std::shared_ptr<Effect<Spell<SpellStrategy>>>> spellEffects;
+	std::vector<Effect<Entity>*> m_onHitEffects;
     std::vector<std::string> modifiers;
     float baseDamage;
 	float m_currentDamage = baseDamage;
@@ -131,6 +146,9 @@ public:
     inline void SetSpeed(float speed) {
         m_currentSpeed = speed;
 	}
+    inline void SetOnHitEffects(std::vector< Effect<Entity>*> effects) {
+        m_onHitEffects = effects;
+    }
 protected:
     //std::vector<std::weak_ptr<Effect>> spellEffects;
     inline void Start() {}
@@ -167,6 +185,7 @@ protected:
 	inline bool Is(std::string type) { return type == "Projectile"; }
     inline bool OnCollision(OnCollisionEvent& evt)
     {
+        
         GameObject* go = &evt.GetGameObject();
         if (std::find(lastHit.begin(), lastHit.end(), go) != lastHit.end()) return true;
 		else lastHit.push_back(go);
@@ -176,6 +195,15 @@ protected:
         }
         if (go->GetComponent("HealthSystem").lock()) {
             m_hitSoundEffect->Play();
+
+            std::vector<Effect<Entity>*> clonedEffects;
+            for (Effect<Entity>* effect : m_onHitEffects) {
+                if (effect) {
+                    clonedEffects.push_back(effect->Clone());
+                }
+            }
+            OnEffectEvent<Entity>* effectEvt = new OnEffectEvent<Entity>(clonedEffects);
+		    go->subject.notify(*effectEvt);
             go->subject.notify(e);
         }
         Vec2 currentPos = this->associated.box.center();
@@ -205,7 +233,7 @@ protected:
 	std::vector<GameObject*> lastHit;
 
 private:
-
+    std::vector<Effect<Entity>*> m_onHitEffects;
     int m_pierceAmount;
     int m_chainAmount;
     std::weak_ptr<GameObject> m_particlesSystem;
@@ -243,6 +271,13 @@ public:
 
             spell->SetChainAmount(this->GetChainAmount());
             spell->SetPierceAmount(this->GetPierceAmount());
+            std::vector<Effect<Entity>*> clonedEffects;
+            for (Effect<Entity>* effect : m_onHitEffects) {
+                if (effect) {
+                    clonedEffects.push_back(effect->Clone());
+                }
+            }
+            spell->SetOnHitEffects(clonedEffects);
             
             std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(*spellObj, baseSprite, 8, 2, -90);
             spell->m_soundEffect = std::make_shared<Sound>("resources/audio/FireBall_Cast.wav");
