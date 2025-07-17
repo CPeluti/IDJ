@@ -24,7 +24,7 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
                                          hit(false),
                                          damage(50),
                                          hitTimer(0.5),
-                                         deathTimer(5)
+                                         deathTimer(1)
 {
     this->associated.subject.addObserver(this);
 
@@ -187,10 +187,10 @@ bool Zombie::OnInteraction(OnInteractionEvent &evt)
     {
     case InteractionType::Effect:
     {
-        std::vector<std::weak_ptr<Effect<Entity>>> effects;
+        std::vector<Effect<Entity>*> effects;
         for (auto& effect : this->m_Effects)
         {
-            std::weak_ptr<Effect<Entity>> newWeakEffect = effect;
+            Effect<Entity>* newWeakEffect = effect;
             effects.push_back(newWeakEffect);
         }
         OnEffectEvent<Entity> e = OnEffectEvent<Entity>(effects);

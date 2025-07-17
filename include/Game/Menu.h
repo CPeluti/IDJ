@@ -364,7 +364,7 @@ public:
  		if (!enabled) return;
 		for (const auto& element : elements) {
 			if (currentState == elementsStateMap[element.first] || elementsStateMap[element.first] == ALL) {
-				LOG_INFO("Rendering element: " + element.first);
+				//LOG_INFO("Rendering element: " + element.first);
 				renderOrder.push_back(element.second);
 			}
 		}

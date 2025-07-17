@@ -22,8 +22,8 @@ class Timer{
             return m_justExpired;
         }
 
-        inline float GetTime() { return m_Time; };
-        inline float GetAmount() { return m_Amount; };
+        inline float GetTime() const{ return m_Time; };
+        inline float GetAmount() const{ return m_Amount; };
 
         inline void SetTime(float time) { m_Time = time; };
         inline void SetAmount(float amount) { m_Amount = amount; };
