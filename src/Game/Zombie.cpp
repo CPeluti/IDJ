@@ -24,7 +24,7 @@ Zombie::Zombie(GameObject &associated) : Component(associated),
                                          hit(false),
                                          damage(50),
                                          hitTimer(0.5),
-                                         deathTimer(5)
+                                         deathTimer(1)
 {
     this->associated.subject.addObserver(this);
 
