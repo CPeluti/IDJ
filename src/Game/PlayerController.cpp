@@ -41,16 +41,18 @@ void PlayerController::Update(float dt)
             character->Issue(c);
         }
     }
-    if (ip.MousePress(LEFT_MOUSE_BUTTON))
+    /*if (ip.KeyPress(RETURN_KEY))
     {
-        Vec2 target;
-        target.x = ip.GetMouseX();
-        target.y = ip.GetMouseY();
-        Character::Command c = Character::Command(Character::Command::SHOOT, target);
-        if(auto character = std::dynamic_pointer_cast<Character>(this->associated.GetComponent("Character").lock())){
-            character->Issue(c);
+        if (ts.HasSubmitted()) {
+            Vec2 target;
+            target.x = ip.GetMouseX();
+            target.y = ip.GetMouseY();
+            Character::Command c = Character::Command(Character::Command::SHOOT, target);
+            if (auto character = std::dynamic_pointer_cast<Character>(this->associated.GetComponent("Character").lock())) {
+                character->Issue(c);
+            }
         }
-    }
+    }*/
     if (ip.MousePress(RIGHT_MOUSE_BUTTON))
     {
         /*std::shared_ptr<GameObject> dummy = std::make_shared<GameObject>();
