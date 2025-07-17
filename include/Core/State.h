@@ -64,16 +64,21 @@ public:
         {
             for (int i = 0; i < (int)(el.second.size()); i++)
             {
+                    auto colliderA = el.second[i].lock();
+                    if (!colliderA)
+						continue;
+                    if(colliderA->disabled)
+						continue;
                     for (int j = i + 1; j < el.second.size(); j++)
                     {
-                        auto colliderA = el.second[i].lock();
                         auto colliderB = el.second[j].lock();
-                        if (colliderA && colliderB)
-                        {
-                            if(colliderA->GetTag() != colliderB->GetTag()){
-                                auto r = Collision::IsColliding(colliderA, colliderB);
-                                Collision::ResolveCollision(colliderA, colliderB, r);
-                            }
+                        if (!colliderB)
+                            continue;
+                        if (colliderB->disabled)
+                            continue;
+                        if(colliderA->GetTag() != colliderB->GetTag()){
+                            auto r = Collision::IsColliding(colliderA, colliderB);
+                            Collision::ResolveCollision(colliderA, colliderB, r);
                         }
                     }
             }
@@ -98,6 +103,7 @@ protected:
     bool popRequested;
     bool started;
     bool quitRequested;
+    bool m_paused = false;
     float time;
 
 	std::weak_ptr<TileMap> tileMap;

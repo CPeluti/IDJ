@@ -4,7 +4,7 @@
 class Timer{
     public:
         inline Timer(float amount):m_Amount(amount),m_Time(amount){};
-        
+        inline Timer(): m_Amount(0), m_Time (0) {}
 
         inline void Update(float dt) {
             bool already = Expired();
