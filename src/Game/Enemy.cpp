@@ -16,6 +16,8 @@ void Enemy::Start() {
         colliderOffset
     );
     associated.AddComponent(interactionEffectCollider);
+
+    this->m_enemies.push_back(shared_from_this());
 }
 
 void Enemy::SetAnimation(Vec2 direction, Enemy::Command::CommandType type)
@@ -110,15 +112,6 @@ void Enemy::Update(float dt)
 
     if (auto animator = std::dynamic_pointer_cast<Animator>(this->associated.GetComponent("Animator").lock()))
     {
-        if (isDead)
-        {
-            deathTimer.Update(dt);
-            if (deathTimer.Expired())
-            {
-                associated.RequestDelete();
-            }
-            return;
-        }
         if (taskQueue.size() == 0 && animator)
         {
             //animator->SetAnimation("idle");
@@ -244,6 +237,17 @@ void Enemy::Update(float dt)
                 }
             }
             break;
+            case StateType::DYING: {
+                animator->SetAnimation("idle");
+        
+                deathTimer.Update(dt);
+                if (deathTimer.Expired())
+                {
+                    associated.RequestDelete();
+                }
+                return;
+             
+			}
         }
     }
 }
@@ -267,10 +271,10 @@ bool Enemy::OnDamageTaken(OnDamageTakenEvent& evt)
     {
         if (auto hs = std::dynamic_pointer_cast<HealthSystem>(associated.GetComponent("HealthSystem").lock()))
         {
-            if (hs->GetHp() <= 0 && !isDead)
+            if (hs->GetHp() <= 0)
             {
-                isDead = true;
                 deathTimer.Restart();
+				state = StateType::DYING;
             }
             return true;
         }
