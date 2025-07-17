@@ -379,6 +379,8 @@ void Character::CastSpell(SpellType type, SpellElement element, std::vector<std:
     break;
     case SpellType::area:
     {
+        std::shared_ptr<AreaSpell> spell = std::make_shared<AreaSpell>(target);
+        spell->CastSpell();
         // std::shared_ptr<GameObject> spellObj = std::make_shared<GameObject>();
         // std::shared_ptr<FireAreaSpell> spell = std::make_shared<FireAreaSpell>(*spellObj, this->associated.box.center());
         // spellObj->AddComponent(spell);
