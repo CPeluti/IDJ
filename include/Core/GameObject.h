@@ -35,7 +35,7 @@ public:
     int z;
     double angleDeg;
     Subject subject;
-    
+    bool enabled = true;
 private:
     Vec2 m_speed;
     bool started;
