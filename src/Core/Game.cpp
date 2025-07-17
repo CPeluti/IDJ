@@ -59,7 +59,7 @@ Game::Game(std::string title, int width, int height) : stateStack()
             SDL_Log("Failed to init ttf");
             SDL_Log(SDL_GetError());
         }
-        Mix_AllocateChannels(32);
+        Mix_AllocateChannels(128);
         GPU_SetPreInitFlags(GPU_INIT_DISABLE_VSYNC);
         this->m_gpuTarget = GPU_Init(width, height, GPU_DEFAULT_INIT_FLAGS);
         this->storedState = nullptr;
