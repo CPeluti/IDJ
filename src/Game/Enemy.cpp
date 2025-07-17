@@ -1,6 +1,26 @@
 #include "Game/Enemy.h"
+#include <cmath>
 
 void Enemy::Start() {
+
+    //ParticleSystem initialization
+    {
+        m_Particle.SizeBegin = 1.0f, m_Particle.SizeVariation = 0.3f, m_Particle.SizeEnd = 0;
+        m_Particle.LifeTime = 0.5f;
+        m_Particle.Velocity = { 0.0f, 0.0f };
+        m_Particle.VelocityVariation = { 4.0f, 4.0f };
+        m_Particle.Position = { 0.0f, 0.0f };
+        m_Particle.VelocityFunction = { [](float x) {return x == 1 ? 1 : 1 - pow(2, -10 * x); },[](float x) {return x == 1 ? 1 : 1 - pow(2, -10 * x); } };
+    }
+    std::shared_ptr<GameObject> particles = std::make_shared<GameObject>();
+    std::shared_ptr<ParticleSystem> ps = std::make_shared<ParticleSystem>(*particles, m_Particle);
+    particles->AddComponent(ps);
+    particles->z = 1;
+    ps->SetAmount(50);
+    ps->SetExplosiveness(1);
+    ps->SetOneshot(true);
+    particlesSystem = Game::GetInstance().GetCurrentState()->AddObject(particles);
+
     std::vector<std::string> layers, interactionLayers;
     layers.push_back("layer0");
     interactionLayers.push_back("interaction0, phys0");
@@ -109,9 +129,36 @@ void Enemy::Update(float dt)
     this->associated.SetSpeed({ 0, 0 });
     this->UpdateEffects(dt);
 	this->m_attackTimer.Update(dt);
-
+    if (auto sr = std::dynamic_pointer_cast<SpriteRenderer>(this->associated.GetComponent("SpriteRenderer").lock()))
+    {
+        if (state != StateType::DYING) {
+            if (auto shader = sr->GetShader().lock())
+            {
+                if (this->m_freeze)
+                {
+                    shader->Load("resources/shaders/common.vert", "resources/shaders/color_overlay.frag");
+                    int color_loc = shader->GetLocation("colorOverlay");
+                    float t = SDL_GetTicks() / 1000.0f;
+                    update_color_shader(0.0f,.5f,.5f,1.0f, color_loc);
+                    state = StateType::FREEZE;
+                }
+                else if (this->m_targeted)
+                {
+                    shader->Load("resources/shaders/common.vert", "resources/shaders/outline.frag");
+                    int color_loc = shader->GetLocation("myColor");
+                    float t = SDL_GetTicks() / 1000.0f;
+                    //update_color_shader(255,255,255,255,0);
+                }
+                else
+                {
+                    shader->Reset();
+                }
+            }
+        }
+    }
     if (auto animator = std::dynamic_pointer_cast<Animator>(this->associated.GetComponent("Animator").lock()))
     {
+
         if (taskQueue.size() == 0 && animator)
         {
             //animator->SetAnimation("idle");
@@ -197,7 +244,7 @@ void Enemy::Update(float dt)
             break;
             case StateType::ATTACKING: {
 
-                if (auto c = attackCollider.lock()) {
+                if (auto c = m_attackCollider.lock()) {
                     c->SetDisable(false);
                 }
                 if (auto character = Character::player.lock()) {
@@ -212,7 +259,7 @@ void Enemy::Update(float dt)
                 }
                 if (m_attackTimer.JustExpired())
                 {
-                    if (auto c = attackCollider.lock()) {
+                    if (auto c = m_attackCollider.lock()) {
                         c->SetDisable(true);
                     }
                     SetState(StateType::IDLE);
@@ -238,18 +285,38 @@ void Enemy::Update(float dt)
             }
             break;
             case StateType::DYING: {
-                animator->SetAnimation("idle");
-        
+                animator->SetAnimation("death");
+                if (auto c = m_attackCollider.lock())
+                    c->SetDisable(true);
+                if (auto c = m_hurtboxCollider.lock())
+                    c->SetDisable(true);
                 deathTimer.Update(dt);
                 if (deathTimer.Expired())
                 {
-                    associated.RequestDelete();
+                    if (auto particles = particlesSystem.lock()) {
+                        if (auto ps = std::dynamic_pointer_cast<ParticleSystem>(particles->GetComponent("ParticleSystem").lock())) {
+                            ps->Play();
+                            if (!ps->emmiting) {
+								associated.RequestDelete();
+                            }
+                        }
+                    }
                 }
                 return;
-             
 			}
+            case StateType::FREEZE: {
+                if(m_freeze)
+                    animator->SetAnimation("death");
+                else
+					state = StateType::IDLE;
+                break;
+            }
         }
     }
+    if (auto particles = particlesSystem.lock()) {
+        particles->box.Move(this->associated.box.center());
+    }
+
 }
 
 void Enemy::Render() {}
@@ -273,8 +340,17 @@ bool Enemy::OnDamageTaken(OnDamageTakenEvent& evt)
         {
             if (hs->GetHp() <= 0)
             {
+                if (auto sr = std::dynamic_pointer_cast<SpriteRenderer>(associated.GetComponent("SpriteRenderer").lock()))
+                {
+                    if(auto shader = sr->GetShader().lock())
+                    {
+                        shader->Load("resources/shaders/common.vert", "resources/shaders/hit.frag");
+                        int color_loc = shader->GetLocation("myColor");
+                        float t = SDL_GetTicks() / 1000.0f;
+					}
+                }
                 deathTimer.Restart();
-				state = StateType::DYING;
+                state = StateType::DYING;
             }
             return true;
         }
@@ -301,10 +377,10 @@ bool Enemy::OnInteraction(OnInteractionEvent& evt)
     {
     case InteractionType::Effect:
     {
-        std::vector<std::weak_ptr<Effect<Entity>>> effects;
+        std::vector<Effect<Entity>*> effects;
         for (auto& effect : this->m_Effects)
         {
-            std::weak_ptr<Effect<Entity>> newWeakEffect = effect;
+            Effect<Entity>* newWeakEffect = effect;
             effects.push_back(newWeakEffect);
         }
         OnEffectEvent<Entity> e = OnEffectEvent<Entity>(effects);
@@ -320,7 +396,7 @@ bool Enemy::OnInteraction(OnInteractionEvent& evt)
 
 bool Enemy::OnEffect(OnEffectEvent<Entity>& evt)
 {
-    std::vector<std::weak_ptr<Effect<Entity>>> effects = evt.GetEffects();
+    std::vector<Effect<Entity>*> effects = evt.GetEffects();
     for (auto& effect : effects)
     {
         this->AddEffect(effect);

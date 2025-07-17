@@ -39,7 +39,7 @@ TitleState::TitleState(): m_backgroundMusic("resources/audio/MainTheme.mp3")
         m_Particle.Velocity = { 0.0f, 0.0f };
         m_Particle.VelocityVariation = { 10.0f, 10.0f };
         m_Particle.Position = { 0.0f, 0.0f };
-        m_Particle.VelocityFunction = {[](float x){return sin(8*x);},[](float x){return 1;}};
+        m_Particle.VelocityFunction = { [](float x) {return 1 - (1 - x) * (1 - x); },[](float x) {return 1 - (1 - x) * (1 - x); } };
     }
     std::shared_ptr<GameObject> particles =  std::make_shared<GameObject>();
     std::shared_ptr<ParticleSystem> ps =  std::make_shared<ParticleSystem>(*particles, m_Particle);
@@ -73,8 +73,8 @@ void TitleState::Update(float dt)
         //TODO: rever questão do sistema de particula estar contido em um gameObject
         ps->box.Move({ip.GetMouseX(), ip.GetMouseY()});
         if(auto particles = std::dynamic_pointer_cast<ParticleSystem>(ps->GetComponent("ParticleSystem").lock())){
-            particles->SetExplosiveness(0.5);
-            particles->SetOneshot(false);
+            particles->SetExplosiveness(1);
+            particles->SetOneshot(true);
             particles->Play();
         }
         
