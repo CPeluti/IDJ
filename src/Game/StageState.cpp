@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <set>
 #include <algorithm>
@@ -44,7 +45,7 @@ void createZombie(Vec2 pos, State *state)
 StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
 {
     Camera::zoom = 3.0f;
-
+	menu = std::make_shared<Menu>();
     std::shared_ptr<GameObject> fps = std::make_shared<GameObject>();
 	std::shared_ptr<Text> fpsText = std::make_shared<Text>(*fps, "resources/font/neodgm.ttf", 10, Text::SOLID, "FPS: ", SDL_Color{ 255, 255, 255 }, 0, true);
     fps->box.RawMove({ 50,50 });
@@ -102,17 +103,25 @@ StageState::~StageState()
 }
 void StageState::LoadAssets()
 {
-    backgroundMusic = Music("resources/audio/BGM.wav");
+    //backgroundMusic = Music("resources/audio/BGM.wav");
 }
 void StageState::Update(float dt)
 {
+    InputManager& ip = InputManager::GetInstance();
+    if (SDL_QuitRequested() || ip.QuitRequested())
+    {
+        quitRequested = true;
+    }
+    if (m_paused) {
+		menu->Update(dt);
+        return;
+    };
     float fps = Game::GetInstance().GetFps();
     std::string fpsstring = fmt::format("FPS: {}", fps);
     if(auto shared = fpsText.lock())
     {
         shared->SetText(fpsstring);
 	}
-    InputManager &ip = InputManager::GetInstance();
 
     Camera::Update(dt);
 
@@ -152,10 +161,6 @@ void StageState::Update(float dt)
         ts.ResetSubmission();
     }
 
-    if (SDL_QuitRequested() || ip.QuitRequested())
-    {
-        quitRequested = true;
-    }
     for (int i = 0; i < (int)this->objectArray.size();)
     {
         if (objectArray[i]->IsDead())
@@ -170,20 +175,23 @@ void StageState::Update(float dt)
 }
 void StageState::Render()
 {
+
     std::stable_sort(objectArray.begin(), objectArray.end(), y_sort);
     std::stable_sort(objectArray.begin(), objectArray.end(), z_sort);
     RenderArray();
+    menu->Render();
     // bg->Open("resources/img/Background.png");
     // bg->Render(0, 0);
 }
 
 void StageState::Start()
 {
+    menu->Start();
     LoadAssets();
     StartArray();
     started = true;
-    backgroundMusic.Play();
+    //backgroundMusic.Play();
 }
 
-void StageState::Resume() {}
-void StageState::Pause() {}
+void StageState::Resume() { this->m_paused = false; menu->enabled = false;}
+void StageState::Pause() { this->m_paused = true; menu->enabled = true;}
