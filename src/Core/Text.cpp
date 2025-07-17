@@ -113,6 +113,7 @@ void Text::RemakeTexture()
         break;
     }
     this->texture = GPU_CopyImageFromSurface(surface);
+    GPU_SetImageFilter(texture, GPU_FILTER_NEAREST);
     if (this->texture != NULL)
     {
         this->associated.box.SetSize({surface->w, surface->h});
