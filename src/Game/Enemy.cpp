@@ -166,7 +166,7 @@ void Enemy::Update(float dt)
         while (taskQueue.size() > 0)
         {
             speed = { 0, 0 };
-			m_movementSpeed = 50;
+			m_movementSpeed = 10;
             Command c = taskQueue.front();
             switch (c.type)
             {
