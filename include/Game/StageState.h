@@ -6,6 +6,7 @@
 #include "Core/Text.h"
 #include "WaveSpawner.h"
 #include "TypingSystem.h"
+#include "Menu.h"
 
 class StageState : public State
 {
@@ -27,4 +28,5 @@ private:
     Music backgroundMusic;
     std::weak_ptr<GameObject> player;
     std::weak_ptr<GameObject> spawner;
+    std::shared_ptr<Menu> menu;
 };
