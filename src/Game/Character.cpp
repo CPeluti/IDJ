@@ -15,6 +15,7 @@
 #include "Game/Gun.h"
 #include "Game/PlayerController.h"
 #include "Game/HealthSystem.h"
+#include "Game/ManaSystem.h"
 #include "Game/TypingSystem.h"
 #include "Game/Spell.h"
 
@@ -28,6 +29,7 @@ Character::Character(GameObject &associated, std::string sprite, std::weak_ptr<T
                                                                                                                   taskQueue(),
                                                                                                                   Entity(140),
                                                                                                                   hp(500),
+                                                                                                                  mana(100),
                                                                                                                   isDead(false),
                                                                                                                   deathTimer(5),
                                                                                                                   m_dashTimer(0.4f),
@@ -41,6 +43,7 @@ Character::Character(GameObject &associated, std::string sprite, std::weak_ptr<T
     std::shared_ptr<Animator> animator = std::make_shared<Animator>(associated);
 
     std::shared_ptr<HealthSystem> hs = std::make_shared<HealthSystem>(associated, hp);
+    std::shared_ptr<ManaSystem> ms = std::make_shared<ManaSystem>(associated, mana);
 
     if (!isPlayer)
     {
@@ -60,6 +63,7 @@ Character::Character(GameObject &associated, std::string sprite, std::weak_ptr<T
     associated.AddComponent(sr);
     associated.AddComponent(animator);
     associated.AddComponent(hs);
+    associated.AddComponent(ms);
 
     float dashDuration = m_dashTimer.GetAmount();
 
@@ -378,14 +382,14 @@ void Character::CastSpell(SpellType type, SpellElement element, std::vector<std:
         spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared<PierceEffect>(1)));
         std::unique_ptr<FreezeEffect> f = std::make_unique<FreezeEffect>(5);
         spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared <FreezeOnHitEffect>(f.release())));
-        spell->CastSpell();
+        spell->CastSpell(&this->associated);
     }
 
     break;
     case SpellType::area:
     {
         std::shared_ptr<AreaSpell> spell = std::make_shared<AreaSpell>(target);
-        spell->CastSpell();
+        spell->CastSpell(&this->associated);
         // std::shared_ptr<GameObject> spellObj = std::make_shared<GameObject>();
         // std::shared_ptr<FireAreaSpell> spell = std::make_shared<FireAreaSpell>(*spellObj, this->associated.box.center());
         // spellObj->AddComponent(spell);
