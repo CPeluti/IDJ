@@ -41,6 +41,27 @@ protected:
     float m_Amount;
 };
 
+class OnCastSpellEvent : public Event
+{
+public:
+    OnCastSpellEvent(float amount) : m_Amount(amount) {}
+
+    EVENT_TYPE(OnCastSpell);
+
+    inline float GetAmount() const { return m_Amount; }
+
+    std::string ToString() const override
+    {
+        std::stringstream ss;
+        ss << "teste de cast cost: " << m_Amount;
+        return ss.str();
+    }
+
+protected:
+    float m_Amount;
+};
+
+
 class OnDeathEvent : public Event
 {
 public:
@@ -77,12 +98,12 @@ template <typename EffectType>
 class OnEffectEvent : public Event
 {
 public:
-    OnEffectEvent(std::vector<std::weak_ptr<Effect<EffectType>>> effects) : m_Effects(effects) {}
+    OnEffectEvent(std::vector<Effect<EffectType>*> effects) : m_Effects(effects) {}
 
     EVENT_TYPE(OnEffect);
 
-    inline std::vector<std::weak_ptr<Effect<EffectType>>> GetEffects() const { return m_Effects; }
+    inline std::vector<Effect<EffectType>*> GetEffects() const { return m_Effects; }
 
 protected:
-    std::vector<std::weak_ptr<Effect<EffectType>>> m_Effects;
+    std::vector<Effect<EffectType>*> m_Effects;
 };
