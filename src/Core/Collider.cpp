@@ -10,14 +10,15 @@
 #include <SDL2/SDL.h>
 #endif // DEBUG
 
-Collider::Collider(GameObject &associated, std::vector<std::string> collisionLayers, std::string tag, Event *event, Vec2 size, Vec2 scale, Vec2 offset, float weight) : Component(associated),
-																																										size(size),
-																																										scale(scale),
-																																										offset(offset),
-																																										m_collisionLayers(collisionLayers),
-																																										m_event(event),
-																																										m_tag(tag),
-																																										weight(weight)
+Collider::Collider(GameObject &associated, std::vector<std::string> collisionLayers, std::string tag, Event *event, Vec2 size, Vec2 scale, Vec2 offset, float weight, bool disabled) : Component(associated),
+																																														size(size),
+																																														scale(scale),
+																																														offset(offset),
+																																														m_collisionLayers(collisionLayers),
+																																														m_event(event),
+																																														m_tag(tag),
+																																														disabled(disabled),
+																																														weight(weight)
 {
 
 }
