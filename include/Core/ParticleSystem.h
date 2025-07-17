@@ -37,6 +37,7 @@ class ParticleSystem : public Component {
 
         void Emit(const ParticleData& particleData);
 
+        bool emmiting = false;
     
     private:
         struct Particle {
