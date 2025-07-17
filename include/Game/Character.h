@@ -86,7 +86,7 @@ private:
 	std::vector<std::shared_ptr<IEffect>> effects;
     Direction m_lastDirection;
     Timer m_dashTimer;
-	Timer m_idleTimer;
+    Timer m_idleTimer;
 
 	std::weak_ptr<Entity> targetedEnemy;
 
