@@ -66,7 +66,7 @@ template <typename SpellStrategy>
 class Spell
 {
 public:
-    Spell(std::vector<std::string> modifiers, float baseDamage) : modifiers(modifiers), baseDamage(baseDamage) {}
+    Spell(std::vector<std::string> modifiers, float baseManaCost, float baseDamage, float baseSpeed) : modifiers(modifiers), baseDamage(baseDamage), m_baseSpeed(baseSpeed), m_baseManaCost(baseManaCost) {}
     ~Spell() {};
     virtual SpellType GetSpellType() const = 0;
     virtual SpellElement GetSpellElement() const = 0;
@@ -249,7 +249,7 @@ private:
 class ProjectileSpell : public Spell<Projectile>
 {
 public:
-    ProjectileSpell(Vec2 initialPos, Vec2 target, SpellAssets assets) : Spell({}, 10, "resources/img/fogo_projetil.png"), m_initialPos(initialPos), m_target(target) {
+    ProjectileSpell(Vec2 initialPos, Vec2 target, SpellAssets assets) : Spell({}, 30, 10, 200), m_initialPos(initialPos), m_target(target), m_assets(assets) {
     }
     
     ~ProjectileSpell() {}
@@ -434,7 +434,7 @@ private:
 
 class AreaSpell : public Spell<Area> {
 public:
-    AreaSpell(Vec2 pos, SpellAssets assets) : Spell({}, 10, "resources/img/fogo_area.png"), m_pos(pos)
+	AreaSpell(Vec2 pos, SpellAssets assets) : Spell({}, 30, 10, 0), m_pos(pos), m_assets(assets)
     {}
 	~AreaSpell() {}
     SPELL_TYPE(area, fire);
