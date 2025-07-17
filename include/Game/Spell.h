@@ -80,6 +80,7 @@ protected:
     std::string baseSprite;
     std::vector<SpellStrategy> m_elements;
 	int m_baseElementCount = 1;
+
 };
 
 class Projectile : public Component, public Observer
@@ -94,12 +95,24 @@ public:
 
     }
     std::shared_ptr<Sound> m_soundEffect;
+    std::shared_ptr<Sound> m_hitSoundEffect;
+    inline void RequestDelete() { m_requestDelete = true; }
+    bool m_requestDelete = false;
 protected:
     //std::vector<std::weak_ptr<Effect>> spellEffects;
     inline void Start() {}
     inline void Update(float dt)
     {
-
+        if (m_requestDelete) {
+			std::shared_ptr<Collider> c = std::dynamic_pointer_cast<Collider>(this->associated.GetComponent("Collider").lock());
+            c->disabled = true;
+            std::shared_ptr<SpriteRenderer> sr = std::dynamic_pointer_cast<SpriteRenderer>(this->associated.GetComponent("SpriteRenderer").lock());
+			sr->enabled = false;
+            if (!this->m_hitSoundEffect->IsPlaying()) {
+				this->associated.RequestDelete();
+            }
+            return;
+        }
         Vec2 rotatedSpeed = Vec2::Rotate({.0f, -m_currentSpeed}, associated.angleDeg);
 
         Vec2 oldPos = associated.box.GetPos();
@@ -126,10 +139,12 @@ protected:
         if (go.GetComponent("Character").lock()) {
             return true;
         }
-        if (go.GetComponent("HealthSystem").lock())
+        if (go.GetComponent("HealthSystem").lock()) {
+			m_hitSoundEffect->Play();
             go.subject.notify(e);
+        }
         if (!go.GetComponent("FireProjectileSpell").lock())
-            this->associated.RequestDelete();
+            this->RequestDelete();
 
         return true;
     }
@@ -178,9 +193,10 @@ public:
             std::shared_ptr<Animator> animator = std::make_shared<Animator>(*spellObj);
 		    spellObj->box.Move(m_initialPos);
 		    spellObj->angleDeg = startingAngle+90+angleStep;
-            std::shared_ptr<Projectile> spell = std::make_shared<Projectile>(*spellObj, 50.0f, 300.0f, this->GetDamage());
+            std::shared_ptr<Projectile> spell = std::make_shared<Projectile>(*spellObj, 200.0f, 300.0f, this->GetDamage());
             std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(*spellObj, baseSprite, 8, 2, -90);
             spell->m_soundEffect = std::make_shared<Sound>("resources/audio/FireBall_Cast.wav");
+            spell->m_hitSoundEffect = std::make_shared<Sound>("resources/audio/FireBall_Hit_Strong.wav");
             spell->m_soundEffect->Play();
 
             spellObj->AddComponent(sr);
