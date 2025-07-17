@@ -252,6 +252,14 @@ void Character::Update(float dt)
 {
     TypingSystem& ts = TypingSystem::GetInstance();
 
+    if (auto ms = std::dynamic_pointer_cast<ManaSystem>(this->associated.GetComponent("ManaSystem").lock())) {
+		ms->m_manaRegenTimer.Update(dt);
+        if (ms->m_manaRegenTimer.Expired() && !(ms->isManaFull())) {
+			ms->IncreaseMana();
+            ms->m_manaRegenTimer.Restart();
+        }
+    }
+
     std::weak_ptr<Entity> enemy = Entity::GetClosestEnemy(this->associated.box.center(), 200);
     if (auto e = enemy.lock())
     {
@@ -432,7 +440,7 @@ void Character::CastSpell(std::vector<std::shared_ptr<IEffect>> effects, Vec2 ta
         case SpellType::projectile:
         {
             std::shared_ptr<ProjectileSpell> spell = std::make_shared<ProjectileSpell>(this->associated.box.center(), target, assets);
-            spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared<MoreProjectileEffect>(5)));
+            //spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared<MoreProjectileEffect>(5)));
             spell->CastSpell(&this->associated);
         }
 
