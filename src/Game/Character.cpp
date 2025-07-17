@@ -31,12 +31,13 @@ Character::Character(GameObject &associated, std::string sprite, std::weak_ptr<T
                                                                                                                   isDead(false),
                                                                                                                   deathTimer(5),
                                                                                                                   m_dashTimer(0.4f),
+	                                                                                                              m_idleTimer(1.2f),
                                                                                                                   tilemap(tilemap)
 
 {
     this->associated.subject.addObserver(this);
 
-    std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(associated, sprite, 8, 8);
+    std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(associated, sprite, 86, 1);
     std::shared_ptr<Animator> animator = std::make_shared<Animator>(associated);
 
     std::shared_ptr<HealthSystem> hs = std::make_shared<HealthSystem>(associated, hp);
@@ -62,29 +63,42 @@ Character::Character(GameObject &associated, std::string sprite, std::weak_ptr<T
 
     float dashDuration = m_dashTimer.GetAmount();
 
-    animator->AddAnimation("idle", new Animation(0, 0, 0.1));
 
-    animator->AddAnimation("down", new Animation(0, 2, 0.1));
-    animator->AddAnimation("downright", new Animation(7, 9, 0.1));
-    animator->AddAnimation("right", new Animation(14, 17, 0.1));
-    animator->AddAnimation("upright", new Animation(22, 24, 0.1));
-    animator->AddAnimation("up", new Animation(29, 31, 0.1));
-    animator->AddAnimation("upleft", new Animation(36, 38, 0.1));
-    animator->AddAnimation("left", new Animation(43, 46, 0.1));
-    animator->AddAnimation("downleft", new Animation(51, 53, 0.1));
-    animator->AddAnimation("lookup", new Animation(58, 60, 0.1));
 
-    animator->AddAnimation("dash_down", new Animation(3, 6, dashDuration));
-    animator->AddAnimation("dash_downright", new Animation(10, 13, dashDuration));
-    animator->AddAnimation("dash_right", new Animation(18, 21, dashDuration));
-    animator->AddAnimation("dash_upright", new Animation(25, 28, dashDuration));
-    animator->AddAnimation("dash_up", new Animation(32, 35, dashDuration));
-    animator->AddAnimation("dash_upleft", new Animation(39, 42, dashDuration));
-    animator->AddAnimation("dash_left", new Animation(47, 50, dashDuration));
-    animator->AddAnimation("dash_downleft", new Animation(54, 57, dashDuration));
-    animator->AddAnimation("dash_lookup", new Animation(61, 64, dashDuration));
 
-    animator->SetAnimation("idle");
+    animator->AddAnimation("idle_blink", new Animation(6, 6, 0.5));
+
+
+    animator->AddAnimation("idle_up", new Animation(0, 2, 0.5));
+    animator->AddAnimation("idle_down", new Animation(3, 5, 0.5));
+    animator->AddAnimation("idle_right", new Animation(7, 9, 0.5));
+    animator->AddAnimation("idle_left", new Animation(10, 12, 0.5));
+    animator->AddAnimation("idle_downright", new Animation(13, 15, 0.5));
+    animator->AddAnimation("idle_downleft", new Animation(16, 18, 0.5));
+    animator->AddAnimation("idle_upright", new Animation(19, 21, 0.5));
+    animator->AddAnimation("idle_upleft", new Animation(22, 24, 0.5));
+
+    animator->AddAnimation("walk_up", new Animation(25, 27, 0.1));
+    animator->AddAnimation("walk_down", new Animation(28, 30, 0.1));
+    animator->AddAnimation("walk_right", new Animation(31, 34, 0.1));
+    animator->AddAnimation("walk_left", new Animation(35, 38, 0.1));
+    animator->AddAnimation("walk_downright", new Animation(39, 41, 0.1));
+    animator->AddAnimation("walk_downleft", new Animation(42, 44, 0.1));
+    animator->AddAnimation("walk_upright", new Animation(45, 47, 0.1));
+    animator->AddAnimation("walk_upleft", new Animation(48, 50, 0.1));
+
+    animator->AddAnimation("dash_up", new Animation(51, 54, dashDuration/4));
+    animator->AddAnimation("dash_down", new Animation(55, 58, dashDuration/4));
+    animator->AddAnimation("dash_right", new Animation(59, 62, dashDuration/4));
+    animator->AddAnimation("dash_left", new Animation(63, 66, dashDuration/4));
+    animator->AddAnimation("dash_downright", new Animation(67, 70, dashDuration/4));
+    animator->AddAnimation("dash_downleft", new Animation(71, 74, dashDuration/4));
+    animator->AddAnimation("dash_upright", new Animation(75, 78, dashDuration/4));
+    animator->AddAnimation("dash_upleft", new Animation(79, 82, dashDuration/4));
+
+    animator->AddAnimation("lookup", new Animation(83, 85, 0.1));
+
+    animator->SetAnimation("idle_down");
     flip = false;
 }
 
@@ -105,6 +119,7 @@ Character::~Character()
 
 void Character::Start()
 {
+    m_idleTimer.Restart();
     Vec2 colliderSize = associated.box.GetSize();
     Vec2 colliderOffset = (colliderSize - associated.box.GetSize());
     std::shared_ptr<Collider> physicsCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"phys0"}, "entity", new OnInteractionEvent(associated, InteractionType::Effect), colliderSize, Vec2{ 1, 1 }, colliderOffset);
@@ -149,46 +164,58 @@ bool Character::OnDamageTaken(OnDamageTakenEvent &evt)
     return true;
 }
 
-void Character::SetAnimation(Vec2 direction)
+void Character::SetAnimation(Vec2 direction, std::string prefix)
 {
+    std::string newDirection = "";
     if (auto animator = std::dynamic_pointer_cast<Animator>(this->associated.GetComponent("Animator").lock()))
     {
         if (direction.x == 0 && direction.y > 0)
         {
-            animator->SetAnimation("down");
+            newDirection = "down";
         }
         else if (direction.x > 0 && direction.y > 0)
         {
-            animator->SetAnimation("downright");
+            newDirection = "downright";
         }
         else if (direction.x > 0 && direction.y == 0)
         {
-            animator->SetAnimation("right");
+            newDirection = "right";
         }
         else if (direction.x > 0 && direction.y < 0)
         {
-            animator->SetAnimation("upright");
+            newDirection = "upright";
         }
         else if (direction.x == 0 && direction.y < 0)
         {
-            animator->SetAnimation("up");
+            newDirection = "up";
         }
         else if (direction.x < 0 && direction.y < 0)
         {
-            animator->SetAnimation("upleft");
+            newDirection = "upleft";
         }
         else if (direction.x < 0 && direction.y == 0)
         {
-            animator->SetAnimation("left");
+            newDirection = "left";
         }
         else if (direction.x < 0 && direction.y > 0)
         {
-            animator->SetAnimation("downleft");
+            newDirection = "downleft";
         }
-        else
-        {
-            animator->SetAnimation("idle");
-        }
+        m_lastDirection = { direction, newDirection };
+  //      if(m_idleTimer.Expired() && prefix == "idle")
+  //      {
+  //          if (m_lastDirection.name == "down")
+  //          {
+  //              animator->SetAnimation(fmt::format("idle_blink"));
+  //              m_idleTimer.Restart();
+  //          }
+  //          else
+  //          {
+  //              animator->SetAnimation(fmt::format("{}_{}", prefix, newDirection));
+  //          }
+  //      }
+		//else
+        animator->SetAnimation(fmt::format("{}_{}", prefix, newDirection));
     }
 }
 
@@ -216,10 +243,10 @@ void Character::Update(float dt)
     this->associated.SetSpeed({0, 0});
     this->UpdateEffects(dt);
     m_dashTimer.Update(dt);
+	m_idleTimer.Update(dt);
     if (!m_dashTimer.Expired())
     {
-        LOG_INFO("AQUI");
-        speed = (m_lastDirection).normalized() * m_movementSpeed;
+        speed = m_lastDirection.coordinates.normalized() * m_movementSpeed;
         if (speed.x || speed.y)
         {
             Vec2 newSpeed = (speed * dt);
@@ -233,7 +260,7 @@ void Character::Update(float dt)
     }
     else if (m_dashTimer.JustExpired())
     {
-        SetAnimation(m_lastDirection);
+        SetAnimation(m_lastDirection.coordinates, "walk");
         return;
     }
     if (auto animator = std::dynamic_pointer_cast<Animator>(this->associated.GetComponent("Animator").lock()))
@@ -249,7 +276,7 @@ void Character::Update(float dt)
         }
         if (taskQueue.size() == 0 && animator)
         {
-            animator->SetAnimation("idle");
+            SetAnimation(m_lastDirection.coordinates,"idle");
         }
         while (taskQueue.size() > 0)
         {
@@ -259,9 +286,9 @@ void Character::Update(float dt)
             {
             case c.MOVE:
             {
-                m_lastDirection = c.pos;
+                m_lastDirection.coordinates = c.pos;
                 speed = c.pos.normalized() * m_movementSpeed;
-                SetAnimation(m_lastDirection);
+                SetAnimation(m_lastDirection.coordinates,"walk");
             }
             break;
 
@@ -280,44 +307,10 @@ void Character::Update(float dt)
             break;
             case c.DASH:
             {
-                speed = m_lastDirection * m_movementSpeed;
+                Vec2 coordinates = m_lastDirection.coordinates;
+                speed = m_lastDirection.coordinates * m_movementSpeed;
                 LOG_INFO("Character::Update: dashing to {}", m_lastDirection);
-                if (m_lastDirection.x == 0 && m_lastDirection.y > 0)
-                {
-                    animator->SetAnimation("dash_down");
-                }
-                else if (m_lastDirection.x > 0 && m_lastDirection.y > 0)
-                {
-                    animator->SetAnimation("dash_downright");
-                }
-                else if (m_lastDirection.x > 0 && m_lastDirection.y == 0)
-                {
-                    animator->SetAnimation("dash_right");
-                }
-                else if (m_lastDirection.x > 0 && m_lastDirection.y < 0)
-                {
-                    animator->SetAnimation("dash_upright");
-                }
-                else if (m_lastDirection.x == 0 && m_lastDirection.y < 0)
-                {
-                    animator->SetAnimation("dash_up");
-                }
-                else if (m_lastDirection.x < 0 && m_lastDirection.y < 0)
-                {
-                    animator->SetAnimation("dash_upleft");
-                }
-                else if (m_lastDirection.x < 0 && m_lastDirection.y == 0)
-                {
-                    animator->SetAnimation("dash_left");
-                }
-                else if (m_lastDirection.x < 0 && m_lastDirection.y > 0)
-                {
-                    animator->SetAnimation("dash_downleft");
-                }
-                else
-                {
-                    animator->SetAnimation("dash_down");
-                }
+				SetAnimation(coordinates, "dash");
                 m_dashTimer.Restart();
             }
             break;
@@ -388,6 +381,8 @@ void Character::CastSpell(SpellType type, SpellElement element, std::vector<std:
     break;
     case SpellType::area:
     {
+        std::shared_ptr<AreaSpell> spell = std::make_shared<AreaSpell>(target);
+        spell->CastSpell();
         // std::shared_ptr<GameObject> spellObj = std::make_shared<GameObject>();
         // std::shared_ptr<FireAreaSpell> spell = std::make_shared<FireAreaSpell>(*spellObj, this->associated.box.center());
         // spellObj->AddComponent(spell);
