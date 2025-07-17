@@ -70,6 +70,7 @@ private:
     std::queue<Command> taskQueue;
     Vec2 speed;
     float hp;
+    float mana;
     bool isDead;
     Timer deathTimer;
     int extraProjectiles;
