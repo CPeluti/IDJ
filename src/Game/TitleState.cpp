@@ -51,6 +51,7 @@ TitleState::TitleState(): m_backgroundMusic("resources/audio/MainTheme.mp3")
 }
 TitleState::~TitleState()
 {
+	m_backgroundMusic.Stop();
     this->objectArray.clear();
 }
 void TitleState::LoadAssets() {

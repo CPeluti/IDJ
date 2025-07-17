@@ -7,7 +7,7 @@ SpriteRenderer::SpriteRenderer(GameObject &associated) : Component(associated)
     this->sprite = new Sprite();
 }
 
-SpriteRenderer::SpriteRenderer(GameObject &associated, std::string file, int frameCountW, int frameCountH) : Component(associated)
+SpriteRenderer::SpriteRenderer(GameObject& associated, std::string file, int frameCountW, int frameCountH, float baseAngle) : Component(associated), baseAngle(baseAngle)
 {
     // this->sprite.Open(file);
     // this->sprite.SetFrameCount(frameCountW, frameCountH);
@@ -39,7 +39,7 @@ void SpriteRenderer::Render()
     if (!enabled)
         return;
     sprite->SetShader(m_shader);
-    sprite->Render(associated.box.GetPos(), associated.box.GetSize(), associated.angleDeg);
+    sprite->Render(associated.box.GetPos(), associated.box.GetSize(), associated.angleDeg+baseAngle);
 }
 
 void SpriteRenderer::SetFrame(int frame, SDL_RendererFlip flip)

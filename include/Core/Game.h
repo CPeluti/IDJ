@@ -19,6 +19,8 @@ public:
 
     void Run();
 
+    void Menu();
+
     float GetDeltaTime();
     Vec2 GetWindowSize();
 
@@ -32,6 +34,8 @@ private:
     int frameStart;
     float dt;
     float fps;
+
+    bool m_menuIsOpen;
 
     static Game *instance;
     std::unique_ptr<State> storedState;

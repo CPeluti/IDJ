@@ -98,6 +98,7 @@ protected:
     bool popRequested;
     bool started;
     bool quitRequested;
+    bool m_paused = false;
     float time;
 
 	std::weak_ptr<TileMap> tileMap;
