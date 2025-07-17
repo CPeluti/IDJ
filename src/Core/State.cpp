@@ -41,20 +41,23 @@ void State::StartArray()
 {
     for (int i = 0; i < (int)objectArray.size(); i++)
     {
-        objectArray[i]->Start();
+        if(objectArray[i]->enabled)
+            objectArray[i]->Start();
     }
 }
 void State::UpdateArray(float dt)
 {
     for (int i = 0; i < (int)objectArray.size(); i++)
     {
-        objectArray[i]->Update(dt);
+        if (objectArray[i]->enabled)
+            objectArray[i]->Update(dt);
     }
 }
 void State::RenderArray()
 {
     for (int i = 0; i < (int)objectArray.size(); i++)
     {
-        objectArray[i]->Render();
+        if (objectArray[i]->enabled)
+            objectArray[i]->Render();
     }
 }
