@@ -17,4 +17,7 @@ class TitleState : public State{
         void Pause();
         std::weak_ptr<GameObject> particlesSystem;
         ParticleData m_Particle;
+    private:
+        Music m_backgroundMusic;
+
 };
