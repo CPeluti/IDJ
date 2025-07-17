@@ -10,7 +10,10 @@
 std::unordered_map<std::string, GPU_Image *> Resources::imageTable;
 std::unordered_map<std::string, Mix_Music *> Resources::musicTable;
 std::unordered_map<std::string, Mix_Chunk *> Resources::soundTable;
-std::unordered_map<std::string, TTF_Font *> Resources::fontTable;
+std::unordered_map<std::string, TTF_Font*> Resources::fontTable;
+std::unordered_map<std::string, int> Resources::vertexTable;
+std::unordered_map<std::string, int> Resources::fragmentTable;
+std::unordered_map<std::pair<std::string, std::string>, int, pair_hash> Resources::shaderBlockTable;
 
 GPU_Image *Resources::GetImage(std::string file)
 {
@@ -151,4 +154,69 @@ void Resources::ClearFonts()
         }
     }
     fontTable.clear();
+}
+
+
+int Resources::GetVertex(std::string file)
+{
+
+    if (vertexTable.find(file) == vertexTable.end())
+    {
+        try
+        {
+            int v = GPU_LoadShader(GPU_VERTEX_SHADER, file.c_str());
+            vertexTable[file] = v;
+            return v;
+        }
+        catch (std::string e)
+        {
+            std::cout << "Failed to load Shader: " << e << std::endl;
+            return -1;
+        }
+    }
+    return vertexTable[file];
+}
+
+int Resources::GetFragment(std::string file)
+{
+
+    if (fragmentTable.find(file) == fragmentTable.end())
+    {
+        try
+        {
+            int f = GPU_LoadShader(GPU_FRAGMENT_SHADER, file.c_str());
+            fragmentTable[file] = f;
+            return f;
+        }
+        catch (std::string e)
+        {
+            std::cout << "Failed to load Shader: " << e << std::endl;
+            return -1;
+        }
+    }
+    return fragmentTable[file];
+}
+
+int Resources::GetShaderBlock(std::string vertexFile, std::string fragmentFile)
+{
+
+    int v = GetVertex(vertexFile);
+    int f = GetFragment(fragmentFile);
+    if (!v || !f) return -1;
+	auto key = std::make_pair(vertexFile, fragmentFile);
+    if (shaderBlockTable.find(key) == shaderBlockTable.end())
+    {
+        try
+        {
+            int p = GPU_LinkShaders(v,f);
+            shaderBlockTable[{vertexFile, fragmentFile}] = p;
+            return p;
+        }
+        catch (std::string e)
+        {
+            std::cout << "Failed to load Shader: " << e << std::endl;
+            return -1;
+        }
+    }
+    return shaderBlockTable[{vertexFile, fragmentFile}];
 }

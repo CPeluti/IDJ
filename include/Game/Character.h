@@ -9,6 +9,10 @@
 
 #include <memory>
 #include <queue>
+struct Direction {
+    Vec2 coordinates;
+    std::string name;
+};
 class Character : public Component, public Observer, public Entity, public std::enable_shared_from_this<Character>
 {
 public:
@@ -47,7 +51,7 @@ public:
 
     void CastSpell(SpellType type, SpellElement element, std::vector<std::shared_ptr<IEffect>>, Vec2 target);
 
-    void SetAnimation(Vec2 direction);
+    void SetAnimation(Vec2 direction, std::string prefix);
     // COMPONENT_IS("Character");
 
 public:
@@ -70,10 +74,17 @@ private:
     Timer deathTimer;
     int extraProjectiles;
 	std::vector<std::shared_ptr<IEffect>> effects;
-    Vec2 m_lastDirection;
+    Direction m_lastDirection;
     Timer m_dashTimer;
+	Timer m_idleTimer;
 
 	std::weak_ptr<Entity> targetedEnemy;
 
 	std::weak_ptr<TileMap> tilemap;
 };
+
+
+inline std::string format_as(const Direction& d)
+{
+    return fmt::format("{}, {}", d.coordinates, d.name);
+}

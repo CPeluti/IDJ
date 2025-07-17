@@ -9,7 +9,7 @@ class SpriteRenderer : public Component
 {
 public:
     SpriteRenderer(GameObject &associated);
-    SpriteRenderer(GameObject &associated, std::string file, int frameCountW = 1, int frameCountH = 1);
+    SpriteRenderer(GameObject &associated, std::string file, int frameCountW = 1, int frameCountH = 1 , float baseAngle = 0);
     void Open(std::string file);
     void SetFrameCount(int frameCountW, int frameCountH);
     void Update(float dt);
@@ -27,6 +27,7 @@ public:
     bool enabled = true;
 
 private:
+    float baseAngle = 0;
     Sprite *sprite;
     std::shared_ptr<Shader> m_shader;
 };
