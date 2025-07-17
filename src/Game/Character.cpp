@@ -122,8 +122,10 @@ void Character::Start()
     m_idleTimer.Restart();
     Vec2 colliderSize = associated.box.GetSize();
     Vec2 colliderOffset = (colliderSize - associated.box.GetSize());
-    std::shared_ptr<Collider> interactionEffectCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"phys0"}, "entity", new OnInteractionEvent(associated, InteractionType::Effect), colliderSize, Vec2{1, 1}, colliderOffset);
-    associated.AddComponent(interactionEffectCollider);
+    std::shared_ptr<Collider> physicsCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"phys0"}, "entity", new OnInteractionEvent(associated, InteractionType::Effect), colliderSize, Vec2{ 1, 1 }, colliderOffset);
+    std::shared_ptr<Collider> hurtboxCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"layer0"}, "player", new OnCollisionEvent(associated), colliderSize, Vec2{1, 1}, colliderOffset);
+    associated.AddComponent(physicsCollider);
+    associated.AddComponent(hurtboxCollider);
     if (shared_from_this() == Character::player.lock())
     {
         std::shared_ptr<GameObject> textObject = std::make_shared<GameObject>();
