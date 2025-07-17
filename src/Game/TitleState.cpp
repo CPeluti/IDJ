@@ -12,7 +12,7 @@
 
 #include "Game/TitleState.h"
 #include "Game/StageState.h"
-TitleState::TitleState()
+TitleState::TitleState(): m_backgroundMusic("resources/audio/MainTheme.mp3")
 {
     Camera::zoom = 1;
     Camera::smoothness = 8.f;
@@ -22,6 +22,7 @@ TitleState::TitleState()
     sr->SetCameraFollower(true);
     start->AddComponent(sr);
     this->AddObject(start);
+
     std::shared_ptr<GameObject> text =  std::make_shared<GameObject>();
     std::shared_ptr<Text> textComponent =  std::make_shared<Text>(*text, "resources/font/neodgm.ttf", 20, Text::SOLID, "Press SPACEBAR to play again or ESC to leave",SDL_Color{255,255,255}, 1, true);
     
@@ -50,9 +51,11 @@ TitleState::TitleState()
 }
 TitleState::~TitleState()
 {
+	m_backgroundMusic.Stop();
     this->objectArray.clear();
 }
-void TitleState::LoadAssets() {}
+void TitleState::LoadAssets() {
+}
 void TitleState::Update(float dt)
 {
     InputManager &ip = InputManager::GetInstance();
@@ -72,9 +75,9 @@ void TitleState::Update(float dt)
         if(auto particles = std::dynamic_pointer_cast<ParticleSystem>(ps->GetComponent("ParticleSystem").lock())){
             particles->SetExplosiveness(0.5);
             particles->SetOneshot(false);
+            particles->Play();
         }
         
-        // particles->Play();
 
     }
     UpdateArray(dt);
@@ -94,6 +97,7 @@ void TitleState::Start()
             particles->SetAmount(30);
         }
     }
+    m_backgroundMusic.Play();
 }
 
 void TitleState::Resume(){}
