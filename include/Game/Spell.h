@@ -30,15 +30,13 @@ enum class SpellElement
     fire,
     water
 };
-
-enum class OnHitEffects
-{
-    None = 0,
-    Burn = 1 << 0,
-    Freeze = 1 << 1,
-    Poison = 1 << 2,
-    Slow = 1 << 4,
-	Stun = 1 << 5,
+struct SpellAssets {
+    std::string baseSprite = "";
+    std::string castSound = "";
+    std::string hitSound = "";
+    Animation* castAnimation;
+    int frameCountW = -1;
+    int frameCountH = -1;
 };
 
 class ISpell {
@@ -68,7 +66,7 @@ template <typename SpellStrategy>
 class Spell
 {
 public:
-    Spell(std::vector<std::string> modifiers, float baseManaCost,float baseDamage, float baseSpeed, std::string baseSprite) : modifiers(modifiers), baseDamage(baseDamage), m_baseSpeed(baseSpeed), baseSprite(baseSprite), m_baseManaCost(baseManaCost){}
+    Spell(std::vector<std::string> modifiers, float baseManaCost, float baseDamage, float baseSpeed) : modifiers(modifiers), baseDamage(baseDamage), m_baseSpeed(baseSpeed), m_baseManaCost(baseManaCost) {}
     ~Spell() {};
     virtual SpellType GetSpellType() const = 0;
     virtual SpellElement GetSpellElement() const = 0;
@@ -251,7 +249,7 @@ private:
 class ProjectileSpell : public Spell<Projectile>
 {
 public:
-    ProjectileSpell(Vec2 initialPos, Vec2 target) : Spell({}, 10,60, 200, "resources/img/fogo_projetil.png"), m_initialPos(initialPos), m_target(target) {
+    ProjectileSpell(Vec2 initialPos, Vec2 target, SpellAssets assets) : Spell({}, 30, 10, 200), m_initialPos(initialPos), m_target(target), m_assets(assets) {
     }
     
     ~ProjectileSpell() {}
@@ -287,16 +285,19 @@ public:
             }
             spell->SetOnHitEffects(clonedEffects);
             
-            std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(*spellObj, baseSprite, 8, 2, -90);
-            spell->m_soundEffect = std::make_shared<Sound>("resources/audio/FireBall_Cast.wav");
-            spell->m_hitSoundEffect = std::make_shared<Sound>("resources/audio/FireBall_Hit_Strong.wav");
+
+            
+            spell->m_hitSoundEffect = std::make_shared<Sound>(m_assets.hitSound);
+            
+            std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(*spellObj, m_assets.baseSprite, m_assets.frameCountW, m_assets.frameCountH, -90);
+            spell->m_soundEffect = std::make_shared<Sound>(m_assets.castSound);
             spell->m_soundEffect->Play();
 
             spellObj->AddComponent(sr);
             spellObj->AddComponent(spell);
             spellObj->AddComponent(animator);
             Game::GetInstance().GetCurrentState()->AddObject(spellObj);
-			animator->AddAnimation("projectile", new Animation(0, 7, 0.1f));
+			animator->AddAnimation("projectile", m_assets.castAnimation);
 			animator->SetAnimation("projectile");
             OnCastSpellEvent* newEvt = new OnCastSpellEvent(this->GetManaCost());
 			caster->subject.notify(*newEvt);
@@ -360,6 +361,7 @@ public:
 private:
     Vec2 m_initialPos;
 	Vec2 m_target;
+    SpellAssets m_assets;
 };
 
 
@@ -403,6 +405,9 @@ protected:
     {
         GameObject& go = evt.GetGameObject();
         OnDamageTakenEvent e = OnDamageTakenEvent(this->associated, this->m_baseDamage);
+        if (go.GetComponent("Character").lock()) {
+            return true;
+        }
         if (go.GetComponent("HealthSystem").lock())
             go.subject.notify(e);
 
@@ -429,7 +434,7 @@ private:
 
 class AreaSpell : public Spell<Area> {
 public:
-    AreaSpell(Vec2 pos) : Spell({}, 10,0,10, "resources/img/fogo_area.png"), m_pos(pos)
+	AreaSpell(Vec2 pos, SpellAssets assets) : Spell({}, 30, 10, 0), m_pos(pos), m_assets(assets)
     {}
 	~AreaSpell() {}
     SPELL_TYPE(area, fire);
@@ -439,19 +444,19 @@ public:
         std::shared_ptr<Animator> animator = std::make_shared<Animator>(*spellObj, false);
         spellObj->box.Move(m_pos);
         spellObj->z = 2;
-        std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(*spellObj, baseSprite, 10, 1);
+        std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(*spellObj, m_assets.baseSprite, m_assets.frameCountW, m_assets.frameCountH);
         std::shared_ptr<Area> spell = std::make_shared<Area>(*spellObj, 10, m_pos, spellObj->box.GetSize(), 1.0f);
-        spell->m_soundEffect = std::make_shared<Sound>("resources/audio/FireArea_Explode.wav");
+        spell->m_soundEffect = std::make_shared<Sound>(m_assets.castSound);
         spell->m_soundEffect->Play();
 
         spellObj->AddComponent(sr);
         spellObj->AddComponent(spell);
         spellObj->AddComponent(animator);
         Game::GetInstance().GetCurrentState()->AddObject(spellObj);
-        animator->AddAnimation("area", new Animation(0, 9, 0.1f));
+        animator->AddAnimation("area", m_assets.castAnimation);
         animator->SetAnimation("area");
     }
-    inline bool Is(std::string type) { return type == "FireAreaSpell"; }
+    inline bool Is(std::string type) { return type == "AreaSpell"; }
     inline void AddEffect(std::shared_ptr<Effect<Spell<Area>>> e) override {
         if (e) {
             for (const auto& effect : spellEffects) {
@@ -498,4 +503,5 @@ private:
 	std::weak_ptr<GameObject> m_particlesSystem;
     ParticleData m_Particle;
     Vec2 m_pos;
+    SpellAssets m_assets;
 };

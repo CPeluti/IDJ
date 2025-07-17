@@ -1,6 +1,19 @@
 #include "Game/TypingSystem.h"
 #include "Game/Character.h"
+#include "Core/InputManager.h"
 #include "Core/Log.h"
+
+std::vector<std::string> split(const std::string str) {
+    std::vector<std::string> tokens;
+    std::istringstream iss(str);
+    std::string token;
+
+    while (iss >> token) {
+        tokens.push_back(token);
+    }
+
+    return tokens;
+}
 
 TypingSystem::TypingSystem(Text *textComponent, bool enableCursor, bool isTypingMode) : textComponent(textComponent),
                                                                                         enableCursor(enableCursor),
@@ -14,6 +27,8 @@ TypingSystem::TypingSystem(Text *textComponent, bool enableCursor, bool isTyping
 
 void TypingSystem::HandleInput(const SDL_Event &event)
 {
+   InputManager ip = InputManager::GetInstance();
+
   switch (event.type)
   {
   case SDL_TEXTINPUT:
@@ -31,6 +46,13 @@ void TypingSystem::HandleInput(const SDL_Event &event)
     {
       this->submitted = true;
       this->HandleSubmit();
+      Vec2 target;
+      target.x = ip.GetMouseX();
+      target.y = ip.GetMouseY();
+      Character::Command c = Character::Command(Character::Command::SHOOT, target);
+      if (auto character = std::dynamic_pointer_cast<Character>(Character::player.lock())) {
+          character->Issue(c);
+      }
     }
   }
   default:
@@ -43,6 +65,7 @@ void TypingSystem::HandleSubmit()
 {
   if (this->submitted)
   {
+	this->submittedText = split(this->text);
     this->CleanText();
     this->ResetSubmission();
   }
@@ -52,7 +75,7 @@ void TypingSystem::Update(float dt)
 {
   if(auto player = Character::player.lock()){
     auto pBox = player->getAssociated()->box;
-    this->textComponent->getAssociated()->box.Move(pBox.center()-Vec2{.0,pBox.GetSize().x/2});
+    this->textComponent->getAssociated()->box.Move((pBox.center() - (Vec2{ .0,pBox.GetSize().x / 2 }*Camera::zoom)));
 
     if (!this->enableCursor || !this->isTypingMode)
     return;

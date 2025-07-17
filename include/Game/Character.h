@@ -49,7 +49,7 @@ public:
 
     inline bool Is(std::string type) { return type == "Character"; }
 
-    void CastSpell(SpellType type, SpellElement element, std::vector<std::shared_ptr<IEffect>>, Vec2 target);
+    void CastSpell(std::vector<std::shared_ptr<IEffect>>, Vec2 target, std::vector<std::string> spellText);
 
     void SetAnimation(Vec2 direction, std::string prefix);
     // COMPONENT_IS("Character");
@@ -57,6 +57,15 @@ public:
 public:
     static int npcCounter;
     static std::weak_ptr<Character> player;
+
+    std::map<std::string, SpellElement> spellElements = {
+        {"fire", SpellElement::fire},
+        {"water", SpellElement::water},
+    };
+    std::map<std::string, SpellType> spellType = {
+        {"ball", SpellType::projectile},
+        {"area", SpellType::area}
+    };
 
 private:
     bool OnCollision(OnCollisionEvent &evt);
@@ -84,6 +93,8 @@ private:
 	std::weak_ptr<TileMap> tilemap;
 
     //std::map<OnHitEffects, std::shared_ptr<Effect<Entity>>> m_onHitEffects;
+
+    std::vector<std::tuple<SpellElement, SpellType, SpellAssets>> m_spellAssets;
 };
 
 
