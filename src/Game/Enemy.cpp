@@ -110,8 +110,26 @@ void Enemy::Update(float dt)
     this->UpdateEffects(dt);
 	this->m_attackTimer.Update(dt);
 
+    if (auto sr = std::dynamic_pointer_cast<SpriteRenderer>(this->associated.GetComponent("SpriteRenderer").lock()))
+    {
+        if (auto shader = sr->GetShader().lock())
+        {
+            if (this->m_targeted)
+            {
+                shader->Load("resources/shaders/common.vert", "resources/shaders/outline.frag");
+                int color_loc = shader->GetLocation("myColor");
+                float t = SDL_GetTicks() / 1000.0f;
+                //update_color_shader(255,255,255,255,0);
+            }
+            else
+            {
+                shader->Reset();
+            }
+        }
+    }
     if (auto animator = std::dynamic_pointer_cast<Animator>(this->associated.GetComponent("Animator").lock()))
     {
+
         if (taskQueue.size() == 0 && animator)
         {
             //animator->SetAnimation("idle");
