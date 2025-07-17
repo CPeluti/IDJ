@@ -41,6 +41,27 @@ protected:
     float m_Amount;
 };
 
+class OnCastSpellEvent : public Event
+{
+public:
+    OnCastSpellEvent(float amount) : m_Amount(amount) {}
+
+    EVENT_TYPE(OnCastSpell);
+
+    inline float GetAmount() const { return m_Amount; }
+
+    std::string ToString() const override
+    {
+        std::stringstream ss;
+        ss << "teste de cast cost: " << m_Amount;
+        return ss.str();
+    }
+
+protected:
+    float m_Amount;
+};
+
+
 class OnDeathEvent : public Event
 {
 public:
