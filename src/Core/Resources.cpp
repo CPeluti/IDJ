@@ -129,6 +129,7 @@ TTF_Font *Resources::GetFont(std::string file, int ptSize)
         try
         {
             TTF_Font *font = TTF_OpenFont(file.c_str(), ptSize);
+            //GPU_SetImageFilter(texture, GPU_FILTER_NEAREST);
             fontTable[file + std::to_string(ptSize)] = font;
             return font;
         }
