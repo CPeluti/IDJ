@@ -13,7 +13,7 @@ void main(){
     // float outline_size = 0.0;
     float progress = 1;
     vec3 outline_color = vec3(1.0, 0.0, 0.0);
-    float width = 0.01;
+    float width = 0.0025;
     vec4 color = texture(tex, texCoord);
 
     // float alpha_threshold = step(sprite_color.a, 1.0 - outline_size) - step(sprite_color.a, 1.0);
