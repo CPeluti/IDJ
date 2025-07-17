@@ -9,6 +9,7 @@
 #include "Core/Animator.h"
 #include "Core/Sound.h"
 #include "Game/Effect.h"
+#include "Game/Entity.h"
 
 #define SPELL_TYPE(type, element)                                                        \
     static SpellType GetStaticType() { return SpellType::type; }                         \
@@ -54,7 +55,7 @@ template <typename SpellStrategy>
 class Spell
 {
 public:
-    Spell(std::vector<std::string> modifiers, float baseDamage, std::string baseSprite) : modifiers(modifiers), baseDamage(baseDamage), baseSprite(baseSprite) {}
+    Spell(std::vector<std::string> modifiers, float baseDamage, float baseSpeed, std::string baseSprite) : modifiers(modifiers), baseDamage(baseDamage), m_baseSpeed(baseSpeed), baseSprite(baseSprite) {}
     ~Spell() {};
     virtual SpellType GetSpellType() const = 0;
     virtual SpellElement GetSpellElement() const = 0;
@@ -72,21 +73,44 @@ public:
     virtual void AddEffect(std::shared_ptr<Effect<Spell<SpellStrategy>>> e) = 0;
     virtual void RemoveEffect(std::string effectName) = 0;
     virtual void UpdateEffect(float dt) = 0;
+    inline void ApplyDamageFactor(float factor) {
+		m_currentDamage = baseDamage * factor;
+    }
+    inline void ApplySpeedFactor(float factor) {
+		m_currentSpeed = m_baseSpeed * factor;
+	}
+    inline void SetChainAmount(int amount) {
+        m_chainAmount = amount;
+    }
+    inline int GetChainAmount() const {
+        return m_chainAmount;
+    }
+    inline void SetPierceAmount(int amount) {
+        m_pierceAmount = amount;
+    }
+    inline int GetPierceAmount() const {
+        return m_pierceAmount;
+    }
 
 protected:
 	std::vector<std::shared_ptr<Effect<Spell<SpellStrategy>>>> spellEffects;
     std::vector<std::string> modifiers;
     float baseDamage;
+	float m_currentDamage = baseDamage;
     std::string baseSprite;
     std::vector<SpellStrategy> m_elements;
 	int m_baseElementCount = 1;
+	float m_baseSpeed = 100.0f;
+    int m_chainAmount = 0;
+    int m_pierceAmount = 0;
+    int m_currentSpeed = m_baseSpeed;
 
 };
 
 class Projectile : public Component, public Observer
 {
 public:
-    Projectile(GameObject& associated, float speed, float distanceLeft, float damage) : Component(associated), m_baseSpeed(speed), m_currentSpeed(speed), m_distanceLeft(distanceLeft), m_baseDamage(damage) {
+    Projectile(GameObject& associated, float speed, float distanceLeft, float damage) : Component(associated), m_currentSpeed(speed), m_distanceLeft(distanceLeft), m_baseDamage(damage) {
         this->associated.subject.addObserver(this);
 
         std::vector<std::string> layers;
@@ -98,6 +122,15 @@ public:
     std::shared_ptr<Sound> m_hitSoundEffect;
     inline void RequestDelete() { m_requestDelete = true; }
     bool m_requestDelete = false;
+    inline void SetChainAmount(int amount) {
+        this->m_chainAmount = amount;
+    }
+    inline void SetPierceAmount(int amount) {
+        this->m_pierceAmount = amount;
+    }
+    inline void SetSpeed(float speed) {
+        m_currentSpeed = speed;
+	}
 protected:
     //std::vector<std::weak_ptr<Effect>> spellEffects;
     inline void Start() {}
@@ -134,18 +167,29 @@ protected:
 	inline bool Is(std::string type) { return type == "Projectile"; }
     inline bool OnCollision(OnCollisionEvent& evt)
     {
-        GameObject& go = evt.GetGameObject();
+        GameObject* go = &evt.GetGameObject();
+        if (std::find(lastHit.begin(), lastHit.end(), go) != lastHit.end()) return true;
+		else lastHit.push_back(go);
         OnDamageTakenEvent e = OnDamageTakenEvent(this->associated, m_baseDamage);
-        if (go.GetComponent("Character").lock()) {
+        if (go->GetComponent("Character").lock()) {
             return true;
         }
-        if (go.GetComponent("HealthSystem").lock()) {
-			m_hitSoundEffect->Play();
-            go.subject.notify(e);
+        if (go->GetComponent("HealthSystem").lock()) {
+            m_hitSoundEffect->Play();
+            go->subject.notify(e);
         }
-        if (!go.GetComponent("FireProjectileSpell").lock())
+        Vec2 currentPos = this->associated.box.center();
+        std::weak_ptr<Entity> entity = Entity::GetClosestEnemy(currentPos, 300, lastHit);
+        
+        if (auto shared = entity.lock()) {
+            if (m_chainAmount > 0) {
+                m_chainAmount--;
+                    float newAngle = Vec2::Angle(currentPos, shared->GetPosition());
+				    this->associated.angleDeg = newAngle + 90;
+            }
+        } else if (!go->GetComponent("FireProjectileSpell").lock() && m_pierceAmount <=0)
             this->RequestDelete();
-
+        m_pierceAmount--;
         return true;
     }
 
@@ -155,13 +199,15 @@ protected:
 
         dispatcher.Dispatch<OnCollisionEvent>(BIND_EVENT_FN(Projectile::OnCollision));
     };
-
     float m_currentSpeed;
-    float m_baseSpeed;
     float m_distanceLeft;
     float m_baseDamage;
+	std::vector<GameObject*> lastHit;
 
 private:
+
+    int m_pierceAmount;
+    int m_chainAmount;
     std::weak_ptr<GameObject> m_particlesSystem;
     ParticleData m_Particle;
 };
@@ -169,14 +215,14 @@ private:
 class ProjectileSpell : public Spell<Projectile>
 {
 public:
-    ProjectileSpell(Vec2 initialPos, Vec2 target) : Spell({}, 10, "resources/img/fogo_projetil.png"), m_initialPos(initialPos), m_target(target) {
+    ProjectileSpell(Vec2 initialPos, Vec2 target) : Spell({}, 60, 200, "resources/img/fogo_projetil.png"), m_initialPos(initialPos), m_target(target) {
     }
     
     ~ProjectileSpell() {}
     SPELL_TYPE(projectile, fire);
 
 
-    inline float GetDamage() { return 30.0f; };
+    inline float GetDamage() { return m_currentDamage; };
     inline void CastSpell()
     {
         for (auto e : this->spellEffects) {
@@ -193,7 +239,11 @@ public:
             std::shared_ptr<Animator> animator = std::make_shared<Animator>(*spellObj);
 		    spellObj->box.Move(m_initialPos);
 		    spellObj->angleDeg = startingAngle+90+angleStep;
-            std::shared_ptr<Projectile> spell = std::make_shared<Projectile>(*spellObj, 200.0f, 300.0f, this->GetDamage());
+            std::shared_ptr<Projectile> spell = std::make_shared<Projectile>(*spellObj, m_currentSpeed, 300.0f, this->GetDamage());
+
+            spell->SetChainAmount(this->GetChainAmount());
+            spell->SetPierceAmount(this->GetPierceAmount());
+            
             std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(*spellObj, baseSprite, 8, 2, -90);
             spell->m_soundEffect = std::make_shared<Sound>("resources/audio/FireBall_Cast.wav");
             spell->m_hitSoundEffect = std::make_shared<Sound>("resources/audio/FireBall_Hit_Strong.wav");
@@ -220,6 +270,7 @@ public:
                     exists = true;
                     break;
                 }
+                it++;
             }
             if (!exists)
             {
@@ -258,6 +309,7 @@ public:
     }
 
     inline bool Is(std::string type) { return type == "ProjectileSpell"; }
+
 
 private:
     Vec2 m_initialPos;
@@ -331,7 +383,7 @@ private:
 
 class AreaSpell : public Spell<Area> {
 public:
-    AreaSpell(Vec2 pos) : Spell({}, 10, "resources/img/fogo_area.png"), m_pos(pos)
+    AreaSpell(Vec2 pos) : Spell({}, 0,10, "resources/img/fogo_area.png"), m_pos(pos)
     {}
 	~AreaSpell() {}
     SPELL_TYPE(area, fire);
