@@ -31,6 +31,13 @@ enum class SpellElement
     fire,
     water
 };
+enum class SpellEffect {
+    multiple,
+    pierce,
+    freeze,
+    chain,
+    speed
+};
 struct SpellAssets {
     std::string baseSprite = "";
     std::string castSound = "";
