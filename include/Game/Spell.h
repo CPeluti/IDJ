@@ -123,6 +123,9 @@ protected:
     {
         GameObject& go = evt.GetGameObject();
         OnDamageTakenEvent e = OnDamageTakenEvent(this->associated, m_baseDamage);
+        if (go.GetComponent("Character").lock()) {
+            return true;
+        }
         if (go.GetComponent("HealthSystem").lock())
             go.subject.notify(e);
         if (!go.GetComponent("FireProjectileSpell").lock())
