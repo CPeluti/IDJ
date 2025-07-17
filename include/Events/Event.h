@@ -19,6 +19,7 @@ enum class EventType
     OnDeath,
     OnInteraction,
     OnEffect,
+    OnCastSpell,
 };
 
 class Event
