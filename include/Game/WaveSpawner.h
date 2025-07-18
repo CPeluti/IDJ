@@ -10,11 +10,14 @@ public:
     void Render();
     bool Is(std::string type);
     void Start();
-
+    bool Win();
+    bool Lose();
 private:
     int enemyCounter;
 	bool bossSpawned;
     int bossCounter;
     std::vector<Wave *> waves;
     int currentWave;
+    bool win;
+    bool lose;
 };
