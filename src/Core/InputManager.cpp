@@ -7,6 +7,7 @@
 #include "Game/TitleState.h"
 
 #include "Game/TypingSystem.h"
+#include "Game/Character.h"
 
 InputManager &InputManager::GetInstance()
 {
@@ -62,7 +63,7 @@ void InputManager::Update()
         switch (event.type)
         {
         case SDL_KEYDOWN:
-            if (event.key.keysym.sym == SDLK_LSHIFT)
+            /*if (event.key.keysym.sym == SDLK_LSHIFT)
             {
                 if (ts.IsTypingMode())
                 {
@@ -73,6 +74,25 @@ void InputManager::Update()
                     ts.ResetSubmission();
                     ts.SwitchTypingMode();
                 }
+            }*/
+            if (event.key.keysym.sym == SDLK_RETURN || event.key.keysym.sym == SDLK_KP_ENTER)
+            {
+                if (!ts.IsTypingMode()) {
+                    ts.SetIsTypingMode(true);
+                    ts.SetSubmitted(true);
+                    ts.HandleSubmit();
+                    Vec2 target;
+                    target.x = this->GetMouseX();
+                    target.y = this->GetMouseY();
+                    Character::Command c = Character::Command(Character::Command::SHOOT, target);
+                    if (auto character = std::dynamic_pointer_cast<Character>(Character::player.lock())) {
+                        character->Issue(c);
+                    }
+                }
+            }
+			
+            if (!(event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_DOWN || event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_LEFT || event.key.keysym.sym == SDLK_LSHIFT || event.key.keysym.sym == SDLK_RSHIFT)) {
+                ts.SetIsTypingMode(true);
             }
             if (event.key.keysym.sym == SDLK_ESCAPE)
             {
