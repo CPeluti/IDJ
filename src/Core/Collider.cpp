@@ -75,7 +75,13 @@ void Collider::Render()
 	// SDL_SetRenderDrawColor(Game::GetInstance().GetRenderer(), 255, 0, 0, SDL_ALPHA_OPAQUE);
 	for (int i = 0; i < 5; i++)
 	{
-		GPU_Line(Game::GetInstance().GetGPUTarget(), points[i].x, points[i].y, points[(i + 1) % 5].x, points[(i + 1) % 5].y, {255, 0, 0, 255});
+		SDL_Color color;
+		if(disabled) {
+			color = { 50, 50, 50, 255 };
+		} else {
+			color = { 255, 0, 0, 255 };
+		}
+		GPU_Line(Game::GetInstance().GetGPUTarget(), points[i].x, points[i].y, points[(i + 1) % 5].x, points[(i + 1) % 5].y, color);
 	}
 #endif // DEBUG
 }

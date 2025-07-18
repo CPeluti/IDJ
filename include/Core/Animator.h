@@ -5,7 +5,7 @@ class Animation;
 
 class Animator: public Component {
     public:
-        Animator(GameObject &associated, bool loop = true);
+        Animator(GameObject &associated);
         void Update(float dt);
         void Render();
         inline bool Is(std::string type) {return type == "Animator";}

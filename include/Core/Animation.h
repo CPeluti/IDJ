@@ -4,9 +4,10 @@
 #include "SDL_include.h"
 class Animation {
     public:
-        Animation(int frameStart, int frameEnd, float frameTime, SDL_RendererFlip flip = SDL_FLIP_NONE);
+        Animation(int frameStart, int frameEnd, float frameTime, bool repeat = true, SDL_RendererFlip flip = SDL_FLIP_NONE);
         int frameStart;
         int frameEnd;
         float frameTime;
         SDL_RendererFlip flip;
+		bool repeat = true;
 };
