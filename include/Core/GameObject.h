@@ -36,6 +36,7 @@ public:
     double angleDeg;
     Subject subject;
     bool enabled = true;
+    float height = 0;
 private:
     Vec2 m_speed;
     bool started;
