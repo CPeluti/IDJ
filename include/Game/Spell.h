@@ -229,7 +229,8 @@ protected:
                     float newAngle = Vec2::Angle(currentPos, shared->GetPosition());
 				    this->associated.angleDeg = newAngle + 90;
             }
-        } else if (!go->GetComponent("FireProjectileSpell").lock() && m_pierceAmount <=0)
+        } 
+        else if (!go->GetComponent("FireProjectileSpell").lock() && m_pierceAmount <=0)
             this->RequestDelete();
         m_pierceAmount--;
         return true;
