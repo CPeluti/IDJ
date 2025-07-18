@@ -207,7 +207,7 @@ void Boss::Update(float dt)
 		Raycast res;
         if (auto character = Character::player.lock()) {
             Vec2 playerPos = character->GetPos();
-            res = associated.CastRaycast(this->associated.box.center(), playerPos, 150, 1);
+            res = associated.CastRaycast(this->associated.box.center(), playerPos, 400, 1);
             if (!res.intersects) {
                 m_lastSeenPlayerPosition = playerPos;
             }
