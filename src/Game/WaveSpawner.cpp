@@ -7,7 +7,7 @@
 #include "Game/Character.h"
 #include "Game/AIController.h"
 
-WaveSpawner::WaveSpawner(GameObject &associated) : Component(associated), enemyCounter(0), currentWave(0), bossCounter(0), bossSpawned(false)
+WaveSpawner::WaveSpawner(GameObject &associated) : Component(associated), enemyCounter(0), currentWave(4), bossCounter(0), bossSpawned(false)
 {
     for (int i = 0; i < 5; i++)
     {
@@ -36,7 +36,7 @@ void WaveSpawner::Update(float dt)
     //}
     float randomAngle = rand() % 36000 / 100.0;
     Vec2 windowSize = Game::GetInstance().GetWindowSize();
-    Vec2 distance = { windowSize.x / 2, .0 };
+    Vec2 distance = { 150.0, .0 };
     if(currentWave >= (int)waves.size() && !bossSpawned){
         std::shared_ptr<GameObject> enemy = std::make_shared<GameObject>();
         std::shared_ptr<Boss> enemyComponent = std::make_shared<Boss>(*enemy, "resources/img/Sprite-Shoggoth-All.png", 40, 1);
