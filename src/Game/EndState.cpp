@@ -51,7 +51,7 @@ void EndState::Update(float dt){
     if (ip.KeyPress(SPACE_KEY))
     {
         popRequested = true;
-        Game::GetInstance().Push(std::make_unique<TitleState>());
+        Game::GetInstance().Push("Title");
     }
     // UpdateArray(dt);
 }
