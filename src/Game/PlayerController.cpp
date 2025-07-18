@@ -65,14 +65,14 @@ void PlayerController::Update(float dt)
             s->AddObject(dummy);
 		}*/
 
-        std::shared_ptr<GameObject> enemy = std::make_shared<GameObject>();
-        std::shared_ptr<Boss> enemyComponent = std::make_shared<Boss>(*enemy, "resources/img/Sprite-Shoggoth-All.png", 40, 1);
-        enemy->box.Move({ ip.GetMouseX(), ip.GetMouseY() });
-        enemy->AddComponent(enemyComponent);
-        if (auto s = Game::GetInstance().GetCurrentState())
-        {
-            s->AddObject(enemy);
-        }
+        //std::shared_ptr<GameObject> enemy = std::make_shared<GameObject>();
+        //std::shared_ptr<Boss> enemyComponent = std::make_shared<Boss>(*enemy, "resources/img/Sprite-Shoggoth-All.png", 40, 1);
+        //enemy->box.Move({ ip.GetMouseX(), ip.GetMouseY() });
+        //enemy->AddComponent(enemyComponent);
+        //if (auto s = Game::GetInstance().GetCurrentState())
+        //{
+        //    s->AddObject(enemy);
+        //}
     }
     if (ip.KeyPress(SPACE_KEY))
     {
