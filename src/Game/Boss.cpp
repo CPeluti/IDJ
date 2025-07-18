@@ -1,7 +1,9 @@
-#include "Game/Enemy.h"
+#include "Game/Boss.h"
 #include <cmath>
 
-void Enemy::Start() {
+int Boss::bossCounter = 0;
+
+void Boss::Start() {
 
     //ParticleSystem initialization
     {
@@ -12,6 +14,32 @@ void Enemy::Start() {
         m_Particle.Position = { 0.0f, 0.0f };
         m_Particle.VelocityFunction = { [](float x) {return x == 1 ? 1 : 1 - pow(2, -10 * x); },[](float x) {return x == 1 ? 1 : 1 - pow(2, -10 * x); } };
     }
+
+    roarsTimer.Restart();
+
+    attackSound.push_back(new Sound("resources/audio/ShogATK_1.wav"));
+    attackSound.push_back(new Sound("resources/audio/ShogATK_2.wav"));
+    attackSound.push_back(new Sound("resources/audio/ShogATK_3.wav"));
+    roarsSound.push_back(new Sound("resources/audio/ShogRoar_1.wav"));
+    roarsSound.push_back(new Sound("resources/audio/ShogRoar_2.wav"));
+    roarsSound.push_back(new Sound("resources/audio/ShogRoar_3.wav"));
+    hitsSound.push_back(new Sound("resources/audio/ShogPain_1.wav"));
+    hitsSound.push_back(new Sound("resources/audio/ShogPain_2.wav"));
+    hitsSound.push_back(new Sound("resources/audio/ShogPain_3.wav"));
+    deathSound.push_back(new Sound("resources/audio/ShogDeath.wav"));
+    landSound.push_back(new Sound("resources/audio/Shog_Land.wav"));
+
+    std::shared_ptr<GameObject> exclamation = std::make_shared<GameObject>();
+    std::shared_ptr<SpriteRenderer> exclamationSprite = std::make_shared<SpriteRenderer>(*exclamation, "resources/img/exclamation.png", 6, 1);
+    std::shared_ptr<Animator> exclamationAnimator = std::make_shared<Animator>(*exclamation);
+    exclamationAnimator->AddAnimation("exclamation", new Animation(0, 5, 0.025, false));
+    exclamation->AddComponent(exclamationSprite);
+    exclamation->AddComponent(exclamationAnimator);
+    Game::GetInstance().GetCurrentState()->AddObject(exclamation);
+    this->exclamation = exclamation;
+    exclamationSprite->enabled = false;
+
+
     std::shared_ptr<GameObject> particles = std::make_shared<GameObject>();
     std::shared_ptr<ParticleSystem> ps = std::make_shared<ParticleSystem>(*particles, m_Particle);
     particles->AddComponent(ps);
@@ -26,94 +54,45 @@ void Enemy::Start() {
     interactionLayers.push_back("interaction0, phys0");
     Vec2 colliderSize = associated.box.GetSize();
     Vec2 colliderOffset = (colliderSize - associated.box.GetSize());
-    std::shared_ptr<Collider> interactionEffectCollider = std::make_shared<Collider>(
-        associated, 
-        std::vector<std::string>{"phys0"}, 
-        "entity", 
-        new OnInteractionEvent(associated, InteractionType::Effect), 
-        colliderSize, 
-        Vec2{ 1, 1 }, 
-        colliderOffset
-    );
-    associated.AddComponent(interactionEffectCollider);
+    //std::shared_ptr<Collider> interactionEffectCollider = std::make_shared<Collider>(
+    //    associated, 
+    //    std::vector<std::string>{"phys0"}, 
+    //    "entity", 
+    //    new OnInteractionEvent(associated, InteractionType::Effect), 
+    //    colliderSize, 
+    //    Vec2{ 1, 1 }, 
+    //    colliderOffset
+    //);
+    //associated.AddComponent(interactionEffectCollider);
 
     this->m_enemies.push_back(shared_from_this());
+
+	state = StateType::IDLE;
 }
 
-void Enemy::SetAnimation(Vec2 direction, Enemy::Command::CommandType type)
+void Boss::SetAnimation(Vec2 direction, Boss::Command::CommandType type)
 {
     if (auto animator = std::dynamic_pointer_cast<Animator>(this->associated.GetComponent("Animator").lock()))
     {
-        if (type == Enemy::Command::MOVE) {
-            if (direction.x == 0 && direction.y > 0)
-            {
-                animator->SetAnimation("down_walking");
-            }
-            else if (direction.x > 0 && direction.y > 0)
-            {
-                //animator->SetAnimation("downright");
-                animator->SetAnimation("r_walking");
-            }
-            else if (direction.x > 0 && direction.y == 0)
-            {
-                animator->SetAnimation("r_walking");
-            }
-            else if (direction.x > 0 && direction.y < 0)
-            {
-                animator->SetAnimation("r_up_walking");
-            }
-            else if (direction.x == 0 && direction.y < 0)
-            {
-                animator->SetAnimation("up_walking");
-            }
-            else if (direction.x < 0 && direction.y < 0)
-            {
-                animator->SetAnimation("l_up_walking");
-            }
-            else if (direction.x < 0 && direction.y == 0)
+        if (type == Boss::Command::MOVE) {
+
+            if (direction.x < 0)
             {
                 animator->SetAnimation("l_walking");
             }
-            else if (direction.x < 0 && direction.y > 0)
+            else
             {
-                //animator->SetAnimation("downleft");
-                animator->SetAnimation("l_walking");
+                animator->SetAnimation("r_walking");
             }
+
         }
-        else if (type == Enemy::Command::ATTACK) {
-            if (direction.x == 0 && direction.y > 0)
+        else if (type == Boss::Command::ATTACK) {
+            if (direction.x < 0)
             {
-                animator->SetAnimation("down_attack");
+                animator->SetAnimation("l_attack");
             }
-            else if (direction.x > 0 && direction.y > 0)
-            {
-                //animator->SetAnimation("downright");
-                animator->SetAnimation("r_down_attack");
-            }
-            else if (direction.x > 0 && direction.y == 0)
-            {
-                animator->SetAnimation("r_walking");
-            }
-            else if (direction.x > 0 && direction.y < 0)
-            {
-                animator->SetAnimation("r_up_attack");
-            }
-            else if (direction.x == 0 && direction.y < 0)
-            {
-                animator->SetAnimation("up_attack");
-            }
-            else if (direction.x < 0 && direction.y < 0)
-            {
-                animator->SetAnimation("l_up_attack");
-            }
-            else if (direction.x < 0 && direction.y == 0)
-            {
-                animator->SetAnimation("l_walking");
-            }
-            else if (direction.x < 0 && direction.y > 0)
-            {
-                //animator->SetAnimation("downleft");
-                animator->SetAnimation("l_down_attack");
+            else {
+                animator->SetAnimation("r_attack");
             }
         }
         else
@@ -123,12 +102,16 @@ void Enemy::SetAnimation(Vec2 direction, Enemy::Command::CommandType type)
     }
 }
 
-void Enemy::Update(float dt)
+void Boss::Update(float dt)
 {
+    roarsTimer.Update(dt);
     Vec2 speed = { 0, 0 };
     this->associated.SetSpeed({ 0, 0 });
     this->UpdateEffects(dt);
 	this->m_attackTimer.Update(dt);
+    if (auto e = this->exclamation.lock()) {
+        e->box.Move(this->associated.box.center() - Vec2{ 90, 90 });
+    }
     if (auto sr = std::dynamic_pointer_cast<SpriteRenderer>(this->associated.GetComponent("SpriteRenderer").lock()))
     {
         if (state != StateType::DYING) {
@@ -144,9 +127,9 @@ void Enemy::Update(float dt)
                 }
                 else if (this->m_targeted)
                 {
-                    shader->Load("resources/shaders/common.vert", "resources/shaders/outline.frag");
-                    int color_loc = shader->GetLocation("myColor");
-                    float t = SDL_GetTicks() / 1000.0f;
+                    //shader->Load("resources/shaders/common.vert", "resources/shaders/outline.frag");
+                    //int color_loc = shader->GetLocation("myColor");
+                    //float t = SDL_GetTicks() / 1000.0f;
                     //update_color_shader(255,255,255,255,0);
                 }
                 else
@@ -220,7 +203,7 @@ void Enemy::Update(float dt)
 		Raycast res;
         if (auto character = Character::player.lock()) {
             Vec2 playerPos = character->GetPos();
-            res = associated.CastRaycast(this->associated.box.center(), playerPos, 100, 1);
+            res = associated.CastRaycast(this->associated.box.center(), playerPos, 150, 1);
             if (!res.intersects) {
                 m_lastSeenPlayerPosition = playerPos;
             }
@@ -230,31 +213,56 @@ void Enemy::Update(float dt)
                 /*if (auto character = Character::player.lock()) {
                     Vec2 playerPos = character->GetPos();
                     Vec2 distance = (playerPos - associated.box.center()).normalized();
-                    if (auto enemy = std::dynamic_pointer_cast<Enemy>(this->associated.GetComponent("Enemy").lock())) {
-                        enemy->Issue(Enemy::Command(Enemy::Command::MOVE, distance));
+                    if (auto enemy = std::dynamic_pointer_cast<Boss>(this->associated.GetComponent("Boss").lock())) {
+                        enemy->Issue(Boss::Command(Boss::Command::MOVE, distance));
                     }
                 }*/
-                if (res.intersects) {
+                if (res.intersects || res.maxDistanceExceeded) {
                     animator->SetAnimation("idle");
+                    if (auto e = exclamation.lock())
+                    {
+                        std::dynamic_pointer_cast<SpriteRenderer>(e->GetComponent("SpriteRenderer").lock())->enabled = false;
+                        if (!playerFound)
+                        {
+                            std::dynamic_pointer_cast<Animator>(e->GetComponent("Animator").lock())->SetAnimation("exclamation");
+                            playerFound = false;
+                        }
+                    }
                 }
                 else {
+                    if (auto e = exclamation.lock())
+                    {
+                        std::dynamic_pointer_cast<SpriteRenderer>(e->GetComponent("SpriteRenderer").lock())->enabled = true;
+                        if (!playerFound)
+                        {
+                            std::dynamic_pointer_cast<Animator>(e->GetComponent("Animator").lock())->SetAnimation("exclamation");
+                            playerFound = true;
+                        }
+                    }
                     SetState(StateType::MOVING);
                 }
             }
             break;
             case StateType::ATTACKING: {
-
+                if (m_attackCounter >= 3) {
+					JumpTarget = m_lastSeenPlayerPosition;
+					JumpStart = this->associated.box.center();
+                    jumpTime = 0.0f;
+					state = StateType::JUMPING;
+                }
                 if (auto c = m_attackCollider.lock()) {
                     c->SetDisable(false);
                 }
                 if (auto character = Character::player.lock()) {
                     if (!res.intersects) {
                         Vec2 playerPos = character->GetPos();
-                        this->Issue(Enemy::Command(Enemy::Command::ATTACK, playerPos));
+                        attackSound[counterAttackSound++ % attackSound.size()]->Play();
+                        this->Issue(Boss::Command(Boss::Command::ATTACK, playerPos));
                     }
                 }
                 if (m_attackTimer.Expired()) {
-					m_attackTimer.Restart();
+                    m_attackCounter++;
+                    m_attackTimer.Restart();
                     attacked = false;
                 }
                 if (m_attackTimer.JustExpired())
@@ -267,18 +275,22 @@ void Enemy::Update(float dt)
             }
             break;
             case StateType::MOVING: {
+                if (roarsTimer.Expired()) {
+                    roarsTimer.Restart();
+					roarsSound[counterRoarsSound++ % roarsSound.size()]->Play();
+                }
                 if (auto character = Character::player.lock()) {
                     Vec2 playerPos = character->GetPos();
                     Vec2 distance = (m_lastSeenPlayerPosition - associated.box.center()).normalized();
                     if (res.intersects && Vec2::Distance(m_lastSeenPlayerPosition, this->associated.box.center()) < 50) {
                         SetState(StateType::IDLE);
                     }
-                    else if (auto enemy = std::dynamic_pointer_cast<Enemy>(this->associated.GetComponent("Enemy").lock())) {
-                        if (Vec2::Distance(playerPos, this->associated.box.center()) < 80) {
+                    else if (auto enemy = std::dynamic_pointer_cast<Boss>(this->associated.GetComponent("Boss").lock())) {
+                        if (Vec2::Distance(playerPos, this->associated.box.center()) < 150) {
                             SetState(StateType::ATTACKING);
                         }
                         else {
-                            enemy->Issue(Enemy::Command(Enemy::Command::MOVE, distance));
+                            enemy->Issue(Boss::Command(Boss::Command::MOVE, distance));
                         }
                     }
                 }
@@ -286,6 +298,7 @@ void Enemy::Update(float dt)
             break;
             case StateType::DYING: {
                 animator->SetAnimation("death");
+                deathSound[counterDeathSound++ % deathSound.size()]->Play();
                 if (auto c = m_attackCollider.lock())
                     c->SetDisable(true);
                 if (auto c = m_hurtboxCollider.lock())
@@ -304,6 +317,41 @@ void Enemy::Update(float dt)
                 }
                 return;
 			}
+            case StateType::JUMPING: {
+                if(this->associated.height >=5){
+                    landSound[counterLandSound++ % landSound.size()]->Play();
+                    if(auto c = this->m_attackCollider.lock())
+					    c->SetDisable(true);
+                    if (auto c = m_hurtboxCollider.lock())
+                        c->SetDisable(true);
+                }
+                else {
+                    if (auto c = this->m_attackCollider.lock())
+                        c->SetDisable(false);
+                    if (auto c = m_hurtboxCollider.lock())
+                        c->SetDisable(false);
+                }
+                jumpTime += dt;
+                float t = jumpTime / jumpDuration;
+                if (t > 1.0f) t = 1.0f;
+
+                float positionx = Vec2::lerp(JumpStart.x, JumpTarget.x, t);
+                float positiony = Vec2::lerp(JumpStart.y, JumpTarget.y, t);
+				this->associated.box.Move({ positionx, positiony });
+                if ((this->associated.box.center() - JumpTarget).x > 0) {
+					animator->SetAnimation("r_jump");
+                }
+                else {
+                    animator->SetAnimation("l_jump");
+                }
+                float height = maxJumpHeight * 4.0f * t * (1.0f - t);
+                this->associated.height = height;
+                if (t >= 1.0f) {
+					state = StateType::IDLE;
+                    m_attackCounter = 0;
+                }
+                break;
+            }
             case StateType::FREEZE: {
                 if(m_freeze)
                     animator->SetAnimation("death");
@@ -319,25 +367,26 @@ void Enemy::Update(float dt)
 
 }
 
-void Enemy::Render() {}
+void Boss::Render() {}
 
-Enemy::Command::Command(CommandType type, Vec2 pos) : type(type), pos(pos) {}
+Boss::Command::Command(CommandType type, Vec2 pos) : type(type), pos(pos) {}
 
-void Enemy::OnEvent(Event& e)
+void Boss::OnEvent(Event& e)
 {
     EventDispatcher dispatcher(e);
 
-    dispatcher.Dispatch<OnCollisionEvent>(BIND_EVENT_FN(Enemy::OnCollision));
-    dispatcher.Dispatch<OnDamageTakenEvent>(BIND_EVENT_FN(Enemy::OnDamageTaken));
-    dispatcher.Dispatch<OnEffectEvent<Entity>>(BIND_EVENT_FN(Enemy::OnEffect));
+    dispatcher.Dispatch<OnCollisionEvent>(BIND_EVENT_FN(Boss::OnCollision));
+    dispatcher.Dispatch<OnDamageTakenEvent>(BIND_EVENT_FN(Boss::OnDamageTaken));
+    dispatcher.Dispatch<OnEffectEvent<Entity>>(BIND_EVENT_FN(Boss::OnEffect));
 }
 
-bool Enemy::OnDamageTaken(OnDamageTakenEvent& evt)
+bool Boss::OnDamageTaken(OnDamageTakenEvent& evt)
 {
     if (auto animator = std::dynamic_pointer_cast<Animator>(associated.GetComponent("Animator").lock()))
     {
         if (auto hs = std::dynamic_pointer_cast<HealthSystem>(associated.GetComponent("HealthSystem").lock()))
         {
+            LOG_INFO(hs->GetHp());
             if (hs->GetHp() <= 0)
             {
                 if (auto sr = std::dynamic_pointer_cast<SpriteRenderer>(associated.GetComponent("SpriteRenderer").lock()))
@@ -358,19 +407,20 @@ bool Enemy::OnDamageTaken(OnDamageTakenEvent& evt)
     return true;
 }
 
-bool Enemy::OnCollision(OnCollisionEvent& evt) {
+bool Boss::OnCollision(OnCollisionEvent& evt) {
     GameObject& go = evt.GetGameObject();
     OnDamageTakenEvent e = OnDamageTakenEvent(this->associated, this->damage);
 
     if (go.GetComponent("HealthSystem").lock() && !attacked) {
         go.subject.notify(e);
-		attacked = true;
+        hitsSound[counterHitsSound++ % hitsSound.size()]->Play();
+        attacked = true;
     }
 
     return true;
 }
 
-bool Enemy::OnInteraction(OnInteractionEvent& evt)
+bool Boss::OnInteraction(OnInteractionEvent& evt)
 {
     GameObject& target = evt.GetGameObject();
     switch (evt.GetInteractionType())
@@ -394,7 +444,7 @@ bool Enemy::OnInteraction(OnInteractionEvent& evt)
     return true;
 }
 
-bool Enemy::OnEffect(OnEffectEvent<Entity>& evt)
+bool Boss::OnEffect(OnEffectEvent<Entity>& evt)
 {
     std::vector<Effect<Entity>*> effects = evt.GetEffects();
     for (auto& effect : effects)
@@ -403,5 +453,3 @@ bool Enemy::OnEffect(OnEffectEvent<Entity>& evt)
     }
     return true;
 }
-
-int Enemy::enemyCounter = 0;
