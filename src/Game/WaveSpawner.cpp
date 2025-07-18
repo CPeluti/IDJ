@@ -7,7 +7,7 @@
 #include "Game/Character.h"
 #include "Game/AIController.h"
 
-WaveSpawner::WaveSpawner(GameObject &associated) : Component(associated), enemyCounter(0), currentWave(4), bossCounter(0), bossSpawned(false), win(false), lose(false)
+WaveSpawner::WaveSpawner(GameObject &associated) : Component(associated), enemyCounter(0), currentWave(0), bossCounter(0), bossSpawned(false), win(false), lose(false)
 {
     for (int i = 0; i < 5; i++)
     {
