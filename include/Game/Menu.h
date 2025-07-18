@@ -8,19 +8,20 @@
 #include "Core/Animator.h"
 #include "Core/Text.h"
 #include "Core/Game.h"
-#include "Game/TitleState.h"
 #include "Core/Camera.h"
+
 enum MenuStates {
 	INITIAL,
 	SETTINGS,
-	ALL
+	ALL,
+	START
 };
 
-enum Alignement {
-	START,
-	CENTER,
-	END
-};
+//enum Alignement {
+//	START,
+//	CENTER,
+//	END
+//};
 
 
 bool y_sort(std::shared_ptr<GameObject> i, std::shared_ptr<GameObject> j);
@@ -34,8 +35,9 @@ public:
 	virtual ~Menu() = default;
 	inline void Start() {
 		cursorCoordinates = 0;
-		elementOrder[INITIAL] = std::vector < std::string>({ "continue", "quit"});
+		elementOrder[INITIAL] = std::vector < std::string>({ "continue", "quit" });
 		elementOrder[SETTINGS] = std::vector < std::string>({ "resolution:option", "music:option", "effects:option", "back"});
+		elementOrder[START] = std::vector < std::string>({ "start", "quitStart"});
 
 		this->elements = std::map < std::string, std::shared_ptr<GameObject>>();
 		Animation* buttonAnimation = new Animation(0, 0, 0.0f);
@@ -60,6 +62,61 @@ public:
 		elements["uiCursor"] = uiCursor;
 		elements["tabCursor"] = tabCursor;
 		elements["titleBg"] = titleBg;
+
+		// Start
+		std::shared_ptr<GameObject> startButton = std::make_shared<GameObject>();
+		std::shared_ptr<GameObject> quitStartButton = std::make_shared<GameObject>();
+
+		std::shared_ptr<SpriteRenderer> startButtonRenderer = std::make_shared<SpriteRenderer>(*startButton, "resources/interface/ui_button.png", 3, 1);
+		std::shared_ptr<SpriteRenderer> quitStartButtonRenderer = std::make_shared<SpriteRenderer>(*quitStartButton, "resources/interface/ui_button.png", 3, 1);
+		startButtonRenderer->SetCameraFollower(true);
+		quitStartButtonRenderer->SetCameraFollower(true);
+
+		std::shared_ptr<Animator> quitStartButtonAnimator = std::make_shared<Animator>(*quitStartButton);
+		std::shared_ptr<Animator> startButtonAnimator = std::make_shared<Animator>(*startButton);
+		
+		startButton->AddComponent(startButtonAnimator);
+		quitStartButton->AddComponent(quitStartButtonRenderer);
+		quitStartButton->AddComponent(quitStartButtonAnimator);
+		startButton->AddComponent(startButtonRenderer);
+
+		quitStartButtonAnimator->AddAnimation("default", buttonAnimation);
+		quitStartButtonAnimator->AddAnimation("hover", buttonAnimationHover);
+		quitStartButtonAnimator->AddAnimation("click", buttonAnimationClick);
+		startButtonAnimator->AddAnimation("default", buttonAnimation);
+		startButtonAnimator->AddAnimation("hover", buttonAnimationHover);
+		startButtonAnimator->AddAnimation("click", buttonAnimationClick);
+
+		startButton->box.Move(Game::GetInstance().GetWindowSize() / 2 / Camera::zoom);
+		startButton->box.MoveToPos({ 0,80 });
+		quitStartButton->box.RawMove(startButton->box.GetPos());
+		quitStartButton->box.Move({ startButton->box.center().x,startButton->box.center().y });
+		quitStartButton->box.MoveToPos({ 0.,-12 - startButton->box.GetSize().y });
+
+		startButton->z = 1;
+		quitStartButton->z = 1;
+
+		elements["start:button"] = startButton;
+		elements["quitStart:button"] = quitStartButton;
+		elementsStateMap["start:button"] = START;
+		elementsStateMap["quitStart:button"] = START;
+
+		std::shared_ptr<GameObject> start = std::make_shared<GameObject>();
+		std::shared_ptr<Text> startText = std::make_shared<Text>(*start, "resources/font/neodgm.ttf", 7, Text::SOLID, "Exit", SDL_Color{ 132, 58, 19 }, 0, true);
+		start->AddComponent(startText);
+		elements["start:text"] = start;
+
+		std::shared_ptr<GameObject> quitStart = std::make_shared<GameObject>();
+		std::shared_ptr<Text> quitStartText = std::make_shared<Text>(*quitStart, "resources/font/neodgm.ttf", 7, Text::SOLID, "Start", SDL_Color{ 132, 58, 19 }, 0, true);
+		quitStart->AddComponent(quitStartText);
+		elements["quitStart:text"] = quitStart;
+
+		start->box.Move(startButton->box.center());
+		quitStart->box.Move(quitStartButton->box.center());
+		start->z = 2;
+		quitStart->z = 2;
+		elementsStateMap["start:text"] = START;
+		elementsStateMap["quitStart:text"] = START;
 
 		// Initial
 		std::shared_ptr<GameObject> pauseBg = std::make_shared<GameObject>();
@@ -363,7 +420,7 @@ public:
 		std::vector < std::shared_ptr<GameObject>> renderOrder;
  		if (!enabled) return;
 		for (const auto& element : elements) {
-			if (currentState == elementsStateMap[element.first] || elementsStateMap[element.first] == ALL) {
+			if (currentState == elementsStateMap[element.first] || (elementsStateMap[element.first] == ALL && currentState != START)) {
 				//LOG_INFO("Rendering element: " + element.first);
 				renderOrder.push_back(element.second);
 			}
@@ -405,7 +462,11 @@ public:
 		else if(clickedElement == "quit")
 		{
 			Game::GetInstance().GetCurrentState()->SetPopRequested(true);
-			Game::GetInstance().Push(std::make_unique<TitleState>());
+
+			//Game::GetInstance().Push(std::make_unique<TitleState>());
+		}
+		else if (clickedElement == "quitStart") {
+			Game::GetInstance().GetCurrentState()->SetQuitRequested(true);
 		}
 		else if(clickedElement == "back")
 		{
@@ -441,6 +502,9 @@ public:
 		{
 			// Increase resolution logic
 				
+		}
+		else if (clickedElement == "start") {
+			Game::GetInstance().Push("Stage");
 		}
 		return clickedElement;
 	};
