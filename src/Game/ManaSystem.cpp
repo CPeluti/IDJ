@@ -3,7 +3,7 @@
 #include "Game/Lifebar.h"
 #include "Game/ManaSystem.h"
 
-ManaSystem::ManaSystem(GameObject& associated, float mana) : Component(associated), m_mana(mana), m_manaRegenTimer(5.0f), m_manaPerIncrease(10.0f)
+ManaSystem::ManaSystem(GameObject& associated, float mana) : Component(associated), m_mana(mana), m_manaRegenTimer(1.0f), m_manaPerIncrease(20.0f)
 {
     m_maxMana = mana;
     associated.subject.addObserver(this);
@@ -16,6 +16,9 @@ ManaSystem::ManaSystem(GameObject& associated, float mana) : Component(associate
 float ManaSystem::DecreaseMana(float amount)
 {
     m_mana -= amount;
+    if (m_mana < 0) {
+        m_mana = 0;
+	}
     if (auto manabar = m_manabar.lock()) {
         manabar->setAmount(m_mana);
     }
@@ -25,6 +28,9 @@ float ManaSystem::DecreaseMana(float amount)
 float ManaSystem::IncreaseMana()
 {
     m_mana += this->m_manaPerIncrease;
+    if (m_mana > m_maxMana) {
+        m_mana = m_maxMana;
+	}
     if (auto manabar = m_manabar.lock()) {
         manabar->setAmount(m_mana);
     }
