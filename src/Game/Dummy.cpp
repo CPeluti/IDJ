@@ -125,8 +125,8 @@ void Dummy::Start()
     this->m_enemies.push_back(shared_from_this());
     std::shared_ptr<GameObject> exclamation = std::make_shared<GameObject>();
     std::shared_ptr<SpriteRenderer> exclamationSprite = std::make_shared<SpriteRenderer>(*exclamation, "resources/img/exclamation.png", 6, 1);
-    std::shared_ptr<Animator> exclamationAnimator = std::make_shared<Animator>(*exclamation, false);
-    exclamationAnimator->AddAnimation("exclamation", new Animation(0, 5, 0.025));
+    std::shared_ptr<Animator> exclamationAnimator = std::make_shared<Animator>(*exclamation);
+    exclamationAnimator->AddAnimation("exclamation", new Animation(0, 5, 0.025, false));
     exclamation->AddComponent(exclamationSprite);
     exclamation->AddComponent(exclamationAnimator);
     Game::GetInstance().GetCurrentState()->AddObject(exclamation);
