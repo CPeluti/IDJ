@@ -1,0 +1,82 @@
+{
+    "activeFile": "teste.tmx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "C:/Users/peluti/Downloads/Typeturge/tiles/dungeon-2.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/peluti/Downloads/Typeturge/tiles/dungeon-completo.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/peluti/Downloads/Typeturge/tiles/dungeon-novo.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/peluti/Downloads/Typeturge/tiles/tilemap.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/peluti/Downloads/Typeturge/tiles/tileset/dungeon-2.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "C:/Users/peluti/Downloads/Typeturge/tiles/tileset/dungeon-completo.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "C:/Users/peluti/Downloads/Typeturge/tiles/tileset/dungeon-novo.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/peluti/Downloads/Typeturge/tiles/tileset/teste-2..tmx": {
+            "scale": 0.0625,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 8128,
+                "y": 5248
+            }
+        },
+        "C:/Users/peluti/Downloads/Typeturge/tiles/viradinhos.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/peluti/projetos/IDJ/resources/dungeon-2.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/peluti/projetos/IDJ/resources/dungeon-completo.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/peluti/projetos/IDJ/resources/dungeon-novo.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/peluti/projetos/IDJ/resources/viradinhos.tsx": {
+            "scaleInDock": 1
+        },
+        "teste.tmx": {
+            "scale": 0.25,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 1988,
+                "y": 3784
+            }
+        },
+        "tileset.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        }
+    },
+    "last.externalTilesetPath": "C:/Users/peluti/Downloads/Typeturge/tiles/tileset",
+    "last.imagePath": "C:/Users/peluti/projetos/IDJ/resources/img",
+    "openFiles": [
+        "teste.tmx",
+        "tileset.tsx",
+        "C:/Users/peluti/Downloads/Typeturge/tiles/tileset/teste-2..tmx"
+    ],
+    "project": "tilemap.tiled-project",
+    "recentFiles": [
+        "C:/Users/peluti/Downloads/Typeturge/tiles/tileset/teste-2..tmx",
+        "C:/Users/peluti/Downloads/Typeturge/tiles/tileset/dungeon-2.tsx",
+        "C:/Users/peluti/Downloads/Typeturge/tiles/tileset/dungeon-completo.tsx",
+        "tileset.tsx",
+        "teste.tmx"
+    ]
+}

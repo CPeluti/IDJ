@@ -18,6 +18,8 @@
 #include "Game/StageState.h"
 #include "Game/TitleState.h"
 #include "Game/Zombie.h"
+#include "Game/Boss.h"
+#include "Game/Enemy.h"
 #include "Game/Character.h"
 #include "Game/EndState.h"
 #include "Game/GameData.h"
@@ -42,7 +44,7 @@ void createZombie(Vec2 pos, State *state)
     enemy->box.Move(pos);
 }
 
-StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
+StageState::StageState() : backgroundMusic("resources/audio/levelmusic.mp3"), bossMusic("resources/audio/bossmusic.mp3")
 {
 
     Camera::zoom = 3.0f;
@@ -81,17 +83,11 @@ StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
         {116, fullTileCollider},
         {79, fullTileCollider}
     });
-    std::shared_ptr<TileMap> tilemap = std::make_shared<TileMap>(*bg, "resources/map/tilemap.txt", tileset);
-    bg->AddComponent(tilemap);
+    std::shared_ptr<TileMap> newtilemap = std::make_shared<TileMap>(*bg, "resources/map/tilemap.txt", tileset);
+	tilemap = newtilemap;
+    bg->AddComponent(newtilemap);
     this->AddObject(bg);
 
-    std::shared_ptr<GameObject> character = std::make_shared<GameObject>();
-    std::shared_ptr<Character> characterComponent = std::make_shared<Character>(*character, "resources/img/Protagonista.png", tilemap, true);
-    character->AddComponent(characterComponent);
-    this->AddObject(character);
-    character->box.RawMove({4000, 4000});
-    Character::player = characterComponent;
-    Camera::Follow(character);
     // std::shared_ptr<GameObject> waveSpawner = std::make_shared<GameObject>();
     // std::shared_ptr<WaveSpawner>ws = std::make_shared<WaveSpawner>(*waveSpawner);
     // waveSpawner->AddComponent(ws);
@@ -107,17 +103,44 @@ void StageState::LoadAssets()
 {
     //backgroundMusic = Music("resources/audio/BGM.wav");
 }
+
+void Restart() {
+    
+}
 void StageState::Update(float dt)
 {
+    if (!isBossStage && Boss::bossCounter > 0) {
+        //backgroundMusic.Stop();
+        bossMusic.Play();
+		isBossStage = true;
+    }
     InputManager& ip = InputManager::GetInstance();
     if (SDL_QuitRequested() || ip.QuitRequested())
     {
         quitRequested = true;
     }
-    if (m_paused) {
-		menu->Update(dt);
-        return;
-    };
+ 
+    if (auto character = Character::player.lock()) {
+        lastPlayerPos = character->GetPos();
+    }
+
+    if (auto ws = std::dynamic_pointer_cast<WaveSpawner>(WaveSpawnerObject->GetComponent("WaveSpawner").lock())) {
+        if (ws->Lose()) {
+			menu->enabled = true;   
+			menu->SetCurrentState(MenuStates::LOSE);
+            menu->Update(dt);
+            return;
+        }
+        else if (ws->Win()) {
+            menu->enabled = true;
+            menu->SetCurrentState(MenuStates::WIN);
+            menu->Update(dt);
+            return;
+        } else if (m_paused) {
+            menu->Update(dt);
+            return;
+        }
+    }
     float fps = Game::GetInstance().GetFps();
     std::string fpsstring = fmt::format("FPS: {}", fps);
     if(auto shared = fpsText.lock())
@@ -188,6 +211,13 @@ void StageState::Render()
 
 void StageState::Start()
 {
+    std::shared_ptr<GameObject> character = std::make_shared<GameObject>();
+    std::shared_ptr<Character> characterComponent = std::make_shared<Character>(*character, "resources/img/Protagonista.png", tilemap, true);
+    character->AddComponent(characterComponent);
+    this->AddObject(character);
+    character->box.RawMove({ 4000, 4000 });
+    Character::player = characterComponent;
+    Camera::Follow(character);
     WaveSpawnerObject = std::make_shared<GameObject>();
     WaveSpawnerObject->AddComponent(std::make_shared<WaveSpawner>(*WaveSpawnerObject));
     this->AddObject(WaveSpawnerObject);
@@ -195,7 +225,7 @@ void StageState::Start()
     LoadAssets();
     StartArray();
     started = true;
-    //backgroundMusic.Play();
+    backgroundMusic.Play();
 }
 
 void StageState::Resume() { this->m_paused = false; menu->enabled = false;}
