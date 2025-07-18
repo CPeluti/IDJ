@@ -22,7 +22,7 @@ public:
         m_attackTimer(1),
 		frameCountW(frameCountW),
 		frameCountH(frameCountH),
-		m_movementSpeed(50)
+		m_movementSpeed(10)
     {
 
 		//Basic initilization
