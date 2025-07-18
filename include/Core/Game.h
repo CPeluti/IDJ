@@ -15,7 +15,7 @@ public:
     GPU_Target *GetGPUTarget();
     State* GetCurrentState();
 
-    void Push(std::unique_ptr<State> state);
+    void Push(std::string state);
 
     void Run();
 
