@@ -17,7 +17,7 @@ public:
     Enemy(GameObject& associated, std::string sprite, int frameCountW, int frameCountH) : Component(associated),
         Entity(140),
         hp(500),
-        damage(10),
+        damage(100),
         deathTimer(1),
         m_attackTimer(1),
 		frameCountW(frameCountW),

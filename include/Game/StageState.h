@@ -30,4 +30,6 @@ private:
     std::weak_ptr<GameObject> player;
     std::weak_ptr<GameObject> spawner;
     std::shared_ptr<Menu> menu;
+	std::weak_ptr<TileMap> tilemap; 
+    Vec2 lastPlayerPos;
 };

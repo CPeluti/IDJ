@@ -14,7 +14,9 @@ enum MenuStates {
 	INITIAL,
 	SETTINGS,
 	ALL,
-	START
+	START,
+	WIN,
+	LOSE
 };
 
 //enum Alignement {
@@ -36,8 +38,11 @@ public:
 	inline void Start() {
 		cursorCoordinates = 0;
 		elementOrder[INITIAL] = std::vector < std::string>({ "continue", "quit" });
+		elementOrder[LOSE] = std::vector < std::string>({ "continue", "quit" });
+		elementOrder[WIN] = std::vector < std::string>({ "continue", "quit" });
 		elementOrder[SETTINGS] = std::vector < std::string>({ "resolution:option", "music:option", "effects:option", "back"});
 		elementOrder[START] = std::vector < std::string>({ "start", "quitStart"});
+		currentState = INITIAL;
 
 		this->elements = std::map < std::string, std::shared_ptr<GameObject>>();
 		Animation* buttonAnimation = new Animation(0, 0, 0.0f);
@@ -179,10 +184,32 @@ public:
 		elements["continue:button"] = continueButton;
 		elements["settings:button"] = settingsButton;
 		elements["quit:button"] = quitButton;
+
+		elements["pauseBgWin"] = pauseBg;
+		elements["continueWin:button"] = continueButton;
+		elements["settingsWin:button"] = settingsButton;
+		elements["quitWin:button"] = quitButton;
+
+
+		elements["pauseBgLose"] = pauseBg;
+		elements["continueLose:button"] = continueButton;
+		elements["settingsLose:button"] = settingsButton;
+		elements["quitLose:button"] = quitButton;
+
 		elementsStateMap["pauseBg"] = INITIAL;
 		elementsStateMap["continue:button"] = INITIAL;
 		elementsStateMap["settings:button"] = INITIAL;
 		elementsStateMap["quit:button"] = INITIAL;
+
+		elementsStateMap["pauseBgWin"] = WIN;
+		elementsStateMap["continueWin:button"] = WIN;
+		elementsStateMap["settingsWin:button"] = WIN;
+		elementsStateMap["quitWin:button"] = WIN;
+
+		elementsStateMap["pauseBgLose"] = LOSE;
+		elementsStateMap["continueLose:button"] = LOSE;
+		elementsStateMap["settingsLose:button"] = LOSE;
+		elementsStateMap["quitLose:button"] = LOSE;
 		// Settings
 		{
 			std::shared_ptr<GameObject> settingsBg = std::make_shared<GameObject>();
@@ -319,6 +346,73 @@ public:
 			elementsStateMap["continuar:text"] = INITIAL;
 			elementsStateMap["settings:text"] = INITIAL;
 			elementsStateMap["quit:text"] = INITIAL;
+		}
+		{
+			std::shared_ptr<GameObject> pause = std::make_shared<GameObject>();
+			std::shared_ptr<Text> pauseText = std::make_shared<Text>(*pause, "resources/font/neodgm.ttf", 14, Text::SOLID, "Vitoria!", SDL_Color{ 79, 38, 16 }, 0, true);
+			pause->AddComponent(pauseText);
+			elements["pauseWin:text"] = pause;
+
+			std::shared_ptr<GameObject> continuar = std::make_shared<GameObject>();
+			std::shared_ptr<Text> continuarText = std::make_shared<Text>(*continuar, "resources/font/neodgm.ttf", 7, Text::SOLID, "Jogar Novamente", SDL_Color{ 132, 58, 19 }, 0, true);
+			continuar->AddComponent(continuarText);
+			elements["continuarWin:text"] = continuar;
+
+			std::shared_ptr<GameObject> settings = std::make_shared<GameObject>();
+			std::shared_ptr<Text> settingsText = std::make_shared<Text>(*settings, "resources/font/neodgm.ttf", 7, Text::SOLID, "Opcoes", SDL_Color{ 132, 58, 19 }, 0, true);
+			elements["settingsWin:text"] = settings;
+
+			std::shared_ptr<GameObject> quit = std::make_shared<GameObject>();
+			std::shared_ptr<Text> quitText = std::make_shared<Text>(*quit, "resources/font/neodgm.ttf", 7, Text::SOLID, "Sair", SDL_Color{ 132, 58, 19 }, 0, true);
+			quit->AddComponent(quitText);
+			elements["quitWin:text"] = quit;
+
+			pause->box.Move(titleBg->box.center());
+			continuar->box.Move(continueButton->box.center());
+			settings->box.Move(settingsButton->box.center());
+			quit->box.Move(quitButton->box.center());
+			pause->z = 2;
+			continuar->z = 2;
+			settings->z = 2;
+			quit->z = 2;
+			elementsStateMap["pauseWin:text"] = WIN;
+			elementsStateMap["continuarWin:text"] = WIN;
+			elementsStateMap["settingsWin:text"] = WIN;
+			elementsStateMap["quitWin:text"] = WIN;
+		}
+
+		{
+			std::shared_ptr<GameObject> pause = std::make_shared<GameObject>();
+			std::shared_ptr<Text> pauseText = std::make_shared<Text>(*pause, "resources/font/neodgm.ttf", 14, Text::SOLID, "Derrota!", SDL_Color{ 79, 38, 16 }, 0, true);
+			pause->AddComponent(pauseText);
+			elements["pauseLose:text"] = pause;
+
+			std::shared_ptr<GameObject> continuar = std::make_shared<GameObject>();
+			std::shared_ptr<Text> continuarText = std::make_shared<Text>(*continuar, "resources/font/neodgm.ttf", 7, Text::SOLID, "Tentar Novamente", SDL_Color{ 132, 58, 19 }, 0, true);
+			continuar->AddComponent(continuarText);
+			elements["continuarLose:text"] = continuar;
+
+			std::shared_ptr<GameObject> settings = std::make_shared<GameObject>();
+			std::shared_ptr<Text> settingsText = std::make_shared<Text>(*settings, "resources/font/neodgm.ttf", 7, Text::SOLID, "Opcoes", SDL_Color{ 132, 58, 19 }, 0, true);
+			elements["settingsLose:text"] = settings;
+
+			std::shared_ptr<GameObject> quit = std::make_shared<GameObject>();
+			std::shared_ptr<Text> quitText = std::make_shared<Text>(*quit, "resources/font/neodgm.ttf", 7, Text::SOLID, "Sair", SDL_Color{ 132, 58, 19 }, 0, true);
+			quit->AddComponent(quitText);
+			elements["quitLose:text"] = quit;
+
+			pause->box.Move(titleBg->box.center());
+			continuar->box.Move(continueButton->box.center());
+			settings->box.Move(settingsButton->box.center());
+			quit->box.Move(quitButton->box.center());
+			pause->z = 2;
+			continuar->z = 2;
+			settings->z = 2;
+			quit->z = 2;
+			elementsStateMap["pauseLose:text"] = LOSE;
+			elementsStateMap["continuarLose:text"] = LOSE;
+			elementsStateMap["settingsLose:text"] = LOSE;
+			elementsStateMap["quitLose:text"] = LOSE;
 		}
 
 		//Setting texts
@@ -459,7 +553,7 @@ public:
 			Game::GetInstance().GetCurrentState()->Resume();
 				
 		}
-		else if(clickedElement == "quit")
+		else if(clickedElement == "quit" || clickedElement=="quitLose" || clickedElement =="quitWin")
 		{
 			Game::GetInstance().GetCurrentState()->SetPopRequested(true);
 
@@ -472,6 +566,13 @@ public:
 		{
 			currentState = INITIAL;
 				
+		}
+		else if (clickedElement == "continueWin" || clickedElement == "continueLose")
+		{
+			currentState = INITIAL;
+			Game::GetInstance().GetCurrentState()->Restart();
+
+
 		}
 		else if(clickedElement == "decreaseMusicVolume")
 		{

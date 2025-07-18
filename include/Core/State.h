@@ -19,7 +19,7 @@ public:
     virtual void LoadAssets() = 0;
     virtual void Update(float dt) = 0;
     virtual void Render() = 0;
-
+    virtual void Restart() {}
     virtual void Start() = 0;
     virtual void Resume() = 0;
     virtual void Pause() = 0;
