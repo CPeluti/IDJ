@@ -1,3 +1,4 @@
+#pragma once
 #include "Core/Component.h"
 #include "Core/GameObject.h"
 #include "Events/BasicEvent.h"
@@ -6,7 +7,7 @@
 class HealthSystem : public Component, public Observer
 {
 public:
-    HealthSystem(GameObject &associated, float hp);
+    HealthSystem(GameObject &associated, float hp, bool boss = false);
 
     void Update(float dt) {}
     void Render() {}
@@ -29,8 +30,10 @@ public:
     };
 
 private:
+    bool m_boss;
     float hp;
     float m_maxHp;
     bool m_enableLifebar = true;
     std::weak_ptr <Lifebar> m_lifebar;
+    std::weak_ptr<GameObject> spriteLifebar;
 };
