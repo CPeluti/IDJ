@@ -2,16 +2,16 @@
 #include "Core/Camera.h"
 
 #include "Game/WaveSpawner.h"
-#include "Game/Zombie.h"
+#include "Game/Enemy.h"
 #include "Game/Character.h"
 #include "Game/AIController.h"
 
-WaveSpawner::WaveSpawner(GameObject &associated) : Component(associated), zombieCounter(0), npcCounter(0), currentWave(0)
+WaveSpawner::WaveSpawner(GameObject &associated) : Component(associated), enemyCounter(0), currentWave(0)
 {
     for (int i = 0; i < 2; i++)
     {
-        Wave *w = new Wave(1, 0, 1);
-        // w->cooldown.Restart();
+        Wave *w = new Wave(1, 5);
+         w->cooldown.Restart();
         waves.push_back(w);
     }
 }
@@ -32,25 +32,22 @@ void WaveSpawner::Update(float dt)
         Vec2 distance = {windowSize.x / 2, .0};
 
         if(auto s = std::move(Game::GetInstance().GetCurrentState())){
-            if (zombieCounter < waves[currentWave]->zombies)
+            if (enemyCounter <= waves[currentWave]->enemies)
             {
-                std::shared_ptr<GameObject> go = std::make_shared<GameObject>();
-                std::shared_ptr<Zombie> z = std::make_shared<Zombie>(*go);
-                go->AddComponent(z);
-                s->AddObject(go);
-                go->box.Move(Camera::pos + windowSize / 2 + Vec2::Rotate({distance}, randomAngle));
-                zombieCounter++;
-            }
-            if(npcCounter < waves[currentWave]->npcs){
-                randomAngle = rand() % 36000 / 100.0;
-                std::shared_ptr<GameObject> cgo = std::make_shared<GameObject>();
-                //std::shared_ptr<Character> c = std::make_shared<Character>(*cgo, "resources/img/NPC.png");
-                std::shared_ptr<AIController> a = std::make_shared<AIController>(*cgo);
-                //cgo->AddComponent(c);
-                cgo->AddComponent(a);
-                s->AddObject(cgo);
-                cgo->box.Move(Camera::pos + windowSize / 2 + Vec2::Rotate({distance}, randomAngle));
-                npcCounter++;
+                std::shared_ptr<GameObject> enemy = std::make_shared<GameObject>();
+                std::shared_ptr<Enemy> enemyComponent = std::make_shared<Enemy>(*enemy, "resources/img/Axolote.png", 8, 7);
+                //std::shared_ptr<Enemy> z = std::make_shared<Enemy>(*go);
+                enemy->AddComponent(enemyComponent);
+                s->AddObject(enemy);
+                Vec2 targetPos = Camera::pos + (windowSize / 2) + Vec2::Rotate({ distance }, randomAngle);
+                Raycast r = this->associated.CastRaycast(Camera::pos + (windowSize / 2), targetPos, 300);
+                if (r.intersects) {
+					enemy->box.Move(r.intersectionPoint - enemy->box.GetSize());
+                }
+                else {
+                    enemy->box.Move(targetPos);
+                }
+                enemyCounter++;
             }
         }
 
@@ -62,11 +59,10 @@ void WaveSpawner::Update(float dt)
     }
     else
     {
-        if (Zombie::zombieCounter == 0 && Character::npcCounter == 0)
+        if (Enemy::enemyCounter == 0)
         {
             currentWave++;
-            zombieCounter = 0;
-            npcCounter = 0;
+            enemyCounter = 0;
         }
     }
 }
