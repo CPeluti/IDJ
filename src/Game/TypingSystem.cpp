@@ -38,13 +38,17 @@ void TypingSystem::HandleInput(const SDL_Event &event)
   break;
   case SDL_KEYDOWN:
   {
-    if (event.key.keysym.sym == SDLK_BACKSPACE && !this->text.empty())
+    if (event.key.keysym.sym == SDLK_BACKSPACE && !this->text.empty() && this->text != " ")
     {
       this->text.pop_back();
+      if (this->text.empty()) {
+          this->text.clear();
+      }
     }
     else if (event.key.keysym.sym == SDLK_RETURN || event.key.keysym.sym == SDLK_KP_ENTER)
     {
-      this->submitted = true;
+      this->SetIsTypingMode(true);
+      this->SetSubmitted(true);
       this->HandleSubmit();
       Vec2 target;
       target.x = ip.GetMouseX();
@@ -53,6 +57,9 @@ void TypingSystem::HandleInput(const SDL_Event &event)
       if (auto character = std::dynamic_pointer_cast<Character>(Character::player.lock())) {
           character->Issue(c);
       }
+    }
+    else if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_DOWN || event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_LEFT || event.key.keysym.sym == SDLK_LSHIFT || event.key.keysym.sym == SDLK_RSHIFT) {
+		this->isTypingMode = false;
     }
   }
   default:
