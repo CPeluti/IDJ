@@ -257,7 +257,7 @@ private:
 class ProjectileSpell : public Spell<Projectile>
 {
 public:
-    ProjectileSpell(Vec2 initialPos, Vec2 target, SpellAssets assets) : Spell({}, 30, 10, 200), m_initialPos(initialPos), m_target(target), m_assets(assets) {
+    ProjectileSpell(Vec2 initialPos, Vec2 target, SpellAssets assets) : Spell({}, 30, 500, 200), m_initialPos(initialPos), m_target(target), m_assets(assets) {
     }
     
     ~ProjectileSpell() {}
@@ -458,7 +458,7 @@ public:
             }
         }
         std::shared_ptr<GameObject> spellObj = std::make_shared<GameObject>();
-        std::shared_ptr<Animator> animator = std::make_shared<Animator>(*spellObj, false);
+        std::shared_ptr<Animator> animator = std::make_shared<Animator>(*spellObj);
         spellObj->box.Move(m_pos);
         spellObj->z = 2;
         std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(*spellObj, m_assets.baseSprite, m_assets.frameCountW, m_assets.frameCountH);

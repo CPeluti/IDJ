@@ -8,7 +8,7 @@
 #include "Game/Lifebar.h"
 #include "Game/Character.h"
 
-Lifebar::Lifebar(GameObject &associated, float max, Vec2 size, Vec2 offset, SDL_Color color) : Component(associated), total(max), size(size), offset(offset), m_color(color)
+Lifebar::Lifebar(GameObject &associated, float max, Vec2 size, Vec2 offset, SDL_Color color, bool boss) : Component(associated), m_boss(boss), total(max), size(size), offset(offset), m_color(color)
 {
     current = max;
     //LOG_INFO(size);
@@ -21,8 +21,14 @@ bool Lifebar::Is(std::string type)
 
 void Lifebar::Update(float dt)
 {
-    lifebar.x = (int)(this->associated.box.GetPos().x - offset.x);
-    lifebar.y = (int)(this->associated.box.GetPos().y - offset.y);
+    if(m_boss){
+        lifebar.x = (int)(this->associated.box.GetPos().x + offset.x);
+        lifebar.y = (int)(this->associated.box.GetPos().y + offset.y);
+    }
+    else {
+        lifebar.x = (int)(this->associated.box.GetPos().x - offset.x);
+        lifebar.y = (int)(this->associated.box.GetPos().y - offset.y);
+    }
 }
 
 void Lifebar::Render()
@@ -36,7 +42,6 @@ void Lifebar::Render()
     barToFill.x = lifebar.x + (lifebar.w / 2) - (barToFill.w / 2);
     barToFill.y = lifebar.y + (lifebar.h / 2) - (barToFill.h / 2);
     barToFill.w = barToFill.w * current / total;
-
     barToFill.x *= Camera::zoom;
     barToFill.y *= Camera::zoom;
     barToFill.w *= Camera::zoom;
@@ -47,13 +52,21 @@ void Lifebar::Render()
     bg.w *= Camera::zoom;
     bg.h *= Camera::zoom;
 
-    barToFill.x -= Camera::pos.x;
-    barToFill.y -= Camera::pos.y;
-
-    bg.x -= Camera::pos.x;
-    bg.y -= Camera::pos.y;
+    if (!m_boss) {
+        barToFill.x -= Camera::pos.x;
+        barToFill.y -= Camera::pos.y;
+        bg.x -= Camera::pos.x;
+        bg.y -= Camera::pos.y;
+    }
     // SDL_SetRenderDrawColor(Game::GetInstance().GetRenderer(), 0, 0, 0, 255);
+    if (m_boss) {
+        GPU_RectangleFilled(Game::GetInstance().GetGPUTarget(), bg.x, bg.y, bg.x + bg.w, bg.y + bg.h, { 140,154,145, 255 });
+
+    }
+    else {
+
     GPU_RectangleFilled(Game::GetInstance().GetGPUTarget(), bg.x, bg.y, bg.x + bg.w, bg.y + bg.h, {0, 0, 0, 255});
+    }
     // SDL_SetRenderDrawColor(Game::GetInstance().GetRenderer(), 255, 0, 0, 255);
     GPU_RectangleFilled(Game::GetInstance().GetGPUTarget(), barToFill.x, barToFill.y, barToFill.x + barToFill.w, barToFill.y + barToFill.h, m_color);
 }
