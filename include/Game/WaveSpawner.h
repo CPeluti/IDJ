@@ -11,8 +11,9 @@ public:
     bool Is(std::string type);
 
 private:
-    int zombieCounter;
-    int npcCounter;
+    int enemyCounter;
+	bool bossSpawned;
+    bool bossCounter;
     std::vector<Wave *> waves;
     int currentWave;
 };

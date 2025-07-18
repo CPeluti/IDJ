@@ -23,10 +23,12 @@ public:
 		frameCountW(frameCountW),
 		frameCountH(frameCountH),
 		m_movementSpeed(50),
+        deathSoundTimer(2),
         roarsTimer(3),
-        hitsTimer(3),
-        attackTimer(3),
-        landTimer(3)
+        hitsTimer(0.6f),
+        attackTimer(0.6f),
+        landTimer(2.5f),
+        damageTimer(0.4f)
     {
 
 		//Basic initilization
@@ -95,7 +97,8 @@ public:
         ATTACKING,
         DYING,
         FREEZE,
-		JUMPING
+		JUMPING,
+        DAMAGE
     };
 
     void Start();
@@ -157,9 +160,11 @@ private:
 	float maxJumpHeight = 100.0f; // altura máxima do pulo
 
     Timer roarsTimer;
+    Timer deathSoundTimer;
     Timer hitsTimer;
     Timer attackTimer;
     Timer landTimer;
+    Timer damageTimer;
 
     int counterRoarsSound = 0;
     int counterHitsSound = 0;
