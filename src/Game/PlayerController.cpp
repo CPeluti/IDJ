@@ -19,19 +19,19 @@ void PlayerController::Update(float dt)
 
     Vec2 direction = {0, 0};
 
-    if (ip.IsKeyDown(A_KEY))
+    if (ip.IsKeyDown(LEFT_ARROW_KEY))
     {
         direction.x -= 1;
     }
-    if (ip.IsKeyDown(D_KEY))
+    if (ip.IsKeyDown(RIGHT_ARROW_KEY))
     {
         direction.x += 1;
     }
-    if (ip.IsKeyDown(W_KEY))
+    if (ip.IsKeyDown(UP_ARROW_KEY))
     {
         direction.y -= 1;
     }
-    if (ip.IsKeyDown(S_KEY))
+    if (ip.IsKeyDown(DOWN_ARROW_KEY))
     {
         direction.y += 1;
     }
@@ -74,7 +74,7 @@ void PlayerController::Update(float dt)
         //    s->AddObject(enemy);
         //}
     }
-    if (ip.KeyPress(SPACE_KEY))
+    if (ip.KeyPress(SHIFT_KEY) || ip.KeyPress(SHIFT_RIGHT_KEY))
     {
         Character::Command c = Character::Command(Character::Command::DASH, {0,0});
         if (auto character = std::dynamic_pointer_cast<Character>(this->associated.GetComponent("Character").lock())) {
