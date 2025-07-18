@@ -62,15 +62,15 @@ StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
     Rect fullTileCollider = {0, 0, 16, 16};
     Rect halfTileLeftCollider = {0, 0, 9, 16};
     Rect halfTileRightCollider = {7, 0, 9, 16};
-    TileSet *tileset = new TileSet(16, 16, "resources/img/TilesetCastle.png", std::map<int, Rect>{
-        {97, fullTileCollider},
-        {41, fullTileCollider},
-        {32, fullTileCollider},
-        {27, fullTileCollider},
-        {29, fullTileCollider},
-        {98, fullTileCollider},
-        {80, fullTileCollider},
-        { 152, fullTileCollider },
+    TileSet *tileset = new TileSet(16, 16, "resources/img/tileset.png", std::map<int, Rect>{
+        {180, fullTileCollider},
+        {153, fullTileCollider},
+        {70, fullTileCollider},
+        {154, fullTileCollider},
+        {181, fullTileCollider},
+        {234, fullTileCollider},
+        {208, fullTileCollider},
+        { 207, fullTileCollider },
         { 151, fullTileCollider },
         { 116, halfTileRightCollider },
         { 134, fullTileCollider },
@@ -81,7 +81,7 @@ StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
         {116, fullTileCollider},
         {79, fullTileCollider}
     });
-    std::shared_ptr<TileMap> tilemap = std::make_shared<TileMap>(*bg, "resources/map/testec.txt", tileset);
+    std::shared_ptr<TileMap> tilemap = std::make_shared<TileMap>(*bg, "resources/map/tilemap.txt", tileset);
     bg->AddComponent(tilemap);
     this->AddObject(bg);
 
@@ -89,7 +89,7 @@ StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
     std::shared_ptr<Character> characterComponent = std::make_shared<Character>(*character, "resources/img/Protagonista.png", tilemap, true);
     character->AddComponent(characterComponent);
     this->AddObject(character);
-    character->box.RawMove({30, 80});
+    character->box.RawMove({4000, 4000});
     Character::player = characterComponent;
     Camera::Follow(character);
     // std::shared_ptr<GameObject> waveSpawner = std::make_shared<GameObject>();
