@@ -166,7 +166,7 @@ void Enemy::Update(float dt)
         while (taskQueue.size() > 0)
         {
             speed = { 0, 0 };
-			m_movementSpeed = 10;
+			//m_movementSpeed = 10;
             Command c = taskQueue.front();
             switch (c.type)
             {
@@ -274,7 +274,7 @@ void Enemy::Update(float dt)
                         SetState(StateType::IDLE);
                     }
                     else if (auto enemy = std::dynamic_pointer_cast<Enemy>(this->associated.GetComponent("Enemy").lock())) {
-                        if (Vec2::Distance(playerPos, this->associated.box.center()) < 80) {
+                        if (Vec2::Distance(playerPos, this->associated.box.center()) < 30) {
                             SetState(StateType::ATTACKING);
                         }
                         else {
@@ -351,6 +351,7 @@ bool Enemy::OnDamageTaken(OnDamageTakenEvent& evt)
                 }
                 deathTimer.Restart();
                 state = StateType::DYING;
+                deathSound.Play();
             }
             return true;
         }

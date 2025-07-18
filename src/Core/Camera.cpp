@@ -7,17 +7,20 @@ Vec2 Camera::pos = {0, 0};
 Vec2 Camera::speed = {0, 0};
 float Camera::zoom = 1.0f;
 float Camera::smoothness = 0.0f;
+bool Camera::following = false;
 
 std::weak_ptr<GameObject> Camera::focus = std::weak_ptr<GameObject>();
 
 void Camera::Follow(std::weak_ptr<GameObject> newFocus)
 {
     focus = newFocus;
+    following = true;
 }
 
 void Camera::Unfollow()
 {
     focus.reset();
+    following = false;
 }
 
 void Camera::Update(float dt)
