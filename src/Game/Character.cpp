@@ -113,7 +113,7 @@ Character::Character(GameObject &associated, std::string sprite, std::weak_ptr<T
         "resources/img/fogo_projetil.png",
         "resources/audio/FireBall_Cast.wav",
         "resources/audio/FireBall_Hit_Strong",
-        new Animation(0, 7, 0.1f),
+        new Animation(0, 7, 0.1f, false),
         8,
         1
     };

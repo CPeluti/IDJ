@@ -44,6 +44,7 @@ void createZombie(Vec2 pos, State *state)
 
 StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
 {
+
     Camera::zoom = 3.0f;
 	menu = std::make_shared<Menu>();
     std::shared_ptr<GameObject> fps = std::make_shared<GameObject>();
@@ -186,6 +187,9 @@ void StageState::Render()
 
 void StageState::Start()
 {
+    WaveSpawnerObject = std::make_shared<GameObject>();
+    WaveSpawnerObject->AddComponent(std::make_shared<WaveSpawner>(*WaveSpawnerObject));
+    this->AddObject(WaveSpawnerObject);
     menu->Start();
     LoadAssets();
     StartArray();
