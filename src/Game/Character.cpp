@@ -39,7 +39,7 @@ Character::Character(GameObject &associated, std::string sprite, std::weak_ptr<T
 {
     this->associated.subject.addObserver(this);
 
-    std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(associated, sprite, 86, 1);
+    std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(associated, sprite, 91, 1);
     std::shared_ptr<Animator> animator = std::make_shared<Animator>(associated);
 
     std::shared_ptr<HealthSystem> hs = std::make_shared<HealthSystem>(associated, hp);
@@ -73,34 +73,38 @@ Character::Character(GameObject &associated, std::string sprite, std::weak_ptr<T
     animator->AddAnimation("idle_blink", new Animation(6, 6, 0.5));
 
 
-    animator->AddAnimation("idle_up", new Animation(0, 2, 0.5));
-    animator->AddAnimation("idle_down", new Animation(3, 5, 0.5));
-    animator->AddAnimation("idle_right", new Animation(7, 9, 0.5));
-    animator->AddAnimation("idle_left", new Animation(10, 12, 0.5));
-    animator->AddAnimation("idle_downright", new Animation(13, 15, 0.5));
-    animator->AddAnimation("idle_downleft", new Animation(16, 18, 0.5));
-    animator->AddAnimation("idle_upright", new Animation(19, 21, 0.5));
-    animator->AddAnimation("idle_upleft", new Animation(22, 24, 0.5));
+    animator->AddAnimation("idle_down", new Animation(0, 2, 0.5));
+    animator->AddAnimation("walk_down", new Animation(3, 6, 0.1));
+    animator->AddAnimation("dash_down", new Animation(7, 10, dashDuration/4));
+    animator->AddAnimation("idle_downright", new Animation(11, 13, 0.5));
+    animator->AddAnimation("walk_downright", new Animation(14, 17, 0.1));
+    animator->AddAnimation("dash_downright", new Animation(18, 21, dashDuration/4));
+    animator->AddAnimation("idle_right", new Animation(22, 24, 0.5));
+    animator->AddAnimation("walk_right", new Animation(25, 27, 0.1));
+    animator->AddAnimation("dash_right", new Animation(28, 31, dashDuration/4));
+    animator->AddAnimation("idle_upright", new Animation(32, 34, 0.5));
+    animator->AddAnimation("walk_upright", new Animation(35, 37, 0.1));
+    animator->AddAnimation("dash_upright", new Animation(38, 41, dashDuration/4));
+    animator->AddAnimation("idle_up", new Animation(42, 44, 0.5));
+    animator->AddAnimation("walk_up", new Animation(45, 47, 0.1));
+    animator->AddAnimation("dash_up", new Animation(48, 51, dashDuration/4));
+    animator->AddAnimation("idle_upleft", new Animation(52, 54, 0.5));
+    animator->AddAnimation("walk_upleft", new Animation(55, 57, 0.1));
+    animator->AddAnimation("dash_upleft", new Animation(58, 61, dashDuration/4));
+    animator->AddAnimation("idle_left", new Animation(62, 64, 0.5));
+    animator->AddAnimation("walk_left", new Animation(65, 68, 0.1));
+    animator->AddAnimation("dash_left", new Animation(69, 72, dashDuration/4));
+    animator->AddAnimation("idle_downleft", new Animation(73, 75, 0.5));
+    animator->AddAnimation("walk_downleft", new Animation(76, 78, 0.1));
+    animator->AddAnimation("dash_downleft", new Animation(79, 82, dashDuration/4));
+    
+    
+    
 
-    animator->AddAnimation("walk_up", new Animation(25, 27, 0.1));
-    animator->AddAnimation("walk_down", new Animation(28, 30, 0.1));
-    animator->AddAnimation("walk_right", new Animation(31, 34, 0.1));
-    animator->AddAnimation("walk_left", new Animation(35, 38, 0.1));
-    animator->AddAnimation("walk_downright", new Animation(39, 41, 0.1));
-    animator->AddAnimation("walk_downleft", new Animation(42, 44, 0.1));
-    animator->AddAnimation("walk_upright", new Animation(45, 47, 0.1));
-    animator->AddAnimation("walk_upleft", new Animation(48, 50, 0.1));
 
-    animator->AddAnimation("dash_up", new Animation(51, 54, dashDuration/4));
-    animator->AddAnimation("dash_down", new Animation(55, 58, dashDuration/4));
-    animator->AddAnimation("dash_right", new Animation(59, 62, dashDuration/4));
-    animator->AddAnimation("dash_left", new Animation(63, 66, dashDuration/4));
-    animator->AddAnimation("dash_downright", new Animation(67, 70, dashDuration/4));
-    animator->AddAnimation("dash_downleft", new Animation(71, 74, dashDuration/4));
-    animator->AddAnimation("dash_upright", new Animation(75, 78, dashDuration/4));
-    animator->AddAnimation("dash_upleft", new Animation(79, 82, dashDuration/4));
 
     animator->AddAnimation("lookup", new Animation(83, 85, 0.1));
+    animator->AddAnimation("death", new Animation(86, 90, 0.1f, false));
 
     animator->SetAnimation("idle_down");
     flip = false;
@@ -109,7 +113,7 @@ Character::Character(GameObject &associated, std::string sprite, std::weak_ptr<T
         "resources/img/fogo_projetil.png",
         "resources/audio/FireBall_Cast.wav",
         "resources/audio/FireBall_Hit_Strong",
-        new Animation(0, 7, 0.1f),
+        new Animation(0, 7, 0.1f, false),
         8,
         1
     };
@@ -306,6 +310,7 @@ void Character::Update(float dt)
     {
         if (isDead)
         {
+			animator->SetAnimation("death");
             deathTimer.Update(dt);
             if (deathTimer.Expired())
             {

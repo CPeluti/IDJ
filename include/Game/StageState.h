@@ -23,6 +23,7 @@ public:
     void Pause();
 
 private:
+    std::shared_ptr<GameObject> WaveSpawnerObject;
 	std::weak_ptr<Text> fpsText;
     TileSet *tileSet;
     Music backgroundMusic;

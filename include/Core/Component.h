@@ -26,6 +26,7 @@ public:
     void notifyEvent(Event& evt);
     // COMPONENT_IS("Component");
 
+    int z = 0;
 protected:
     GameObject &associated;
 };
