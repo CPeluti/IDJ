@@ -1,0 +1,19 @@
+{
+    "fileStates": {
+        "teste.tmx": {
+            "scale": 0.0625,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 9040,
+                "y": 19008
+            }
+        },
+        "tileset.tsx": {
+            "scaleInEditor": 1
+        }
+    },
+    "recentFiles": [
+        "tileset.tsx",
+        "teste.tmx"
+    ]
+}
