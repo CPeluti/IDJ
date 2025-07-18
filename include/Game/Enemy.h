@@ -57,19 +57,19 @@ public:
         animator->AddAnimation("down_walking", new Animation(40, 43, 0.3));
         animator->AddAnimation("up_walking", new Animation(44, 47, 0.3));
         animator->AddAnimation("r_walking", new Animation(32, 35, 0.3));
-        animator->AddAnimation("l_walking", new Animation(32, 35, 0.3, SDL_FLIP_HORIZONTAL));
+        animator->AddAnimation("l_walking", new Animation(32, 35, 0.3, true, SDL_FLIP_HORIZONTAL));
         animator->AddAnimation("r_up_walking", new Animation(36, 39, 0.3));
-        animator->AddAnimation("l_up_walking", new Animation(36, 39, 0.3, SDL_FLIP_HORIZONTAL));
+        animator->AddAnimation("l_up_walking", new Animation(36, 39, 0.3, true, SDL_FLIP_HORIZONTAL));
 
         animator->AddAnimation("r_down_attack", new Animation(8, 13, 0.1));
-        animator->AddAnimation("l_down_attack", new Animation(8, 13, 0.1, SDL_FLIP_HORIZONTAL));
+        animator->AddAnimation("l_down_attack", new Animation(8, 13, 0.1, true, SDL_FLIP_HORIZONTAL));
         animator->AddAnimation("r_up_attack", new Animation(14, 19, 0.1));
-        animator->AddAnimation("l_up_attack", new Animation(14, 19, 0.1, SDL_FLIP_HORIZONTAL));
+        animator->AddAnimation("l_up_attack", new Animation(14, 19, 0.1, true, SDL_FLIP_HORIZONTAL));
         animator->AddAnimation("down_attack", new Animation(20, 25, 0.1));
         animator->AddAnimation("up_attack", new Animation(26, 31, 0.1));
 
         animator->AddAnimation("r_aggro", new Animation(0, 7, 0.09));
-        animator->AddAnimation("l_aggro", new Animation(0, 7, 0.09, SDL_FLIP_HORIZONTAL));
+        animator->AddAnimation("l_aggro", new Animation(0, 7, 0.09, true, SDL_FLIP_HORIZONTAL));
 
         animator->SetAnimation("idle");
 

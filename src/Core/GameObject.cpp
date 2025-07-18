@@ -3,6 +3,11 @@
 #include "Core/TileMap.h"
 #include <iostream>
 // #include "Component.h"
+
+bool z_sort(std::shared_ptr<Component> i, std::shared_ptr<Component> j)
+{
+    return (i->z < j->z);
+}
 GameObject::GameObject()
 {
     isDead = false;
@@ -37,6 +42,7 @@ void GameObject::Update(float dt)
 
 void GameObject::Render()
 {
+    std::stable_sort(components.begin(), components.end(), z_sort);
     for (int i = 0; i < (int)this->components.size(); i++)
     {
         // std::cout << "rendering " << this->components[i]->Is("TileMap");
