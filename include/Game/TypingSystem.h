@@ -48,6 +48,14 @@ public:
   {
     return this->isTypingMode;
   };
+  void SetIsTypingMode(bool value)
+  {
+      this->isTypingMode = value;
+  };
+  void SetSubmitted(bool value)
+  {
+      this->submitted = value;
+  };
 
   void SetTextComponent(std::shared_ptr<Text> textComponent)
   {
