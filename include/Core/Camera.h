@@ -12,6 +12,7 @@ public:
     static Vec2 speed;
     static float zoom;
     static float smoothness;
+    static bool following;
 
 private:
     static std::weak_ptr<GameObject> focus;

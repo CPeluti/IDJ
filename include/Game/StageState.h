@@ -27,7 +27,13 @@ private:
 	std::weak_ptr<Text> fpsText;
     TileSet *tileSet;
     Music backgroundMusic;
+    Music bossMusic;
     std::weak_ptr<GameObject> player;
     std::weak_ptr<GameObject> spawner;
     std::shared_ptr<Menu> menu;
+	std::weak_ptr<TileMap> tilemap;
+    
+	bool isBossStage = false;
+
+    Vec2 lastPlayerPos;
 };
