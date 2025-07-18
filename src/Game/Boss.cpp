@@ -105,6 +105,10 @@ void Boss::SetAnimation(Vec2 direction, Boss::Command::CommandType type)
 void Boss::Update(float dt)
 {
     roarsTimer.Update(dt);
+    hitsTimer.Update(dt);
+    attackTimer.Update(dt);
+    deathSoundTimer.Update(dt);
+    landTimer.Update(dt);
     Vec2 speed = { 0, 0 };
     this->associated.SetSpeed({ 0, 0 });
     this->UpdateEffects(dt);
@@ -256,7 +260,10 @@ void Boss::Update(float dt)
                 if (auto character = Character::player.lock()) {
                     if (!res.intersects) {
                         Vec2 playerPos = character->GetPos();
-                        attackSound[counterAttackSound++ % attackSound.size()]->Play();
+                        if (attackTimer.Expired()) {
+							attackTimer.Restart();
+                            attackSound[counterAttackSound++ % attackSound.size()]->Play();
+                        }
                         this->Issue(Boss::Command(Boss::Command::ATTACK, playerPos));
                     }
                 }
@@ -298,7 +305,10 @@ void Boss::Update(float dt)
             break;
             case StateType::DYING: {
                 animator->SetAnimation("death");
-                deathSound[counterDeathSound++ % deathSound.size()]->Play();
+                if (deathSoundTimer.Expired()) {
+					deathSoundTimer.Restart();
+                    deathSound[counterDeathSound++ % deathSound.size()]->Play();
+                }
                 if (auto c = m_attackCollider.lock())
                     c->SetDisable(true);
                 if (auto c = m_hurtboxCollider.lock())
@@ -318,18 +328,21 @@ void Boss::Update(float dt)
                 return;
 			}
             case StateType::JUMPING: {
-                if(this->associated.height >=5){
-                    landSound[counterLandSound++ % landSound.size()]->Play();
+                if(this->associated.height <=5){
+                    if (landTimer.Expired()) {
+                        landSound[counterLandSound++ % landSound.size()]->Play();
+                        landTimer.Restart();
+                    }
                     if(auto c = this->m_attackCollider.lock())
-					    c->SetDisable(true);
+					    c->SetDisable(false);
                     if (auto c = m_hurtboxCollider.lock())
-                        c->SetDisable(true);
+                        c->SetDisable(false);
                 }
                 else {
                     if (auto c = this->m_attackCollider.lock())
-                        c->SetDisable(false);
+                        c->SetDisable(true);
                     if (auto c = m_hurtboxCollider.lock())
-                        c->SetDisable(false);
+                        c->SetDisable(true);
                 }
                 jumpTime += dt;
                 float t = jumpTime / jumpDuration;
@@ -357,6 +370,15 @@ void Boss::Update(float dt)
                     animator->SetAnimation("death");
                 else
 					state = StateType::IDLE;
+                break;
+            }
+            case StateType::DAMAGE: {
+                animator->SetAnimation("death");
+                if (damageTimer.Expired()) {
+                    attackTimer.Restart();
+                    attacked = false;
+					state = StateType::IDLE;
+                }
                 break;
             }
         }
