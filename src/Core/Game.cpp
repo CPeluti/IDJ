@@ -12,6 +12,9 @@
 #include "Core/Resources.h"
 #include "Core/InputManager.h"
 #include "Core/Log.h"
+#include "Game/StageState.h"
+#include "Game/TitleState.h"
+#include "Game/EndState.h"
 
 void update_marching_ants_shader(float t, int time_loc)
 {
@@ -90,9 +93,19 @@ Game::~Game()
     SDL_Quit();
 }
 
-void Game::Push(std::unique_ptr<State> state)
+void Game::Push(std::string state)
 {
-    storedState = std::move(state);
+    if (state == "Stage") {
+        storedState = std::move(std::make_unique<StageState>());
+    } else if (state == "Title") {
+        storedState = std::move(std::make_unique<TitleState>());
+    } else if (state == "End") {
+        storedState = std::move(std::make_unique<EndState>());
+    }
+    else {
+        LOG_ERROR("Unknown state: " + state);
+        return;
+    }
 }
 
 GPU_Target *Game::GetGPUTarget()
@@ -117,7 +130,7 @@ Game &Game::GetInstance()
 {
     if (Game::instance == nullptr)
     {
-        new Game("190085312", 1920, 1080);
+        new Game("190085312", 1280, 720);
     }
     return *Game::instance;
 }

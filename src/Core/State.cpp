@@ -37,6 +37,10 @@ bool State::QuitRequested()
 {
     return quitRequested;
 }
+void State::SetQuitRequested(bool value)
+{
+    quitRequested = value;
+}
 void State::StartArray()
 {
     for (int i = 0; i < (int)objectArray.size(); i++)
