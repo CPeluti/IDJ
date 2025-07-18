@@ -100,6 +100,7 @@ StageState::~StageState()
 {
     SDL_StopTextInput();
     this->objectArray.clear();
+    Game::GetInstance().Push("Title");
 }
 void StageState::LoadAssets()
 {
@@ -132,7 +133,7 @@ void StageState::Update(float dt)
         {
             popRequested = true;
             GameData::playerWon = false;
-            Game::GetInstance().Push(std::make_unique<EndState>());
+            Game::GetInstance().Push("End");
             backgroundMusic.Stop();
             return;
         }
@@ -143,7 +144,7 @@ void StageState::Update(float dt)
                 popRequested = true;
                 GameData::playerWon = true;
                 backgroundMusic.Stop();
-                Game::GetInstance().Push(std::make_unique<EndState>());
+                Game::GetInstance().Push("End");
                 return;
             }
         }
