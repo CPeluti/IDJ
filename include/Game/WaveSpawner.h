@@ -9,10 +9,12 @@ public:
     void Update(float dt);
     void Render();
     bool Is(std::string type);
+    void Start();
 
 private:
-    int zombieCounter;
-    int npcCounter;
+    int enemyCounter;
+	bool bossSpawned;
+    int bossCounter;
     std::vector<Wave *> waves;
     int currentWave;
 };
