@@ -321,6 +321,8 @@ void Boss::Update(float dt)
                             ps->Play();
                             if (!ps->emmiting) {
 								associated.RequestDelete();
+                                if(auto ex = exclamation.lock())
+                                    ex->RequestDelete();
                             }
                         }
                     }
