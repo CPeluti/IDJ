@@ -29,7 +29,7 @@ public:
 
     bool PopRequested();
     bool QuitRequested();
-
+    void State::SetQuitRequested(bool value);
     void SetPopRequested(bool req)
     {
         popRequested = req;

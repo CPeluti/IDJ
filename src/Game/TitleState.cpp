@@ -14,11 +14,17 @@
 #include "Game/StageState.h"
 TitleState::TitleState(): m_backgroundMusic("resources/audio/MainTheme.mp3")
 {
-    Camera::zoom = 1;
     Camera::smoothness = 8.f;
+    menu = std::make_shared<Menu>();
 
-    std::shared_ptr<GameObject> start =  std::make_shared<GameObject>();
-    std::shared_ptr<SpriteRenderer> sr =  std::make_shared<SpriteRenderer>(*start, "resources/img/Title.png", 1, 1);
+    std::shared_ptr<GameObject> start = std::make_shared<GameObject>();
+    std::shared_ptr<SpriteRenderer> sr =  std::make_shared<SpriteRenderer>(*start, "resources/interface/tela_inicial.png", 1, 1);
+	float factor_x = Game::GetInstance().GetWindowSize().x / start->box.GetSize().x;
+	float factor_y = Game::GetInstance().GetWindowSize().y / start->box.GetSize().y;
+    float factor = std::floor(std::max(factor_x, factor_y));
+    Camera::zoom = factor;
+	
+    start->box.Move({ Game::GetInstance().GetWindowSize().x / (Camera::zoom * 2), Game::GetInstance().GetWindowSize().y / (Camera::zoom * 2) });
     sr->SetCameraFollower(true);
     start->AddComponent(sr);
     this->AddObject(start);
@@ -58,6 +64,8 @@ void TitleState::LoadAssets() {
 }
 void TitleState::Update(float dt)
 {
+    menu->Update(dt);
+
     InputManager &ip = InputManager::GetInstance();
 
     if (ip.KeyPress(ESCAPE_KEY) || ip.QuitRequested() || SDL_QuitRequested())
@@ -67,7 +75,7 @@ void TitleState::Update(float dt)
     if (ip.KeyPress(SPACE_KEY))
     {
         popRequested = true;
-        Game::GetInstance().Push(std::make_unique<StageState>());
+        Game::GetInstance().Push("Stage");
     }
     if(auto ps = particlesSystem.lock()){
         //TODO: rever questão do sistema de particula estar contido em um gameObject
@@ -86,10 +94,15 @@ void TitleState::Update(float dt)
 void TitleState::Render()
 {
     RenderArray();
+    menu->Render();
 }
 
 void TitleState::Start()
 {
+    menu->Start();
+	menu->enabled = true;
+	menu->SetCurrentState(MenuStates::START);
+
     LoadAssets();
     StartArray();
     if(auto ps = particlesSystem.lock()){
@@ -98,6 +111,7 @@ void TitleState::Start()
         }
     }
     m_backgroundMusic.Play();
+
 }
 
 void TitleState::Resume(){}

@@ -2,6 +2,7 @@
 #include "Core/State.h"
 #include "Core/Text.h"
 #include "Core/ParticleSystem.h"
+#include "Menu.h"
 
 class TitleState : public State{
     public:
@@ -19,5 +20,5 @@ class TitleState : public State{
         ParticleData m_Particle;
     private:
         Music m_backgroundMusic;
-
+        std::shared_ptr<Menu> menu;
 };
