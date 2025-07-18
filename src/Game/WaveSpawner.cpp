@@ -7,7 +7,7 @@
 #include "Game/Character.h"
 #include "Game/AIController.h"
 
-WaveSpawner::WaveSpawner(GameObject &associated) : Component(associated), enemyCounter(0), currentWave(4), bossCounter(0), bossSpawned(false)
+WaveSpawner::WaveSpawner(GameObject &associated) : Component(associated), enemyCounter(0), currentWave(4), bossCounter(0), bossSpawned(false), win(false), lose(false)
 {
     for (int i = 0; i < 5; i++)
     {
@@ -34,6 +34,11 @@ void WaveSpawner::Update(float dt)
     //    this->associated.RequestDelete();
     //    return;
     //}
+    if(Character::player.lock() == nullptr){
+        LOG_INFO("Player is dead, wave spawner will not spawn enemies");
+        lose = true;
+        return;
+	}
     float randomAngle = rand() % 36000 / 100.0;
     Vec2 windowSize = Game::GetInstance().GetWindowSize();
     Vec2 distance = { 150.0, .0 };
@@ -111,10 +116,19 @@ void WaveSpawner::Update(float dt)
     {
         LOG_INFO("WIN");
         if(waves.size()<=(unsigned int)currentWave){
-            this->associated.RequestDelete();
+            //this->associated.RequestDelete();
+            win = true;
             return;
         }
 	}
+}
+
+bool WaveSpawner::Win() {
+    return win;
+}
+
+bool WaveSpawner::Lose() {
+    return lose;
 }
 void WaveSpawner::Render() {
 

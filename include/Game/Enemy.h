@@ -17,12 +17,13 @@ public:
     Enemy(GameObject& associated, std::string sprite, int frameCountW, int frameCountH) : Component(associated),
         Entity(140),
         hp(500),
-        damage(10),
+        damage(100),
         deathTimer(1),
         m_attackTimer(1),
 		frameCountW(frameCountW),
 		frameCountH(frameCountH),
-		m_movementSpeed(10)
+		m_movementSpeed(60),
+        deathSound("resources/audio/FishDie.wav")
     {
 
 		//Basic initilization
@@ -144,6 +145,8 @@ private:
     std::vector<std::shared_ptr<IEffect>> effects;
     std::weak_ptr<Collider> m_attackCollider;
     std::weak_ptr<Collider> m_hurtboxCollider;
+
+    Sound deathSound;
 
     ParticleData m_Particle;
     std::weak_ptr<GameObject> particlesSystem;
