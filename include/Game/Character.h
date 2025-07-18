@@ -66,6 +66,12 @@ public:
         {"ball", SpellType::projectile},
         {"area", SpellType::area}
     };
+    std::map<std::string, SpellEffect> spellEffect = {
+        {"multi", SpellEffect::multiple},
+        {"chain", SpellEffect::chain},
+        {"pierce", SpellEffect::pierce},
+        {"freeze", SpellEffect::freeze},
+    };
 
 private:
     bool OnCollision(OnCollisionEvent &evt);
