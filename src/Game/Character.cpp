@@ -112,7 +112,7 @@ Character::Character(GameObject &associated, std::string sprite, std::weak_ptr<T
     SpellAssets fireProjectile = {
         "resources/img/fogo_projetil.png",
         "resources/audio/FireBall_Cast.wav",
-        "resources/audio/FireBall_Hit_Strong",
+        "resources/audio/FireBall_Hit_Strong.wav",
         new Animation(0, 7, 0.1f, false),
         8,
         1
@@ -124,8 +124,8 @@ Character::Character(GameObject &associated, std::string sprite, std::weak_ptr<T
         "resources/img/fogo_area.png",
         "resources/audio/FireArea_Explode.wav",
         "resources/audio/FireBall_Hit_Strong.wav",
-        new Animation(0, 8, 0.1f),
-        9,
+        new Animation(0, 8, 0.1f, false),
+        10,
         1
     };
     std::tuple<SpellElement, SpellType, SpellAssets> fireAreTuple = std::make_tuple(SpellElement::fire, SpellType::area, fireArea);
