@@ -12,7 +12,7 @@ public:
     void Update(float dt) {}
     void Render() {}
     void OnEvent(Event &evt);
-
+    ~HealthSystem();
     inline bool Is(std::string type) { return type == "HealthSystem"; }
 
     float TakeDamage(float damage);
