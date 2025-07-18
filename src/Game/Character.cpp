@@ -415,12 +415,14 @@ void Character::CastSpell(std::vector<std::shared_ptr<IEffect>> effects, Vec2 ta
     for (std::string s : spellText) {
         itFoundElement = spellElements.find(s);
         if (itFoundElement != spellElements.end()) {
+			spellText.erase(std::remove(spellText.begin(), spellText.end(), s), spellText.end());
             break;
 		}
     }
     for (std::string s : spellText) {
         itFoundType = spellType.find(s);
         if (itFoundType != spellType.end()) {
+			spellText.erase(std::remove(spellText.begin(), spellText.end(), s), spellText.end());
             break;
 		}
     }
@@ -434,13 +436,36 @@ void Character::CastSpell(std::vector<std::shared_ptr<IEffect>> effects, Vec2 ta
                 break;
 		    }
         }
+		std::set<SpellEffect> effectsToApply;
+        for (std::string s : spellText) {
+            if (spellEffect.find(s) != spellEffect.end()) {
+                effectsToApply.insert(spellEffect[s]);
+			}
+        }
 
         switch (itFoundType->second)
         {
         case SpellType::projectile:
         {
             std::shared_ptr<ProjectileSpell> spell = std::make_shared<ProjectileSpell>(this->associated.box.center(), target, assets);
-            //spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared<MoreProjectileEffect>(5)));
+            
+            if (effectsToApply.find(SpellEffect::multiple) != effectsToApply.end()) {
+                spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared<MoreProjectileEffect>(5)));
+            }
+            if (effectsToApply.find(SpellEffect::chain) != effectsToApply.end()) {
+                spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared<ChainEffect>(3)));
+            }
+            if (effectsToApply.find(SpellEffect::pierce) != effectsToApply.end()) {
+                spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared<PierceEffect>(3)));
+            }
+            if (effectsToApply.find(SpellEffect::freeze) != effectsToApply.end()) {
+				std::unique_ptr<FreezeEffect> freezeEffect = std::make_unique<FreezeEffect>(5.0f);
+                spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared<FreezeOnHitEffect>(freezeEffect.release())));
+            }
+            if (effectsToApply.find(SpellEffect::speed) != effectsToApply.end()) {
+                spell->AddEffect(std::dynamic_pointer_cast<Effect<Spell<Projectile>>>(std::make_shared<SpeedEffect>(5)));
+            }
+            
             spell->CastSpell(&this->associated);
         }
 
