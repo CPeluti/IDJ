@@ -1,8 +1,7 @@
 #include "Core/Timer.h"
 class Wave {
     public:
-        Wave(int zombies, int npcs, float cooldown);
-        int zombies;
-        int npcs;
+        Wave(int enemies, float cooldown);
+        int enemies;
         Timer cooldown;
 };
