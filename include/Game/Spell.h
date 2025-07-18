@@ -250,7 +250,7 @@ private:
 class ProjectileSpell : public Spell<Projectile>
 {
 public:
-    ProjectileSpell(Vec2 initialPos, Vec2 target, SpellAssets assets) : Spell({}, 30, 10, 200), m_initialPos(initialPos), m_target(target), m_assets(assets) {
+    ProjectileSpell(Vec2 initialPos, Vec2 target, SpellAssets assets) : Spell({}, 30, 500, 200), m_initialPos(initialPos), m_target(target), m_assets(assets) {
     }
     
     ~ProjectileSpell() {}

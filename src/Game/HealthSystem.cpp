@@ -29,7 +29,12 @@ HealthSystem::HealthSystem(GameObject &associated, float hp, bool boss) : Compon
         m_lifebar = lb;
     }
 }
-
+HealthSystem::~HealthSystem()
+{
+    if (auto lifebar = spriteLifebar.lock()) {
+        lifebar->RequestDelete();
+    }
+}
 float HealthSystem::TakeDamage(float damage)
 {
     hp -= damage;
