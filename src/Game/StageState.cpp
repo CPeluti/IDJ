@@ -44,7 +44,7 @@ void createZombie(Vec2 pos, State *state)
     enemy->box.Move(pos);
 }
 
-StageState::StageState() : backgroundMusic("resources/audio/BGM.wav")
+StageState::StageState() : backgroundMusic("resources/audio/levelmusic.mp3"), bossMusic("resources/audio/bossmusic.mp3")
 {
 
     Camera::zoom = 3.0f;
@@ -109,6 +109,11 @@ void Restart() {
 }
 void StageState::Update(float dt)
 {
+    if (!isBossStage && Boss::bossCounter > 0) {
+        //backgroundMusic.Stop();
+        bossMusic.Play();
+		isBossStage = true;
+    }
     InputManager& ip = InputManager::GetInstance();
     if (SDL_QuitRequested() || ip.QuitRequested())
     {
@@ -220,7 +225,7 @@ void StageState::Start()
     LoadAssets();
     StartArray();
     started = true;
-    //backgroundMusic.Play();
+    backgroundMusic.Play();
 }
 
 void StageState::Resume() { this->m_paused = false; menu->enabled = false;}
