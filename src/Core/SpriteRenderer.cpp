@@ -39,7 +39,7 @@ void SpriteRenderer::Render()
     if (!enabled)
         return;
     sprite->SetShader(m_shader);
-    sprite->Render(associated.box.GetPos(), associated.box.GetSize(), associated.angleDeg+baseAngle);
+    sprite->Render(associated.box.GetPos() - Vec2{.0f, this->associated.height }, associated.box.GetSize(), associated.angleDeg + baseAngle);
 }
 
 void SpriteRenderer::SetFrame(int frame, SDL_RendererFlip flip)

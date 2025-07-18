@@ -3,6 +3,7 @@
 #include "Game/Character.h"
 #include "Game/Dummy.h"
 #include "Game/Enemy.h"
+#include "Game/Boss.h"
 #include "Game/PlayerController.h"
 #include "Game/TypingSystem.h"
 
@@ -63,7 +64,7 @@ void PlayerController::Update(float dt)
 		}*/
 
         std::shared_ptr<GameObject> enemy = std::make_shared<GameObject>();
-        std::shared_ptr<Enemy> enemyComponent = std::make_shared<Enemy>(*enemy, "resources/img/Axolote.png", 8, 7);
+        std::shared_ptr<Boss> enemyComponent = std::make_shared<Boss>(*enemy, "resources/img/Sprite-Shoggoth-All.png", 40, 1);
         enemy->box.Move({ ip.GetMouseX(), ip.GetMouseY() });
         enemy->AddComponent(enemyComponent);
         if (auto s = Game::GetInstance().GetCurrentState())

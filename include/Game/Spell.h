@@ -436,7 +436,7 @@ public:
 	inline float GetDamage() { return this->baseDamage; }
     inline void CastSpell(GameObject* caster) {
         std::shared_ptr<GameObject> spellObj = std::make_shared<GameObject>();
-        std::shared_ptr<Animator> animator = std::make_shared<Animator>(*spellObj, false);
+        std::shared_ptr<Animator> animator = std::make_shared<Animator>(*spellObj);
         spellObj->box.Move(m_pos);
         spellObj->z = 2;
         std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(*spellObj, baseSprite, 10, 1);

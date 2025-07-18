@@ -2,7 +2,7 @@
 #include "Core/SpriteRenderer.h"
 #include <iostream>
 
-Animator::Animator(GameObject &associated, bool loop) : Component(associated), current(""), frameStart(0), frameEnd(0), frameTime(0), currentFrame(0), timeElapsed(0), loop(loop) {}
+Animator::Animator(GameObject &associated) : Component(associated), current(""), frameStart(0), frameEnd(0), frameTime(0), currentFrame(0), timeElapsed(0), loop(loop) {}
 void Animator::Update(float dt) {
     int oldCurrentFrame = currentFrame;
     if(frameTime != 0) timeElapsed+= dt;
@@ -11,7 +11,7 @@ void Animator::Update(float dt) {
         timeElapsed -= frameTime;
     }
     if(currentFrame > frameEnd){
-        if(loop){
+        if(animations[current]->repeat) {
             currentFrame = frameStart;
         } else {
             currentFrame = frameEnd;

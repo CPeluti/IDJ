@@ -17,12 +17,16 @@ public:
     Boss(GameObject& associated, std::string sprite, int frameCountW, int frameCountH) : Component(associated),
         Entity(140),
         hp(500),
-        damage(10),
+        damage(300),
         deathTimer(1),
         m_attackTimer(1),
 		frameCountW(frameCountW),
 		frameCountH(frameCountH),
-		m_movementSpeed(50)
+		m_movementSpeed(50),
+        roarsTimer(3),
+        hitsTimer(3),
+        attackTimer(3),
+        landTimer(3)
     {
 
 		//Basic initilization
@@ -32,14 +36,16 @@ public:
 
 
         //
+
         std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(associated, sprite, frameCountW, frameCountH);
-        std::shared_ptr<HealthSystem> hs = std::make_shared<HealthSystem>(associated, hp);
+        std::shared_ptr<HealthSystem> hs = std::make_shared<HealthSystem>(associated, hp, true);
         std::shared_ptr<Animator> animator = std::make_shared<Animator>(associated);
 
-        Boss::enemyCounter++;
+        Boss::bossCounter++;
         
-        Vec2 colliderSize = associated.box.GetSize();
-        Vec2 colliderOffset = (colliderSize - associated.box.GetSize());
+        Vec2 colliderSize = associated.box.GetSize()*0.6;
+        Vec2 colliderCenter = associated.box.GetSize()/2;
+		Vec2 colliderOffset = (associated.box.GetSize()-colliderSize) / 2;
         std::shared_ptr<Collider> hitboxCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"layer0"}, "enemy", new OnCollisionEvent(associated), colliderSize, Vec2{ 1, 1 }, colliderOffset, true);
         std::shared_ptr<Collider> hurtboxCollider = std::make_shared<Collider>(associated, std::vector<std::string>{"layer0"}, "enemy", new OnCollisionEvent(associated), colliderSize, Vec2{ 1, 1 }, colliderOffset, true);
         m_attackCollider = hitboxCollider;
@@ -51,25 +57,15 @@ public:
         associated.AddComponent(hitboxCollider);
         associated.AddComponent(hurtboxCollider);
 
-        animator->AddAnimation("idle", new Animation(48, 53, 0.5));
-        animator->AddAnimation("death", new Animation(48, 48, 0));
+        animator->AddAnimation("idle", new Animation(0, 0, 0));
+        animator->AddAnimation("death", new Animation(0, 0, 0));
 
-        animator->AddAnimation("down_walking", new Animation(40, 43, 0.3));
-        animator->AddAnimation("up_walking", new Animation(44, 47, 0.3));
-        animator->AddAnimation("r_walking", new Animation(32, 35, 0.3));
-        animator->AddAnimation("l_walking", new Animation(32, 35, 0.3, SDL_FLIP_HORIZONTAL));
-        animator->AddAnimation("r_up_walking", new Animation(36, 39, 0.3));
-        animator->AddAnimation("l_up_walking", new Animation(36, 39, 0.3, SDL_FLIP_HORIZONTAL));
-
-        animator->AddAnimation("r_down_attack", new Animation(8, 13, 0.1));
-        animator->AddAnimation("l_down_attack", new Animation(8, 13, 0.1, SDL_FLIP_HORIZONTAL));
-        animator->AddAnimation("r_up_attack", new Animation(14, 19, 0.1));
-        animator->AddAnimation("l_up_attack", new Animation(14, 19, 0.1, SDL_FLIP_HORIZONTAL));
-        animator->AddAnimation("down_attack", new Animation(20, 25, 0.1));
-        animator->AddAnimation("up_attack", new Animation(26, 31, 0.1));
-
-        animator->AddAnimation("r_aggro", new Animation(0, 7, 0.09));
-        animator->AddAnimation("l_aggro", new Animation(0, 7, 0.09, SDL_FLIP_HORIZONTAL));
+        animator->AddAnimation("r_walking", new Animation(0, 3, 0.3f));
+        animator->AddAnimation("l_walking", new Animation(4, 7, 0.3f));
+        animator->AddAnimation("l_attack", new Animation(8, 12, 0.3f));
+        animator->AddAnimation("r_attack", new Animation(13, 17, 0.3f));
+        animator->AddAnimation("r_jump", new Animation(18, 28, 0.3f));
+        animator->AddAnimation("l_jump", new Animation(29, 39, 0.3f));
 
         animator->SetAnimation("idle");
 
@@ -85,7 +81,8 @@ public:
         enum CommandType
         {
             MOVE,
-            ATTACK
+            ATTACK,
+            JUMP
         };
         Command(CommandType type, Vec2 pos);
         CommandType type;
@@ -97,21 +94,22 @@ public:
         MOVING,
         ATTACKING,
         DYING,
-        FREEZE
+        FREEZE,
+		JUMPING
     };
 
     void Start();
     void Update(float dt);
     void Render();
     void OnEvent(Event& evt);
-    void SetAnimation(Vec2 direction, Enemy::Command::CommandType type);
+    void SetAnimation(Vec2 direction, Boss::Command::CommandType type);
 
     inline void Issue(Command task) { taskQueue.push(task); }
     inline Vec2 GetPos() const { return associated.box.center(); }
     inline int GetHP() const { return hp; }
     inline void SetFlip(bool value) { flip = value; }
     inline void SetState(StateType value) { state = value; }
-    inline bool Is(std::string type) { return type == "Enemy"; }
+    inline bool Is(std::string type) { return type == "Boss"; }
     
     static int bossCounter;
 
@@ -147,5 +145,32 @@ private:
 
     ParticleData m_Particle;
     std::weak_ptr<GameObject> particlesSystem;
+
+    int m_attackCounter = 0;
+
+    std::weak_ptr<GameObject> m_healthSystem;
+
+    Vec2 JumpStart;
+    Vec2 JumpTarget;
+    float jumpTime = 0.0f;
+    float jumpDuration = 3.0f; // duração total do pulo
+	float maxJumpHeight = 100.0f; // altura máxima do pulo
+
+    Timer roarsTimer;
+    Timer hitsTimer;
+    Timer attackTimer;
+    Timer landTimer;
+
+    int counterRoarsSound = 0;
+    int counterHitsSound = 0;
+    int counterAttackSound = 0;
+    int counterDeathSound = 0;
+    int counterLandSound = 0;
+
+    std::vector<Sound*> roarsSound;
+    std::vector<Sound*> hitsSound;
+    std::vector<Sound*> attackSound;
+    std::vector<Sound*> deathSound;
+    std::vector<Sound*> landSound;
 
 };
