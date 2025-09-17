@@ -1,10 +1,22 @@
-[gd_scene load_steps=6 format=3 uid="uid://cv2bt1utpstrg"]
+[gd_scene load_steps=8 format=3 uid="uid://cv2bt1utpstrg"]
 
 [ext_resource type="Script" uid="uid://dppfwainq0pqp" path="res://scripts/player.gd" id="1_3vyb7"]
+[ext_resource type="Shader" uid="uid://cr3rtb5jv83bh" path="res://shaders/edge.gdshader" id="2_qhqgy"]
 [ext_resource type="Shader" uid="uid://cxu5285smyef7" path="res://shaders/toon.gdshader" id="3_dqkch"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dqkch"]
+render_priority = 0
+shader = ExtResource("2_qhqgy")
+shader_parameter/shadows_enabled = true
+shader_parameter/highlights_enabled = true
+shader_parameter/shadow_strength = 0.4
+shader_parameter/highlight_strength = 0.1
+shader_parameter/highlight_color = Color(1, 1, 1, 1)
+shader_parameter/shadow_color = Color(0, 0, 0, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_qlg0r"]
 render_priority = 0
+next_pass = SubResource("ShaderMaterial_dqkch")
 shader = ExtResource("3_dqkch")
 shader_parameter/albedo = Color(1, 1, 1, 1)
 shader_parameter/clamp_diffuse_to_max = false
