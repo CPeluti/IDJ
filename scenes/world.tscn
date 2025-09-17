@@ -1,9 +1,15 @@
-[gd_scene load_steps=23 format=3 uid="uid://b1mgeimub0jok"]
+[gd_scene load_steps=33 format=3 uid="uid://b1mgeimub0jok"]
 
 [ext_resource type="PackedScene" uid="uid://cv2bt1utpstrg" path="res://scenes/player.tscn" id="1_nnsk1"]
-[ext_resource type="Shader" uid="uid://cxu5285smyef7" path="res://toon.gdshader" id="2_rwgxs"]
-[ext_resource type="Shader" uid="uid://cr3rtb5jv83bh" path="res://edge.gdshader" id="3_4wyf3"]
+[ext_resource type="Shader" uid="uid://cxu5285smyef7" path="res://shaders/toon.gdshader" id="2_rwgxs"]
+[ext_resource type="Shader" uid="uid://cr3rtb5jv83bh" path="res://shaders/edge.gdshader" id="3_4wyf3"]
 [ext_resource type="Material" uid="uid://w76wg1wtt6q3" path="res://scenes/edge.material" id="3_k0juu"]
+[ext_resource type="Script" uid="uid://ca0gc68a2bgxw" path="res://scripts/camera_rig.gd" id="3_qfnet"]
+[ext_resource type="Shader" uid="uid://e18pk6i0dmm0" path="res://shaders/edge_detection.gdshader" id="4_4mrxx"]
+[ext_resource type="ArrayMesh" uid="uid://b4nmb1cirmuc2" path="res://rock1.obj" id="5_71j4m"]
+[ext_resource type="Script" path="res://scenes/node_3d.gd" id="7_7r4gi"]
+[ext_resource type="Shader" uid="uid://dxv6q0c4b4kbv" path="res://shaders/upscaler.gdshader" id="7_i7141"]
+[ext_resource type="Script" uid="uid://dlncdris7bcj8" path="res://scripts/display.gd" id="9_w7kh3"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_8cj0n"]
 size = Vector3(60, 2, 60)
@@ -11,135 +17,7 @@ size = Vector3(60, 2, 60)
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_rwgxs"]
 render_priority = 0
 shader = ExtResource("2_rwgxs")
-shader_parameter/albedo = Color(0.59717613, 0.59717613, 0.5971761, 1)
-shader_parameter/clamp_diffuse_to_max = false
-shader_parameter/cuts = 3
-shader_parameter/wrap = 0.0
-shader_parameter/steepness = 1.0
-shader_parameter/use_attenuation = true
-shader_parameter/use_specular = false
-shader_parameter/specular_strength = 1.0
-shader_parameter/specular_shininess = 16.0
-shader_parameter/use_rim = true
-shader_parameter/rim_width = 8.0
-shader_parameter/rim_color = Color(1, 1, 1, 1)
-shader_parameter/use_ramp = false
-shader_parameter/use_borders = false
-shader_parameter/border_width = 0.01
-
-[sub_resource type="BoxMesh" id="BoxMesh_uwrxv"]
-lightmap_size_hint = Vector2i(604, 326)
-material = SubResource("ShaderMaterial_rwgxs")
-size = Vector3(60, 2, 60)
-
-[sub_resource type="Shader" id="Shader_rwgxs"]
-code = "shader_type spatial;
-
-//render_mode ambient_light_disabled;
-
-uniform vec4 albedo : source_color = vec4(1.0f);
-uniform sampler2D albedo_texture : source_color;
-uniform bool clamp_diffuse_to_max = false;
-
-uniform int cuts : hint_range(1, 8) = 3;
-uniform float wrap : hint_range(-2.0f, 2.0f) = 0.0f;
-uniform float steepness : hint_range(1.0f, 8.0f) = 1.0f;
-
-uniform bool use_attenuation = true;
-
-uniform bool use_specular = true;
-uniform float specular_strength : hint_range(0.0f, 1.0f) = 1.0f;
-uniform float specular_shininess : hint_range(0.0f, 32.0f) = 16.0f;
-uniform sampler2D specular_map : source_color;
-
-uniform bool use_rim = true;
-uniform float rim_width : hint_range(0.0f, 16.0f) = 8.0f;
-uniform vec4 rim_color : source_color = vec4(1.0f);
-
-uniform bool use_ramp = false;
-uniform sampler2D ramp : source_color;
-
-uniform bool use_borders = false;
-uniform float border_width = 0.01f;
-
-varying vec3 vertex_pos;
-varying vec3 normal;
-
-float split_specular(float specular) {
-	return step(0.5f, specular);
-}
-
-void vertex() {
-	vertex_pos = VERTEX;
-	normal = NORMAL;
-}
-
-void fragment() {
-	ALBEDO = albedo.rgb * texture(albedo_texture, UV).rgb;
-}
-
-void light() {
-	// Attenuation.
-	float attenuation = 1.0f;
-	if (use_attenuation) {
-		attenuation = ATTENUATION;
-	}
-	
-	// Diffuse lighting.
-	float NdotL = dot(NORMAL, LIGHT);
-	float diffuse_amount = NdotL + (attenuation - 1.0) + wrap;
-	//float diffuse_amount = NdotL * attenuation + wrap;
-	diffuse_amount *= steepness;
-	float cuts_inv = 1.0f / float(cuts);
-	float diffuse_stepped = clamp(diffuse_amount + mod(1.0f - diffuse_amount, cuts_inv), 0.0f, 1.0f);
-
-	// Calculate borders.
-	float border = 0.0f;
-	if (use_borders) {
-		float corr_border_width = length(cross(NORMAL, LIGHT)) * border_width * steepness;
-		border = step(diffuse_stepped - corr_border_width, diffuse_amount)
-				 - step(1.0 - corr_border_width, diffuse_amount);
-	}
-	
-	// Apply diffuse result to different styles.
-	vec3 diffuse = ALBEDO.rgb * LIGHT_COLOR / PI;
-	if (use_ramp) {
-		diffuse *= texture(ramp, vec2(diffuse_stepped * (1.0f - border), 0.0f)).rgb;
-	} else {
-		diffuse *= diffuse_stepped * (1.0f - border);
-	}
-	
-	if (clamp_diffuse_to_max) {
-		// Clamp diffuse to max for multiple light sources.
-		DIFFUSE_LIGHT = max(DIFFUSE_LIGHT, diffuse);
-	} else {
-		DIFFUSE_LIGHT += diffuse;
-	}
-	
-	// Specular lighting.
-	if (use_specular) {
-		vec3 H = normalize(LIGHT + VIEW);
-		float NdotH = dot(NORMAL, H);
-		float specular_amount = max(pow(NdotH, specular_shininess*specular_shininess), 0.0f)
-							    * texture(specular_map, UV).r
-								* attenuation;
-		specular_amount = split_specular(specular_amount);
-		SPECULAR_LIGHT += specular_strength * specular_amount * LIGHT_COLOR;
-	}
-	
-	// Simple rim lighting.
-	if (use_rim) {
-		float NdotV = dot(NORMAL, VIEW);
-		float rim_light = pow(1.0 - NdotV, rim_width);
-		DIFFUSE_LIGHT += rim_light * rim_color.rgb * rim_color.a * LIGHT_COLOR / PI;
-	}
-}"
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_4wyf3"]
-render_priority = 0
-next_pass = ExtResource("3_k0juu")
-shader = SubResource("Shader_rwgxs")
-shader_parameter/albedo = Color(0.9647059, 0, 0, 1)
+shader_parameter/albedo = Color(1.6845763e-06, 0.6670269, 0.24916464, 1)
 shader_parameter/clamp_diffuse_to_max = false
 shader_parameter/cuts = 3
 shader_parameter/wrap = 0.0
@@ -154,6 +32,26 @@ shader_parameter/rim_color = Color(1, 1, 1, 1)
 shader_parameter/use_ramp = false
 shader_parameter/use_borders = false
 shader_parameter/border_width = 0.01
+
+[sub_resource type="BoxMesh" id="BoxMesh_uwrxv"]
+material = SubResource("ShaderMaterial_rwgxs")
+size = Vector3(60, 2, 60)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7r4gi"]
+render_priority = 0
+shader = ExtResource("4_4mrxx")
+shader_parameter/lightIntensity = 1.25
+shader_parameter/lineAlpha = 0.7
+shader_parameter/useLighting = true
+shader_parameter/lineHighlight = 0.2
+shader_parameter/lineShadow = 0.55
+
+[sub_resource type="QuadMesh" id="QuadMesh_i7141"]
+material = SubResource("ShaderMaterial_7r4gi")
+flip_faces = true
+size = Vector2(2, 2)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4wyf3"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_k0juu"]
 material = SubResource("ShaderMaterial_4wyf3")
@@ -445,7 +343,6 @@ void light() {
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_i7141"]
 render_priority = 0
-next_pass = ExtResource("3_k0juu")
 shader = SubResource("Shader_qfnet")
 shader_parameter/albedo = Color(0.26353896, 0.69185084, 0.9999997, 1)
 shader_parameter/clamp_diffuse_to_max = false
@@ -466,73 +363,130 @@ shader_parameter/border_width = 0.01
 [sub_resource type="BoxMesh" id="BoxMesh_4mrxx"]
 material = SubResource("ShaderMaterial_i7141")
 
-[sub_resource type="Environment" id="Environment_rwgxs"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_w7kh3"]
+render_priority = 0
+shader = ExtResource("2_rwgxs")
+shader_parameter/albedo = Color(0.69965345, 0.69965345, 0.69965345, 1)
+shader_parameter/clamp_diffuse_to_max = false
+shader_parameter/cuts = 3
+shader_parameter/wrap = 0.0
+shader_parameter/steepness = 1.0
+shader_parameter/use_attenuation = true
+shader_parameter/use_specular = false
+shader_parameter/specular_strength = 1.0
+shader_parameter/specular_shininess = 16.0
+shader_parameter/use_rim = false
+shader_parameter/rim_width = 8.0
+shader_parameter/rim_color = Color(1, 1, 1, 1)
+shader_parameter/use_ramp = false
+shader_parameter/use_borders = false
+shader_parameter/border_width = 0.01
+
+[sub_resource type="Environment" id="Environment_i7141"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_e3hyu"]
+shader = ExtResource("7_i7141")
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_q5onr"]
+viewport_path = NodePath("SubViewport")
 
 [node name="main" type="Node"]
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
-texture_filter = 3
+[node name="SubViewport" type="SubViewport" parent="."]
+handle_input_locally = false
+size = Vector2i(320, 180)
+render_target_update_mode = 4
+
+[node name="StaticBody3D" type="StaticBody3D" parent="SubViewport"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SubViewport/StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+shape = SubResource("BoxShape3D_8cj0n")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewport/StaticBody3D"]
+transform = Transform3D(0.17639405, 0, 0, 0, 1, 0, 0, 0, 0.26868033, 0, -1, 0)
+mesh = SubResource("BoxMesh_uwrxv")
+
+[node name="Player" parent="SubViewport" node_paths=PackedStringArray("cameraRig") instance=ExtResource("1_nnsk1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.50714, 0)
+speed = 1
+rotation_speed = 1
+cameraRig = NodePath("../CameraRig")
+
+[node name="CameraRig" type="Node3D" parent="SubViewport"]
+transform = Transform3D(-0.98660064, 0, -0.16315381, 0, 1, 0, 0.16315381, 0, -0.98660064, 0, 0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="SubViewport/CameraRig"]
+transform = Transform3D(0.13916266, -0.4966276, 0.856735, 0.012091602, 0.865941, 0.50000006, -0.99019575, -0.05922203, 0.12651168, 21.026741, 12.466625, 3.5128934)
+projection = 1
+size = 9.738
+far = 300.0
+script = ExtResource("3_qfnet")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewport/CameraRig/Camera3D"]
+extra_cull_margin = 16384.0
+mesh = SubResource("QuadMesh_i7141")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.470779, 0)
+visible = false
+mesh = SubResource("BoxMesh_k0juu")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="SubViewport"]
+transform = Transform3D(-1.96413e-08, -0.449341, 0.405114, 0.605, -2.64454e-08, 0, 1.77081e-08, 0.405114, 0.449341, 1.52699, 0.646311, -1.23398)
+visible = false
+mesh = SubResource("TorusMesh_4wyf3")
+skeleton = NodePath("../MeshInstance3D3")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.57177, 0.236904, -1.16343)
+visible = false
+mesh = SubResource("CylinderMesh_k0juu")
+skeleton = NodePath("../MeshInstance3D3")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="SubViewport"]
+transform = Transform3D(-0.558654, 0, 0.430035, -0.326367, 0.459076, -0.42398, -0.280027, -0.535046, -0.36378, 0.0324524, -0.0107372, -2.38218)
+visible = false
+mesh = SubResource("BoxMesh_71j4m")
+
+[node name="Node3D" type="Node3D" parent="SubViewport"]
+transform = Transform3D(-0.45848814, 0, 0.0775475, 0, 0.465, 0, -0.0775475, 0, -0.45848814, 0.00288886, 1.1134322, 0.0780056)
+script = ExtResource("7_7r4gi")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="SubViewport/Node3D"]
+transform = Transform3D(3.14, 0, 9.3579295e-08, 0, 3.14, 0, -9.3579295e-08, 0, 3.14, 3.177, 0, -4.59)
+mesh = SubResource("BoxMesh_4mrxx")
+skeleton = NodePath("../../..")
+
+[node name="Rock1" type="MeshInstance3D" parent="SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7764764, 0.5235781, -5.224364)
+material_override = SubResource("ShaderMaterial_w7kh3")
+mesh = ExtResource("5_71j4m")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewport"]
+environment = SubResource("Environment_i7141")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewport"]
+transform = Transform3D(-0.99576175, 0.04412148, -0.08069645, 1.6568679e-08, 0.8774142, 0.47973356, 0.09197077, 0.47770032, -0.87369543, 0, 0, 0)
+shadow_enabled = true
+directional_shadow_split_1 = 0.0
+directional_shadow_split_2 = 0.0
+directional_shadow_split_3 = 0.15
+directional_shadow_max_distance = 8192.0
+
+[node name="Display" type="Control" parent="." node_paths=PackedStringArray("viewport")]
+clip_contents = true
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-stretch = true
-stretch_shrink = 4
+script = ExtResource("9_w7kh3")
+viewport = NodePath("../SubViewport")
+metadata/_edit_use_anchors_ = true
 
-[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
-handle_input_locally = false
-size = Vector2i(288, 162)
-render_target_update_mode = 4
-
-[node name="StaticBody3D" type="StaticBody3D" parent="SubViewportContainer/SubViewport"]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="SubViewportContainer/SubViewport/StaticBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
-shape = SubResource("BoxShape3D_8cj0n")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewportContainer/SubViewport/StaticBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
-mesh = SubResource("BoxMesh_uwrxv")
-
-[node name="Player" parent="SubViewportContainer/SubViewport" instance=ExtResource("1_nnsk1")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.50714, 0)
-visible = false
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewportContainer/SubViewport"]
-transform = Transform3D(0.9999863, -0.002980882, -0.0043046116, 0.0046715713, 0.87922627, 0.47638154, 0.0023646906, -0.47639516, 0.8792281, 0, 3.9319, 3.60005)
-shadow_enabled = true
-
-[node name="CameraRig" type="Node3D" parent="SubViewportContainer/SubViewport"]
-
-[node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport/CameraRig"]
-transform = Transform3D(0.13754304, -0.5675479, 0.8117705, 0.011820604, 0.82044196, 0.5716077, -0.9904253, -0.06902504, 0.119554825, 2.32739, 2.49028, -0.802396)
-projection = 1
-size = 5.0
-far = 12.59
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewportContainer/SubViewport"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.470779, 0)
-mesh = SubResource("BoxMesh_k0juu")
-
-[node name="MeshInstance3D5" type="MeshInstance3D" parent="SubViewportContainer/SubViewport"]
-transform = Transform3D(-1.96413e-08, -0.449341, 0.405114, 0.605, -2.64454e-08, 0, 1.77081e-08, 0.405114, 0.449341, 1.52699, 0.646311, -1.23398)
-mesh = SubResource("TorusMesh_4wyf3")
-skeleton = NodePath("../MeshInstance3D3")
-
-[node name="MeshInstance3D4" type="MeshInstance3D" parent="SubViewportContainer/SubViewport"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.57177, 0.236904, -1.16343)
-mesh = SubResource("CylinderMesh_k0juu")
-skeleton = NodePath("../MeshInstance3D3")
-
-[node name="MeshInstance3D3" type="MeshInstance3D" parent="SubViewportContainer/SubViewport"]
-transform = Transform3D(-0.558654, 0, 0.430035, -0.326367, 0.459076, -0.42398, -0.280027, -0.535046, -0.36378, 0.0324524, -0.0107372, -2.38218)
-mesh = SubResource("BoxMesh_71j4m")
-
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="SubViewportContainer/SubViewport"]
-transform = Transform3D(0.283621, 0, 0.368489, 0, 0.465, 0, -0.368489, 0, 0.283621, 0.00288886, 1.19507, 0.0780056)
-mesh = SubResource("BoxMesh_4mrxx")
-skeleton = NodePath("../../..")
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewportContainer/SubViewport"]
-environment = SubResource("Environment_rwgxs")
+[node name="Sprite2D" type="Sprite2D" parent="Display"]
+material = SubResource("ShaderMaterial_e3hyu")
+texture = SubResource("ViewportTexture_q5onr")
+centered = false
