@@ -1,6 +1,12 @@
 shader_type spatial;
 
 //render_mode ambient_light_disabled;
+uniform sampler2D noise_texture : source_color;
+uniform float noise_speed : hint_range(0.0, 1.0, 0.001);
+uniform float noise_scale : hint_range(0.0, 1.0, 0.001);
+uniform float noise_strength : hint_range(0.0, 1.0, 0.1);
+uniform float threshold : hint_range(0.0, 2.0) = 0.1;
+uniform float fluffiness : hint_range(0.0, 2.0) = 0.1;
 
 uniform vec4 albedo : source_color = vec4(1.0f);
 uniform sampler2D albedo_texture : source_color;
@@ -29,6 +35,16 @@ uniform float border_width = 0.01f;
 
 varying vec3 vertex_pos;
 varying vec3 normal;
+varying vec3 world_pos;
+
+float get_cloud_attenuation(vec3 _world_pos){
+	vec2 uv = _world_pos.xz * noise_scale;
+	vec4 noise1 = texture(noise_texture, mod(uv + TIME * 2.5 * noise_speed / 10.0, 0.0));
+	vec4 noise2 = texture(noise_texture, mod(uv + TIME * (2.5 + fluffiness * 3.0) * noise_speed / 10.0, 0.0));
+	vec4 combinedNoise = noise1 + noise2;
+	float noise = combinedNoise.r;
+	return mix(1.0, noise, noise_strength);
+}
 
 float split_specular(float specular) {
 	return step(0.5f, specular);
@@ -37,6 +53,7 @@ float split_specular(float specular) {
 void vertex() {
 	vertex_pos = VERTEX;
 	normal = NORMAL;
+	world_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 }
 
 void fragment() {
@@ -47,7 +64,7 @@ void light() {
 	// Attenuation.
 	float attenuation = 1.0f;
 	if (use_attenuation) {
-		attenuation = ATTENUATION;
+		attenuation =  ATTENUATION * get_cloud_attenuation(world_pos);
 	}
 	
 	// Diffuse lighting.

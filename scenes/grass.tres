@@ -1,0 +1,37 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://3uqs42lbbp28"]
+
+[ext_resource type="Shader" uid="uid://cskpfur2m5e6u" path="res://shaders/grass.gdshader" id="1_iiopi"]
+[ext_resource type="Texture2D" uid="uid://dlmgt2qvlekw5" path="res://assets/sprites/leaf.png" id="2_iiopi"]
+[ext_resource type="Texture2D" uid="uid://3wc5k60plbrm" path="res://new_noise_texture_2d.tres" id="3_i5gq2"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_iiopi")
+shader_parameter/noise_texture = ExtResource("3_i5gq2")
+shader_parameter/noise_speed = 0.0190000009025
+shader_parameter/noise_scale = 0.022000001045
+shader_parameter/noise_strength = 1.0
+shader_parameter/threshold = 0.0
+shader_parameter/fluffiness = 1.0000000475
+shader_parameter/albedo_texture = ExtResource("2_iiopi")
+shader_parameter/albedo = Color(0.4745098, 0.827451, 0.46666667, 1)
+shader_parameter/alpha_scissor_threshold = 0.0470000022325
+shader_parameter/clamp_diffuse_to_max = false
+shader_parameter/cuts = 3
+shader_parameter/wrap = 0.0
+shader_parameter/steepness = 3.56400012179
+shader_parameter/use_attenuation = true
+shader_parameter/threshold_gradient_size = 0.4370000207575
+shader_parameter/use_specular = false
+shader_parameter/specular_strength = 1.0
+shader_parameter/specular_shininess = 16.0
+shader_parameter/use_rim = false
+shader_parameter/rim_width = 8.0
+shader_parameter/rim_color = Color(1, 1, 1, 1)
+shader_parameter/use_ramp = false
+shader_parameter/use_borders = false
+shader_parameter/border_width = 0.01
+shader_parameter/use_fps_rotation = false
+shader_parameter/rotation_strength = 15.0
+shader_parameter/rotation_speed = 1.0
+shader_parameter/rotation_fps = 10.0
