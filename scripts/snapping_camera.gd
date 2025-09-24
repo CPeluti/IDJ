@@ -1,5 +1,6 @@
-class_name CameraRig
+class_name SnappingCamera
 extends Camera3D
+
 @export var snap = true
 
 var texel_error

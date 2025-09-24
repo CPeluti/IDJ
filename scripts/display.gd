@@ -20,7 +20,7 @@ func _process(_delta: float) -> void:
 	position = ((screen_size - size) / 2).round()
 	# smooth!
 	if pixel_movement:
-		var cam = viewport.get_camera_3d() as CameraRig
+		var cam = viewport.get_camera_3d() as SnappingCamera
 		var pixel_error: Vector2 = cam.texel_error * _sprite.scale
 		_sprite.position = -_sprite.scale + pixel_error
 		var is_integer_scale := display_scale == display_scale.floor()

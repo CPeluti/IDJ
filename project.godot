@@ -21,7 +21,7 @@ project/assembly_name="Typeturge"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gut/plugin.cfg")
+enabled=PackedStringArray("res://addons/gut/plugin.cfg", "res://addons/terrain_3d/plugin.cfg")
 
 [input]
 
@@ -63,3 +63,8 @@ rotate_left={
 "events": [Object(InputEventJoypadMotion,"resource_local_to_scene":false,"resource_name":"","device":-1,"axis":2,"axis_value":-1.0,"script":null)
 ]
 }
+
+[layer_names]
+
+3d_render/layer_2="floor"
+3d_render/layer_3="water"

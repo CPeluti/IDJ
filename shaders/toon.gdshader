@@ -1,6 +1,8 @@
 shader_type spatial;
 
+
 //render_mode ambient_light_disabled;
+uniform bool use_cloud_shadows = false;
 uniform sampler2D noise_texture : source_color;
 uniform float noise_speed : hint_range(0.0, 1.0, 0.001);
 uniform float noise_scale : hint_range(0.0, 1.0, 0.001);
@@ -64,9 +66,12 @@ void light() {
 	// Attenuation.
 	float attenuation = 1.0f;
 	if (use_attenuation) {
-		attenuation =  ATTENUATION * get_cloud_attenuation(world_pos);
+		attenuation =  ATTENUATION;
+		if(use_cloud_shadows){
+			attenuation *= get_cloud_attenuation(world_pos);
+		}
 	}
-	
+
 	// Diffuse lighting.
 	float NdotL = dot(NORMAL, LIGHT);
 	float diffuse_amount = NdotL + (attenuation - 1.0) + wrap;
@@ -82,7 +87,7 @@ void light() {
 		border = step(diffuse_stepped - corr_border_width, diffuse_amount)
 				 - step(1.0 - corr_border_width, diffuse_amount);
 	}
-	
+
 	// Apply diffuse result to different styles.
 	vec3 diffuse = ALBEDO.rgb * LIGHT_COLOR / PI;
 	if (use_ramp) {
@@ -90,14 +95,14 @@ void light() {
 	} else {
 		diffuse *= diffuse_stepped * (1.0f - border);
 	}
-	
+
 	if (clamp_diffuse_to_max) {
 		// Clamp diffuse to max for multiple light sources.
 		DIFFUSE_LIGHT = max(DIFFUSE_LIGHT, diffuse);
 	} else {
 		DIFFUSE_LIGHT += diffuse;
 	}
-	
+
 	// Specular lighting.
 	if (use_specular) {
 		vec3 H = normalize(LIGHT + VIEW);
@@ -108,7 +113,7 @@ void light() {
 		specular_amount = split_specular(specular_amount);
 		SPECULAR_LIGHT += specular_strength * specular_amount * LIGHT_COLOR;
 	}
-	
+
 	// Simple rim lighting.
 	if (use_rim) {
 		float NdotV = dot(NORMAL, VIEW);
