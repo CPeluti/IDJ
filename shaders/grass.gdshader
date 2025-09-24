@@ -1,8 +1,9 @@
 shader_type spatial;
-render_mode blend_mix, depth_prepass_alpha, depth_draw_opaque;
+//render_mode blend_mix, depth_prepass_alpha, depth_draw_opaque;
 //render_mode ambient_light_disabled;
 
 // --- Cloud Shadows and Noise Configuration ---
+uniform bool use_cloud_shadows = false;
 uniform sampler2D noise_texture : source_color;
 uniform float noise_speed : hint_range(0.0, 1.0, 0.001);
 uniform float noise_scale : hint_range(0.0, 1.0, 0.001);
@@ -118,7 +119,6 @@ mat3 rotate_z(float angle) {
 void vertex() {
 	// Store the original vertex position before any transformations
 	vec3 original_vertex = VERTEX;
-
 	// Set up billboard transformation matrix to face the camera
 	mat4 modified_model_view = VIEW_MATRIX * mat4(
         vec4(INV_VIEW_MATRIX[0].xyz, 0.0),
@@ -192,7 +192,7 @@ void fragment() {
 	// CLOUD SHADOW KEY: Override the lighting vertex position
 	// This forces all lighting calculations to use the blade's center position
 	// instead of individual fragment positions
-	LIGHT_VERTEX = (VIEW_MATRIX * vec4(lighting_sample_position, 1.0)).xyz;
+	//LIGHT_VERTEX = (VIEW_MATRIX * vec4(lighting_sample_position, 1.0)).xyz;
 
 	ALPHA *= albedo.a * albedo_tex.a;
 	ALPHA_SCISSOR_THRESHOLD = alpha_scissor_threshold;
@@ -207,7 +207,10 @@ void light() {
 		// KEY CHANGE: Use lighting_sample_position instead of world_pos
 		// This samples the cloud noise at the blade's center position only
 		// Result: Same shadow value applied to ALL fragments of this blade
-		attenuation = ATTENUATION * get_cloud_attenuation(lighting_sample_position);
+		attenuation = ATTENUATION;
+		if(use_cloud_shadows){
+			attenuation *= get_cloud_attenuation(lighting_sample_position);
+		}
 	}
 	float diffuse_stepped;
 
