@@ -2,7 +2,7 @@
 
 [ext_resource type="Shader" uid="uid://cskpfur2m5e6u" path="res://shaders/grass.gdshader" id="1_0yae6"]
 [ext_resource type="Texture2D" uid="uid://dlmgt2qvlekw5" path="res://assets/sprites/leaf.png" id="2_i5gq2"]
-[ext_resource type="Texture2D" uid="uid://3wc5k60plbrm" path="res://new_noise_texture_2d.tres" id="2_iiopi"]
+[ext_resource type="Texture2D" uid="uid://3wc5k60plbrm" path="res://assets/Textures/new_noise_texture_2d.tres" id="2_iiopi"]
 
 [resource]
 render_priority = 0

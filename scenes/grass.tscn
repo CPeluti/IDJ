@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dg4muy4w55fv4"]
 
-[ext_resource type="Material" uid="uid://3uqs42lbbp28" path="res://scenes/grass.tres" id="1_e1kak"]
+[ext_resource type="Material" uid="uid://3uqs42lbbp28" path="res://Materials/grass.tres" id="1_e1kak"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_e3hyu"]
 material = ExtResource("1_e1kak")

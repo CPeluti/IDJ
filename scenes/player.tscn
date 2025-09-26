@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dppfwainq0pqp" path="res://scripts/player.gd" id="1_3vyb7"]
 [ext_resource type="Shader" uid="uid://cr3rtb5jv83bh" path="res://shaders/edge.gdshader" id="2_qhqgy"]
 [ext_resource type="Shader" uid="uid://cxu5285smyef7" path="res://shaders/toon.gdshader" id="3_dqkch"]
-[ext_resource type="Texture2D" uid="uid://3wc5k60plbrm" path="res://new_noise_texture_2d.tres" id="4_dqkch"]
+[ext_resource type="Texture2D" uid="uid://3wc5k60plbrm" path="res://assets/Textures/new_noise_texture_2d.tres" id="4_dqkch"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dqkch"]
 render_priority = 0
@@ -19,7 +19,7 @@ shader_parameter/shadow_color = Color(0, 0, 0, 1)
 render_priority = 0
 next_pass = SubResource("ShaderMaterial_dqkch")
 shader = ExtResource("3_dqkch")
-shader_parameter/use_cloud_shadows = false
+shader_parameter/use_cloud_shadows = true
 shader_parameter/noise_texture = ExtResource("4_dqkch")
 shader_parameter/noise_speed = 0.1650000078375
 shader_parameter/noise_scale = 0.022000001045

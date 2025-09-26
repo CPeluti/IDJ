@@ -2,14 +2,14 @@
 
 [ext_resource type="Script" uid="uid://rvqx0e58fhgh" path="res://terrain_3d.gd" id="1_2s1ug"]
 [ext_resource type="Shader" uid="uid://e7l3rw8g0pei" path="res://shaders/terrain3d.gdshader" id="1_6ysym"]
-[ext_resource type="Texture2D" uid="uid://3wc5k60plbrm" path="res://new_noise_texture_2d.tres" id="1_70v8n"]
+[ext_resource type="Texture2D" uid="uid://3wc5k60plbrm" path="res://assets/Textures/new_noise_texture_2d.tres" id="1_70v8n"]
 [ext_resource type="Shader" uid="uid://cxu5285smyef7" path="res://shaders/toon.gdshader" id="1_fpcqr"]
 [ext_resource type="PackedScene" uid="uid://dg4muy4w55fv4" path="res://scenes/grass.tscn" id="1_vlnrc"]
 [ext_resource type="Script" uid="uid://ca0gc68a2bgxw" path="res://scripts/snapping_camera.gd" id="3_vncqj"]
 [ext_resource type="PackedScene" uid="uid://cv2bt1utpstrg" path="res://scenes/player.tscn" id="4_byv2e"]
 [ext_resource type="Script" uid="uid://srfgml0iu22c" path="res://scripts/node_3d.gd" id="5_c853i"]
 [ext_resource type="Shader" uid="uid://cr3rtb5jv83bh" path="res://shaders/edge.gdshader" id="7_r4ubi"]
-[ext_resource type="ArrayMesh" uid="uid://b4nmb1cirmuc2" path="res://rock1.obj" id="8_0twut"]
+[ext_resource type="ArrayMesh" uid="uid://b4nmb1cirmuc2" path="res://assets/Models/rock1.obj" id="8_0twut"]
 
 [sub_resource type="Gradient" id="Gradient_6ysym"]
 offsets = PackedFloat32Array(0.2, 1)

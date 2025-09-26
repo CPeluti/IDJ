@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://d0sqb6vowhvhx"
-path="res://.godot/imported/Log.FBX-29a73a678a17bf1041c424195b941cab.scn"
+uid="uid://dkoe5mgwjkjlk"
+path="res://.godot/imported/Pond.FBX-d4be0947e8aa3f68d477984a273a62b0.scn"
 
 [deps]
 
-source_file="res://assets/Log.FBX"
-dest_files=["res://.godot/imported/Log.FBX-29a73a678a17bf1041c424195b941cab.scn"]
+source_file="res://assets/Models/Pond.FBX"
+dest_files=["res://.godot/imported/Pond.FBX-d4be0947e8aa3f68d477984a273a62b0.scn"]
 
 [params]
 
