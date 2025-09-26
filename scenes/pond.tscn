@@ -3,9 +3,9 @@
 [ext_resource type="Script" uid="uid://ca0gc68a2bgxw" path="res://scripts/snapping_camera.gd" id="1_hvmvx"]
 [ext_resource type="PackedScene" uid="uid://cv2bt1utpstrg" path="res://scenes/player.tscn" id="2_go7bl"]
 [ext_resource type="Shader" uid="uid://c7bvw2xj105gd" path="res://shaders/water.gdshader" id="3_go7bl"]
-[ext_resource type="Texture2D" uid="uid://b6l0hrimqeio2" path="res://Shoreline.png" id="3_jryt2"]
-[ext_resource type="Texture2D" uid="uid://qspdinef2hm0" path="res://Log.png" id="5_7vlfm"]
-[ext_resource type="Texture2D" uid="uid://cglnon5ha7cij" path="res://Lifesaver.png" id="6_fpgeh"]
+[ext_resource type="Texture2D" uid="uid://b6l0hrimqeio2" path="res://assets/Textures/Shoreline.png" id="3_jryt2"]
+[ext_resource type="Texture2D" uid="uid://qspdinef2hm0" path="res://assets/Textures/Log.png" id="5_7vlfm"]
+[ext_resource type="Texture2D" uid="uid://cglnon5ha7cij" path="res://assets/Textures/Lifesaver.png" id="6_fpgeh"]
 
 [sub_resource type="Environment" id="Environment_yjqe1"]
 

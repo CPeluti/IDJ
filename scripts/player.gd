@@ -1,6 +1,6 @@
 extends CharacterBody3D
 
-@export var speed = 19
+@export var speed = 80
 @export var rotation_speed = 5
 @export var fall_acceleration = 75
 @export var cameraRig: Node3D
@@ -31,9 +31,11 @@ func _physics_process(delta: float) -> void:
 
 	target_velocity.z = direction.x * speed
 	target_velocity.x = direction.z * speed * -1
-	# if not is_on_floor():
-	# 	target_velocity.y = target_velocity.y - (fall_acceleration * delta)
+	if not is_on_floor():
+		target_velocity.y = target_velocity.y - (fall_acceleration * delta)
 	
-	cameraRig.rotate_y(rotation.x * rotation_speed * delta)
-	var rotated_speed = target_velocity.rotated(Vector3.UP, cameraRig.rotation.y)
-	cameraRig.global_translate(rotated_speed * delta * -1)
+	# cameraRig.rotate_y(rotation.x * rotation_speed * delta)
+	# var rotated_speed = target_velocity.rotated(Vector3.UP, cameraRig.rotation.y)
+	# cameraRig.global_translate(rotated_speed * delta * -1)
+	velocity = target_velocity
+	move_and_slide()

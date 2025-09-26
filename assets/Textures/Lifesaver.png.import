@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cglnon5ha7cij"
-path.s3tc="res://.godot/imported/Lifesaver.png-a5f2a00402350c0e28f9885a8defad3b.s3tc.ctex"
+path.s3tc="res://.godot/imported/Lifesaver.png-d3abacc10bd410be922da911397bb3a4.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://Lifesaver.png"
-dest_files=["res://.godot/imported/Lifesaver.png-a5f2a00402350c0e28f9885a8defad3b.s3tc.ctex"]
+source_file="res://assets/Textures/Lifesaver.png"
+dest_files=["res://.godot/imported/Lifesaver.png-d3abacc10bd410be922da911397bb3a4.s3tc.ctex"]
 
 [params]
 

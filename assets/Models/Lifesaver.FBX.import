@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://doqducevxk13w"
-path="res://.godot/imported/Lifesaver.FBX-7a48c6179467eef0e6d4df90f5a53f22.scn"
+path="res://.godot/imported/Lifesaver.FBX-79a7ebcec7d1a5d67abc0bc25268b289.scn"
 
 [deps]
 
-source_file="res://assets/Lifesaver.FBX"
-dest_files=["res://.godot/imported/Lifesaver.FBX-7a48c6179467eef0e6d4df90f5a53f22.scn"]
+source_file="res://assets/Models/Lifesaver.FBX"
+dest_files=["res://.godot/imported/Lifesaver.FBX-79a7ebcec7d1a5d67abc0bc25268b289.scn"]
 
 [params]
 
