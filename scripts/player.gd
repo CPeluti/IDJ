@@ -5,6 +5,9 @@ extends CharacterBody3D
 @export var fall_acceleration = 75
 @export var cameraRig: Node3D
 
+@export var Projectile : PackedScene
+@export var target: CharacterBody3D
+
 var target_velocity = Vector3.ZERO
 var target_rotation = Vector3.ZERO
 
@@ -12,7 +15,8 @@ var target_rotation = Vector3.ZERO
 func _physics_process(delta: float) -> void:
 	var direction = Vector3.ZERO
 	var rotation = Vector3.ZERO
-	
+	if Input.is_action_just_pressed("attack"):
+		shoot()
 	if Input.is_action_pressed("move_right"):
 		direction.x+=1
 	if Input.is_action_pressed("move_left"):
@@ -39,3 +43,10 @@ func _physics_process(delta: float) -> void:
 	# cameraRig.global_translate(rotated_speed * delta * -1)
 	velocity = target_velocity
 	move_and_slide()
+
+func shoot():
+	var projectile:Node3D = Projectile.instantiate()
+	get_parent().add_child(projectile)
+	projectile.global_position = global_position
+	# projectile.global_position.x += 20
+	projectile.look_at(target.global_position)

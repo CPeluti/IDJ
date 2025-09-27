@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=4 uid="uid://b1mgeimub0jok"]
+[gd_scene load_steps=36 format=4 uid="uid://b1mgeimub0jok"]
 
 [ext_resource type="PackedScene" uid="uid://cv2bt1utpstrg" path="res://scenes/player.tscn" id="1_nnsk1"]
 [ext_resource type="Material" uid="uid://3uqs42lbbp28" path="res://Materials/grass.tres" id="1_q5onr"]
@@ -7,10 +7,12 @@
 [ext_resource type="Texture2D" uid="uid://3wc5k60plbrm" path="res://assets/Textures/new_noise_texture_2d.tres" id="3_jhx03"]
 [ext_resource type="Script" uid="uid://ca0gc68a2bgxw" path="res://scripts/snapping_camera.gd" id="3_qfnet"]
 [ext_resource type="ArrayMesh" uid="uid://b4nmb1cirmuc2" path="res://assets/Models/rock1.obj" id="5_71j4m"]
+[ext_resource type="PackedScene" uid="uid://bf0kb2swhxx2q" path="res://scenes/Projectile.tscn" id="6_dss4m"]
 [ext_resource type="Shader" uid="uid://dxv6q0c4b4kbv" path="res://shaders/upscaler.gdshader" id="7_i7141"]
 [ext_resource type="Script" uid="uid://srfgml0iu22c" path="res://scripts/node_3d.gd" id="7_w7kh3"]
-[ext_resource type="Script" uid="uid://dlncdris7bcj8" path="res://scripts/display.gd" id="9_w7kh3"]
+[ext_resource type="Script" path="res://scripts/display.gd" id="9_w7kh3"]
 [ext_resource type="Shader" uid="uid://70qq02rsjymu" path="res://shaders/clouds.gdshader" id="10_q5onr"]
+[ext_resource type="PackedScene" uid="uid://bw3mp815g1eq6" path="res://scenes/enemy.tscn" id="11_dss4m"]
 [ext_resource type="Material" uid="uid://w76wg1wtt6q3" path="res://Materials/edge.material" id="11_xo05s"]
 [ext_resource type="Script" uid="uid://b2sr2xebyj757" path="res://scripts/reflex_probe.gd" id="13_jhx03"]
 [ext_resource type="Shader" uid="uid://cjp15dngqlq3c" path="res://shaders/reflection.gdshader" id="14_o8fc1"]
@@ -197,11 +199,13 @@ mesh = SubResource("PlaneMesh_q5onr")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.40678406, 0)
 shape = SubResource("BoxShape3D_o8fc1")
 
-[node name="Player" parent="SubViewport" node_paths=PackedStringArray("cameraRig") instance=ExtResource("1_nnsk1")]
+[node name="Player" parent="SubViewport" node_paths=PackedStringArray("cameraRig", "target") instance=ExtResource("1_nnsk1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.85661, 2.2865038, 0)
 speed = 3
 rotation_speed = 1
 cameraRig = NodePath("../CameraRig")
+Projectile = ExtResource("6_dss4m")
+target = NodePath("../Enemy")
 
 [node name="CameraRig" type="Node3D" parent="SubViewport"]
 transform = Transform3D(-0.98660064, 0, -0.16315381, 0, 1, 0, 0.16315381, 0, -0.98660064, 0, 0, 0)
@@ -261,6 +265,9 @@ transform = Transform3D(0.4302144, 0, 0, 0, 0.4302144, 0, 0, 0, 0.4302144, 0, 1.
 mesh = SubResource("ArrayMesh_dss4m")
 skeleton = NodePath("")
 surface_material_override/0 = ExtResource("11_xo05s")
+
+[node name="Enemy" parent="SubViewport" instance=ExtResource("11_dss4m")]
+transform = Transform3D(2.37, 0, 0, 0, 2.37, 0, 0, 0, 2.37, -10.242359, 1.6118536, 0)
 
 [node name="Display" type="Control" parent="." node_paths=PackedStringArray("viewport")]
 clip_contents = true
