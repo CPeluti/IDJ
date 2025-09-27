@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://bw3mp815g1eq6"]
+
+[ext_resource type="Script" uid="uid://dgww8xf5me3vy" path="res://scripts/HurtboxComponent.gd" id="1_md0e3"]
+[ext_resource type="Script" uid="uid://bnu3xfpccylhs" path="res://scripts/HealthComponent.gd" id="2_4ra3w"]
+
+[sub_resource type="PrismMesh" id="PrismMesh_7p1mj"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3vyb7"]
+size = Vector3(1, 1.1422724, 1)
+
+[node name="Enemy" type="CharacterBody3D"]
+
+[node name="Pivot" type="Node3D" parent="."]
+
+[node name="Character" type="MeshInstance3D" parent="Pivot"]
+mesh = SubResource("PrismMesh_7p1mj")
+
+[node name="Area3D" type="Area3D" parent="." node_paths=PackedStringArray("health_component")]
+script = ExtResource("1_md0e3")
+health_component = NodePath("../HealthComponent")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03250152, 0)
+shape = SubResource("BoxShape3D_3vyb7")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03250152, 0)
+shape = SubResource("BoxShape3D_3vyb7")
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("2_4ra3w")
+metadata/_custom_type_script = "uid://bnu3xfpccylhs"

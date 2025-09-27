@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://bf0kb2swhxx2q"]
+
+[ext_resource type="Script" uid="uid://cqjwm74xs3gu2" path="res://scripts/ProjectileComponent.gd" id="1_dprbf"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vihyi"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6ku62"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_dprbf"]
+material = SubResource("StandardMaterial3D_6ku62")
+
+[node name="Projectile" type="Node3D"]
+script = ExtResource("1_dprbf")
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("BoxShape3D_vihyi")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_dprbf")
+skeleton = NodePath("")
+
+[connection signal="area_entered" from="Area3D" to="." method="_on_hurtbox_area_entered"]

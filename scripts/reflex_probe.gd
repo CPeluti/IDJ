@@ -14,7 +14,6 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	var forward_vector = -player_camera.global_transform.basis.z
-	print(forward_vector)
 	var up_vector = player_camera.global_transform.basis.y
 
 	var normal = Vector3.UP
