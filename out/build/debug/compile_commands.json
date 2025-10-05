@@ -1,0 +1,326 @@
+[
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\Animation.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Animation.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Animation.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\Animation.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\Animator.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Animator.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Animator.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\Animator.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\Camera.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Camera.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Camera.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\Camera.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\Collider.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Collider.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Collider.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\Collider.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\Component.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Component.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Component.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\Component.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\Game.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Game.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Game.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\Game.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\GameObject.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\GameObject.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\GameObject.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\GameObject.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\InputManager.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\InputManager.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\InputManager.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\InputManager.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\Log.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Log.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Log.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\Log.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\Music.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Music.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Music.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\Music.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\Observer.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Observer.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Observer.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\Observer.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\ParticleSystem.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\ParticleSystem.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\ParticleSystem.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\ParticleSystem.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\Random.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Random.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Random.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\Random.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\Rect.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Rect.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Rect.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\Rect.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\Resources.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Resources.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Resources.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\Resources.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\Shader.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Shader.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Shader.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\Shader.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\Sound.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Sound.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Sound.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\Sound.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\Spell.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Spell.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Spell.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\Spell.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\Sprite.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Sprite.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Sprite.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\Sprite.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\SpriteRenderer.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\SpriteRenderer.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\SpriteRenderer.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\SpriteRenderer.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\State.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\State.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\State.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\State.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\Subject.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Subject.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Subject.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\Subject.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\Text.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Text.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Text.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\Text.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\TileMap.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\TileMap.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\TileMap.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\TileMap.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\TileSet.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\TileSet.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\TileSet.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\TileSet.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Core\\Vec2.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Vec2.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Core\\Vec2.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Core\\Vec2.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Game\\AIController.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\AIController.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\AIController.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Game\\AIController.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Game\\Boss.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\Boss.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\Boss.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Game\\Boss.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Game\\Bullet.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\Bullet.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\Bullet.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Game\\Bullet.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Game\\Character.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\Character.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\Character.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Game\\Character.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Game\\Dummy.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\Dummy.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\Dummy.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Game\\Dummy.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Game\\EndState.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\EndState.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\EndState.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Game\\EndState.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Game\\Enemy.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\Enemy.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\Enemy.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Game\\Enemy.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Game\\Entity.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\Entity.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\Entity.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Game\\Entity.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Game\\GameData.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\GameData.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\GameData.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Game\\GameData.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Game\\Gun.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\Gun.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\Gun.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Game\\Gun.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Game\\HealthSystem.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\HealthSystem.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\HealthSystem.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Game\\HealthSystem.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Game\\Lifebar.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\Lifebar.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\Lifebar.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Game\\Lifebar.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Game\\ManaSystem.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\ManaSystem.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\ManaSystem.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Game\\ManaSystem.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Game\\PlayerController.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\PlayerController.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\PlayerController.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Game\\PlayerController.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Game\\StageState.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\StageState.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\StageState.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Game\\StageState.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Game\\TitleState.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\TitleState.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\TitleState.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Game\\TitleState.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Game\\TypingSystem.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\TypingSystem.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\TypingSystem.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Game\\TypingSystem.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Game\\Wave.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\Wave.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\Wave.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Game\\Wave.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Game\\WaveSpawner.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\WaveSpawner.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\WaveSpawner.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Game\\WaveSpawner.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\Game\\Zombie.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\Zombie.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\Game\\Zombie.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\Game\\Zombie.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\" -isystem C:/libs/SDL2-2.32.2/cmake/../include  -DDEBUG -o CMakeFiles\\JOGO.dir\\src\\main.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\main.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\src\\main.cpp",
+  "output": "CMakeFiles\\JOGO.dir\\src\\main.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -DSPDLOG_FWRITE_UNLOCKED -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\"  -DDEBUG -std=c++11 -o vendor\\spdlog\\CMakeFiles\\spdlog.dir\\src\\spdlog.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\vendor\\spdlog\\src\\spdlog.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\vendor\\spdlog\\src\\spdlog.cpp",
+  "output": "vendor\\spdlog\\CMakeFiles\\spdlog.dir\\src\\spdlog.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -DSPDLOG_FWRITE_UNLOCKED -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\"  -DDEBUG -std=c++11 -o vendor\\spdlog\\CMakeFiles\\spdlog.dir\\src\\stdout_sinks.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\vendor\\spdlog\\src\\stdout_sinks.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\vendor\\spdlog\\src\\stdout_sinks.cpp",
+  "output": "vendor\\spdlog\\CMakeFiles\\spdlog.dir\\src\\stdout_sinks.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -DSPDLOG_FWRITE_UNLOCKED -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\"  -DDEBUG -std=c++11 -o vendor\\spdlog\\CMakeFiles\\spdlog.dir\\src\\color_sinks.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\vendor\\spdlog\\src\\color_sinks.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\vendor\\spdlog\\src\\color_sinks.cpp",
+  "output": "vendor\\spdlog\\CMakeFiles\\spdlog.dir\\src\\color_sinks.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -DSPDLOG_FWRITE_UNLOCKED -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\"  -DDEBUG -std=c++11 -o vendor\\spdlog\\CMakeFiles\\spdlog.dir\\src\\file_sinks.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\vendor\\spdlog\\src\\file_sinks.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\vendor\\spdlog\\src\\file_sinks.cpp",
+  "output": "vendor\\spdlog\\CMakeFiles\\spdlog.dir\\src\\file_sinks.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -DSPDLOG_FWRITE_UNLOCKED -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\"  -DDEBUG -std=c++11 -o vendor\\spdlog\\CMakeFiles\\spdlog.dir\\src\\async.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\vendor\\spdlog\\src\\async.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\vendor\\spdlog\\src\\async.cpp",
+  "output": "vendor\\spdlog\\CMakeFiles\\spdlog.dir\\src\\async.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -DSPDLOG_FWRITE_UNLOCKED -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\"  -DDEBUG -std=c++11 -o vendor\\spdlog\\CMakeFiles\\spdlog.dir\\src\\cfg.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\vendor\\spdlog\\src\\cfg.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\vendor\\spdlog\\src\\cfg.cpp",
+  "output": "vendor\\spdlog\\CMakeFiles\\spdlog.dir\\src\\cfg.cpp.obj"
+},
+{
+  "directory": "C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug",
+  "command": "C:\\msys64\\ucrt64\\bin\\c++.exe -DSPDLOG_COMPILED_LIB -DSPDLOG_FWRITE_UNLOCKED -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/include\" -I\"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/vendor/spdlog/include\"  -DDEBUG -std=c++11 -o vendor\\spdlog\\CMakeFiles\\spdlog.dir\\src\\bundled_fmtlib_format.cpp.obj -c \"C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\vendor\\spdlog\\src\\bundled_fmtlib_format.cpp\"",
+  "file": "C:\\Users\\acjpj\\OneDrive - unb.br\\12\\IDJ\\IDJ\\vendor\\spdlog\\src\\bundled_fmtlib_format.cpp",
+  "output": "vendor\\spdlog\\CMakeFiles\\spdlog.dir\\src\\bundled_fmtlib_format.cpp.obj"
+}
+]

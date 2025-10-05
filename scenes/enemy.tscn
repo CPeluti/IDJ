@@ -30,3 +30,7 @@ shape = SubResource("BoxShape3D_3vyb7")
 [node name="HealthComponent" type="Node" parent="."]
 script = ExtResource("2_4ra3w")
 metadata/_custom_type_script = "uid://bnu3xfpccylhs"
+
+[node name="CPUParticles3D" type="CPUParticles3D" parent="."]
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="."]
