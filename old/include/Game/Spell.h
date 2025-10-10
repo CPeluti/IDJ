@@ -33,7 +33,7 @@ enum class SpellElement
 };
 enum class SpellEffect {
     multiple,
-    pierce,
+    pierce
     freeze,
     chain,
     speed
@@ -67,7 +67,7 @@ public:
 
     virtual void UpdateEffect(float dt) = 0;
     virtual void RemoveEffect(std::string effectName) = 0;
-   
+
 };
 
 template <typename SpellStrategy>
@@ -199,7 +199,7 @@ protected:
 	inline bool Is(std::string type) { return type == "Projectile"; }
     inline bool OnCollision(OnCollisionEvent& evt)
     {
-        
+
         GameObject* go = &evt.GetGameObject();
         if (std::find(lastHit.begin(), lastHit.end(), go) != lastHit.end()) return true;
 		else lastHit.push_back(go);
@@ -222,14 +222,14 @@ protected:
         }
         Vec2 currentPos = this->associated.box.center();
         std::weak_ptr<Entity> entity = Entity::GetClosestEnemy(currentPos, 300, lastHit);
-        
+
         if (auto shared = entity.lock()) {
             if (m_chainAmount > 0) {
                 m_chainAmount--;
                     float newAngle = Vec2::Angle(currentPos, shared->GetPosition());
 				    this->associated.angleDeg = newAngle + 90;
             }
-        } 
+        }
         else if (!go->GetComponent("FireProjectileSpell").lock() && m_pierceAmount <=0)
             this->RequestDelete();
         m_pierceAmount--;
@@ -260,7 +260,7 @@ class ProjectileSpell : public Spell<Projectile>
 public:
     ProjectileSpell(Vec2 initialPos, Vec2 target, SpellAssets assets) : Spell({}, 30, 500, 200), m_initialPos(initialPos), m_target(target), m_assets(assets) {
     }
-    
+
     ~ProjectileSpell() {}
     SPELL_TYPE(projectile, fire);
 
@@ -297,11 +297,11 @@ public:
                 }
             }
             spell->SetOnHitEffects(clonedEffects);
-            
 
-            
+
+
             spell->m_hitSoundEffect = std::make_shared<Sound>(m_assets.hitSound);
-            
+
             std::shared_ptr<SpriteRenderer> sr = std::make_shared<SpriteRenderer>(*spellObj, m_assets.baseSprite, m_assets.frameCountW, m_assets.frameCountH, -90);
             spell->m_soundEffect = std::make_shared<Sound>(m_assets.castSound);
             spell->m_soundEffect->Play();
@@ -479,7 +479,7 @@ public:
         if (e) {
             for (const auto& effect : spellEffects) {
                 if (effect->GetName() == e->GetName()) {
-                    return; // já existe
+                    return; // jï¿½ existe
                 }
             }
             spellEffects.push_back(e);
@@ -517,7 +517,7 @@ public:
 
     bool targetsPlayer = false;
 private:
-   
+
 	std::weak_ptr<GameObject> m_particlesSystem;
     ParticleData m_Particle;
     Vec2 m_pos;
