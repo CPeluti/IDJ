@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://cv2bt1utpstrg"]
 
-[ext_resource type="Script" uid="uid://dppfwainq0pqp" path="res://scripts/player.gd" id="1_3vyb7"]
+[ext_resource type="Script" uid="uid://djndy0tk3bfjm" path="res://scripts/player.gd" id="1_3vyb7"]
 [ext_resource type="Shader" uid="uid://cr3rtb5jv83bh" path="res://shaders/edge.gdshader" id="2_qhqgy"]
 [ext_resource type="Shader" uid="uid://cxu5285smyef7" path="res://shaders/toon.gdshader" id="3_dqkch"]
 [ext_resource type="Texture2D" uid="uid://3wc5k60plbrm" path="res://assets/Textures/new_noise_texture_2d.tres" id="4_dqkch"]
@@ -48,14 +48,17 @@ material = SubResource("ShaderMaterial_qlg0r")
 [sub_resource type="BoxShape3D" id="BoxShape3D_3vyb7"]
 size = Vector3(1, 2.03198, 1)
 
-[node name="Player" type="CharacterBody3D"]
+[node name="Player" type="CharacterBody3D" unique_id=952659437]
 script = ExtResource("1_3vyb7")
+speed = null
+rotation_speed = null
+fall_acceleration = null
 
-[node name="Pivot" type="Node3D" parent="."]
+[node name="Pivot" type="Node3D" parent="." unique_id=1128224618]
 
-[node name="Character" type="MeshInstance3D" parent="Pivot"]
+[node name="Character" type="MeshInstance3D" parent="Pivot" unique_id=1609805871]
 mesh = SubResource("CapsuleMesh_u8vuu")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=136654709]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.00500488, 0)
 shape = SubResource("BoxShape3D_3vyb7")

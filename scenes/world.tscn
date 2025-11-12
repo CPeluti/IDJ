@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=4 uid="uid://b1mgeimub0jok"]
+[gd_scene load_steps=35 format=4 uid="uid://b1mgeimub0jok"]
 
 [ext_resource type="PackedScene" uid="uid://cv2bt1utpstrg" path="res://scenes/player.tscn" id="1_nnsk1"]
 [ext_resource type="Material" uid="uid://3uqs42lbbp28" path="res://Materials/grass.tres" id="1_q5onr"]
@@ -7,10 +7,9 @@
 [ext_resource type="Texture2D" uid="uid://3wc5k60plbrm" path="res://assets/Textures/new_noise_texture_2d.tres" id="3_jhx03"]
 [ext_resource type="Script" uid="uid://ca0gc68a2bgxw" path="res://scripts/snapping_camera.gd" id="3_qfnet"]
 [ext_resource type="ArrayMesh" uid="uid://b4nmb1cirmuc2" path="res://assets/Models/rock1.obj" id="5_71j4m"]
-[ext_resource type="PackedScene" uid="uid://bf0kb2swhxx2q" path="res://scenes/Projectile.tscn" id="6_dss4m"]
 [ext_resource type="Shader" uid="uid://dxv6q0c4b4kbv" path="res://shaders/upscaler.gdshader" id="7_i7141"]
 [ext_resource type="Script" uid="uid://srfgml0iu22c" path="res://scripts/node_3d.gd" id="7_w7kh3"]
-[ext_resource type="Script" path="res://scripts/display.gd" id="9_w7kh3"]
+[ext_resource type="Script" uid="uid://dgxxcsy4ul5sd" path="res://scripts/display.gd" id="9_w7kh3"]
 [ext_resource type="Shader" uid="uid://70qq02rsjymu" path="res://shaders/clouds.gdshader" id="10_q5onr"]
 [ext_resource type="PackedScene" uid="uid://bw3mp815g1eq6" path="res://scenes/enemy.tscn" id="11_dss4m"]
 [ext_resource type="Material" uid="uid://w76wg1wtt6q3" path="res://Materials/edge.material" id="11_xo05s"]
@@ -171,46 +170,43 @@ resource_local_to_scene = true
 material = SubResource("ShaderMaterial_xo05s")
 orientation = 1
 
-[node name="main" type="Node"]
+[node name="main" type="Node" unique_id=682412954]
 
-[node name="SubViewport" type="SubViewport" parent="."]
+[node name="SubViewport" type="SubViewport" parent="." unique_id=836035637]
 handle_input_locally = false
 size = Vector2i(640, 360)
 render_target_update_mode = 4
 
-[node name="StaticBody3D" type="StaticBody3D" parent="SubViewport"]
+[node name="StaticBody3D" type="StaticBody3D" parent="SubViewport" unique_id=1218462866]
 
-[node name="MultiMeshInstance3D" type="MultiMeshInstance3D" parent="SubViewport/StaticBody3D"]
+[node name="MultiMeshInstance3D" type="MultiMeshInstance3D" parent="SubViewport/StaticBody3D" unique_id=1760156945]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5726166, 1.5524094, 0)
 layers = 2
 cast_shadow = 0
 multimesh = SubResource("MultiMesh_q5onr")
 
-[node name="grass" parent="SubViewport/StaticBody3D" instance=ExtResource("2_jhx03")]
+[node name="grass" parent="SubViewport/StaticBody3D" unique_id=1466128365 instance=ExtResource("2_jhx03")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3767457, 0.3168273, -0.0032849312)
 layers = 2
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewport/StaticBody3D"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewport/StaticBody3D" unique_id=851169140]
 transform = Transform3D(20.775, 0, 0, 0, 20.775, 0, 0, 0, 20.775, 0, 0, 0)
 layers = 2
 mesh = SubResource("PlaneMesh_q5onr")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="SubViewport/StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SubViewport/StaticBody3D" unique_id=613937896]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.40678406, 0)
 shape = SubResource("BoxShape3D_o8fc1")
 
-[node name="Player" parent="SubViewport" node_paths=PackedStringArray("cameraRig", "target") instance=ExtResource("1_nnsk1")]
+[node name="Player" parent="SubViewport" unique_id=236737294 node_paths=PackedStringArray("cameraRig", "target") instance=ExtResource("1_nnsk1")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.85661, 2.2865038, 0)
-speed = 3
-rotation_speed = 1
 cameraRig = NodePath("../CameraRig")
-Projectile = ExtResource("6_dss4m")
 target = NodePath("../Enemy")
 
-[node name="CameraRig" type="Node3D" parent="SubViewport"]
+[node name="CameraRig" type="Node3D" parent="SubViewport" unique_id=1294596452]
 transform = Transform3D(-0.98660064, 0, -0.16315381, 0, 1, 0, 0.16315381, 0, -0.98660064, 0, 0, 0)
 
-[node name="Camera3D" type="Camera3D" parent="SubViewport/CameraRig"]
+[node name="Camera3D" type="Camera3D" parent="SubViewport/CameraRig" unique_id=785028711]
 transform = Transform3D(0.23140812, -0.4888853, 0.8410954, 0.012091601, 0.8659409, 0.5, -0.9727817, -0.10553388, 0.20629722, 21.026737, 13.08363, 3.5128934)
 projection = 1
 current = true
@@ -219,32 +215,32 @@ near = 0.01
 far = 43.84
 script = ExtResource("3_qfnet")
 
-[node name="Node3D" type="Node3D" parent="SubViewport"]
+[node name="Node3D" type="Node3D" parent="SubViewport" unique_id=1770476554]
 transform = Transform3D(-0.45848814, 0, 0.0775475, 0, 0.465, 0, -0.0775475, 0, -0.45848814, 0.00288886, 0.69400096, 0.0780056)
 script = ExtResource("7_w7kh3")
 
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="SubViewport/Node3D"]
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="SubViewport/Node3D" unique_id=2145547660]
 transform = Transform3D(3.14, 0, 9.3579295e-08, 0, 3.14, 0, -9.3579295e-08, 0, 3.14, 3.177, 0, -4.59)
 mesh = SubResource("BoxMesh_4mrxx")
 skeleton = NodePath("../../..")
 
-[node name="VoxelGI" type="VoxelGI" parent="SubViewport/Node3D"]
+[node name="VoxelGI" type="VoxelGI" parent="SubViewport/Node3D" unique_id=1302539085]
 data = SubResource("VoxelGIData_e3hyu")
 
-[node name="Rock1" type="MeshInstance3D" parent="SubViewport"]
+[node name="Rock1" type="MeshInstance3D" parent="SubViewport" unique_id=1771293518]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.7764764, -0.554142, -5.224364)
 material_override = ExtResource("11_xo05s")
 mesh = ExtResource("5_71j4m")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewport"]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewport" unique_id=1112891220]
 environment = SubResource("Environment_i7141")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewport"]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewport" unique_id=1540475501]
 transform = Transform3D(-0.6648946, 0.74589896, -0.03936875, 0.4366471, 0.43090913, 0.7897193, 0.60601515, 0.5078898, -0.6122039, 0, 7.8993025, -0.6386852)
 shadow_enabled = true
 directional_shadow_fade_start = 1.0
 
-[node name="OmniLight3D" type="OmniLight3D" parent="SubViewport"]
+[node name="OmniLight3D" type="OmniLight3D" parent="SubViewport" unique_id=260216543]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.6497822, 2.4213827, -0.6187494)
 visible = false
 light_indirect_energy = 2.311
@@ -255,21 +251,20 @@ shadow_enabled = true
 omni_range = 8.185
 omni_attenuation = 0.333
 
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="SubViewport"]
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="SubViewport" unique_id=1980936145]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 45.31423, -15.839338)
-visible = false
 mesh = SubResource("QuadMesh_7t5mc")
 
-[node name="Cube" type="MeshInstance3D" parent="SubViewport"]
+[node name="Cube" type="MeshInstance3D" parent="SubViewport" unique_id=1162398328]
 transform = Transform3D(0.4302144, 0, 0, 0, 0.4302144, 0, 0, 0, 0.4302144, 0, 1.02878, 0)
 mesh = SubResource("ArrayMesh_dss4m")
 skeleton = NodePath("")
 surface_material_override/0 = ExtResource("11_xo05s")
 
-[node name="Enemy" parent="SubViewport" instance=ExtResource("11_dss4m")]
+[node name="Enemy" parent="SubViewport" unique_id=347267867 instance=ExtResource("11_dss4m")]
 transform = Transform3D(2.37, 0, 0, 0, 2.37, 0, 0, 0, 2.37, -10.242359, 1.6118536, 0)
 
-[node name="Display" type="Control" parent="." node_paths=PackedStringArray("viewport")]
+[node name="Display" type="Control" parent="." unique_id=1934569271 node_paths=PackedStringArray("viewport")]
 clip_contents = true
 layout_mode = 3
 anchors_preset = 15
@@ -281,15 +276,15 @@ script = ExtResource("9_w7kh3")
 viewport = NodePath("../SubViewport")
 metadata/_edit_use_anchors_ = true
 
-[node name="Sprite2D" type="Sprite2D" parent="Display"]
+[node name="Sprite2D" type="Sprite2D" parent="Display" unique_id=1714865527]
 material = SubResource("ShaderMaterial_e3hyu")
 texture = SubResource("ViewportTexture_q5onr")
 centered = false
 
-[node name="SubViewport2" type="SubViewport" parent="."]
+[node name="SubViewport2" type="SubViewport" parent="." unique_id=315482505]
 size = Vector2i(640, 360)
 
-[node name="ReflexProbe" type="Camera3D" parent="SubViewport2" node_paths=PackedStringArray("player_camera", "player", "water_body")]
+[node name="ReflexProbe" type="Camera3D" parent="SubViewport2" unique_id=1750203843 node_paths=PackedStringArray("player_camera", "player", "water_body")]
 transform = Transform3D(1, 0, 0, 0, 0.8660254, 0.5, 0, -0.5, 0.8660254, 0, 7.2346935, 0)
 cull_mask = 1048569
 projection = 3
@@ -301,15 +296,16 @@ player_camera = NodePath("../../SubViewport/CameraRig/Camera3D")
 player = NodePath("../../SubViewport/Player")
 water_body = NodePath("../MeshInstance3D")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewport2"]
-transform = Transform3D(42.47, 0, 0, 0, 42.47, 0, 0, 0, 42.47, 0, -1.0173244, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewport2" unique_id=596312446]
+transform = Transform3D(42.47, 0, 0, 0, 42.47, 0, 0, 0, 42.47, 0, 0.6601925, 0)
+visible = false
 layers = 4
 mesh = SubResource("QuadMesh_jhx03")
 
-[node name="SubViewport3" type="SubViewport" parent="."]
+[node name="SubViewport3" type="SubViewport" parent="." unique_id=666989002]
 size = Vector2i(640, 360)
 
-[node name="Camera3D2" type="Camera3D" parent="SubViewport3"]
+[node name="Camera3D2" type="Camera3D" parent="SubViewport3" unique_id=1126138851]
 transform = Transform3D(-0.069594346, 0.49955285, -0.8634834, 0.012091599, 0.865941, 0.50000006, 0.9975021, 0.024356283, -0.06630499, -21.318134, 13.08363, -0.035230637)
 projection = 1
 current = true

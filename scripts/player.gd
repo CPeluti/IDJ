@@ -1,20 +1,22 @@
 extends CharacterBody3D
 
-@export var speed = 80
-@export var rotation_speed = 5
-@export var fall_acceleration = 75
+@export var speed: float = 8
+@export var rotation_speed: float = 5
+@export var fall_acceleration: float = 75
 @export var cameraRig: Node3D
 
-@export var Projectile : PackedScene
 @export var target: CharacterBody3D
+
+var casted_spells: Array[SpellStrategy]= []
 
 var target_velocity = Vector3.ZERO
 var target_rotation = Vector3.ZERO
 
+var projectile = preload("res://scenes/Projectile.tscn")
 
 func _physics_process(delta: float) -> void:
 	var direction = Vector3.ZERO
-	var rotation = Vector3.ZERO
+	var _rotation = Vector3.ZERO
 	if Input.is_action_just_pressed("attack"):
 		shoot()
 	if Input.is_action_pressed("move_right"):
@@ -36,7 +38,7 @@ func _physics_process(delta: float) -> void:
 	target_velocity.z = direction.x * speed
 	target_velocity.x = direction.z * speed * -1
 	if not is_on_floor():
-		target_velocity.y = target_velocity.y - (fall_acceleration * delta)
+		target_velocity.y = target_velocity.y - (self.fall_acceleration * delta)
 	
 	# cameraRig.rotate_y(rotation.x * rotation_speed * delta)
 	# var rotated_speed = target_velocity.rotated(Vector3.UP, cameraRig.rotation.y)
@@ -45,8 +47,6 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 func shoot():
-	var projectile:Node3D = Projectile.instantiate()
-	get_parent().add_child(projectile)
-	projectile.global_position = global_position
-	# projectile.global_position.x += 20
-	projectile.look_at(target.global_position)
+	var projectile_spell = ProjectileSpell.new(self, projectile)
+	casted_spells.push_back(projectile_spell)
+	projectile_spell.cast_spell(target.global_position)
