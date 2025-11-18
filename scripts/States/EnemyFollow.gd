@@ -13,15 +13,20 @@ func Update(delta: float):
 	pass
 
 func Physics_Update(delta: float):
+	if not is_instance_valid(player):
+		Transitioned.emit(self, "Idle")
+		return
+	
 	var direction = player.global_position - enemy.global_position
 
-	if direction.length() > 5:
+	if direction.length() > 3:
 		enemy.velocity = direction.normalized() * move_speed
-	else:
-		enemy.velocity = Vector3()
 
 	if direction.length() > 30:
 		Transitioned.emit(self, "Idle")
+		
+	if direction.length() <= 20:
+		Transitioned.emit(self, "Attack")
 
 func Exit():
 	pass

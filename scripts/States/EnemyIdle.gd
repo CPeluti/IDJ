@@ -23,11 +23,17 @@ func Update(delta: float):
 		randomize_wander()
 
 func Physics_Update(delta: float):
+	if not is_instance_valid(player):
+		Transitioned.emit(self, "Idle")
+		return
+	
 	if enemy:
 		enemy.velocity = move_direction * move_speed
-
+	
 	var direction = player.global_position - enemy.global_position
-	if direction.length() <= 30:
+	if direction.length() <= 20:
+		Transitioned.emit(self, "Attack")
+	elif direction.length() <= 30:
 		Transitioned.emit(self, "Follow")
 
 func Exit():

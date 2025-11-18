@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://bw3mp815g1eq6"]
+[gd_scene load_steps=10 format=3 uid="uid://bw3mp815g1eq6"]
 
 [ext_resource type="Script" uid="uid://bba0bho5jxce6" path="res://scenes/enemy.gd" id="1_c4w8v"]
 [ext_resource type="Script" uid="uid://dgww8xf5me3vy" path="res://scripts/HurtboxComponent.gd" id="1_md0e3"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://bmy5pkhq5e3ke" path="res://scenes/StateMachine.gd" id="3_4ra3w"]
 [ext_resource type="Script" uid="uid://be2er48nx8qmn" path="res://scripts/States/EnemyIdle.gd" id="4_5uy6h"]
 [ext_resource type="Script" uid="uid://cy578qv1ka6mj" path="res://scripts/States/EnemyFollow.gd" id="6_xwavj"]
+[ext_resource type="Script" uid="uid://bhx26uqv6fiv" path="res://scripts/States/EnemyAttack.gd" id="7_nenq2"]
 
 [sub_resource type="PrismMesh" id="PrismMesh_7p1mj"]
 
@@ -53,3 +54,8 @@ metadata/_custom_type_script = "uid://be2er48nx8qmn"
 script = ExtResource("6_xwavj")
 enemy = NodePath("../..")
 metadata/_custom_type_script = "uid://cy578qv1ka6mj"
+
+[node name="Attack" type="Node" parent="StateMachine" node_paths=PackedStringArray("enemy")]
+script = ExtResource("7_nenq2")
+enemy = NodePath("../..")
+metadata/_custom_type_script = "uid://bhx26uqv6fiv"
