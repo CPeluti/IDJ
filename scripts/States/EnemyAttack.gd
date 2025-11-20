@@ -3,9 +3,9 @@ class_name EnemyAttack
 
 @export var enemy: CharacterBody3D
 @export var move_speed := 5.0
-@export var attack_range := 3.0
+@export var attack_range := 2.0
 @export var attack_cooldown := 10.0
-@export var damage_amount := 2.0
+@export var damage_amount := 50.0
 
 var player: CharacterBody3D
 var attack_timer := 0.0
@@ -23,15 +23,14 @@ func Update(delta: float):
 	if player == null or enemy == null:
 		return
 
-	attack_timer -= delta
-	
+	self.attack_timer -= delta
 	if attack_timer <= 0:
+		self.attack_timer = attack_cooldown
 		var hurtbox := player.get_node_or_null("HurtboxComponent")
 		if hurtbox == null:
 			return
 		var attack := create_attack()
 		hurtbox.damage(attack)
-		attack_timer = attack_cooldown
 	
 func Physics_Update(delta: float):
 	if not is_instance_valid(player):
@@ -39,7 +38,7 @@ func Physics_Update(delta: float):
 		return
 	
 	var direction = player.global_position - enemy.global_position
-	if direction.length() > attack_range:
+	if abs(direction.length()) > attack_range:
 		Transitioned.emit(self, "Follow") 
 		return
 	

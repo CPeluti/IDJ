@@ -22,10 +22,10 @@ func Physics_Update(delta: float):
 	if direction.length() > 3:
 		enemy.velocity = direction.normalized() * move_speed
 
-	if direction.length() > 30:
+	if abs(direction.length()) > 10:
 		Transitioned.emit(self, "Idle")
 		
-	if direction.length() <= 20:
+	if abs(direction.length()) <= 2:
 		Transitioned.emit(self, "Attack")
 
 func Exit():
