@@ -13,27 +13,27 @@
 [sub_resource type="BoxShape3D" id="BoxShape3D_3vyb7"]
 size = Vector3(1, 1.1422724, 1)
 
-[node name="Enemy" type="CharacterBody3D"]
+[node name="Enemy" type="CharacterBody3D" unique_id=1362679933]
 script = ExtResource("1_c4w8v")
 
-[node name="Pivot" type="Node3D" parent="."]
+[node name="Pivot" type="Node3D" parent="." unique_id=1699361194]
 
-[node name="Character" type="MeshInstance3D" parent="Pivot"]
+[node name="Character" type="MeshInstance3D" parent="Pivot" unique_id=932113491]
 mesh = SubResource("PrismMesh_7p1mj")
 
-[node name="Area3D" type="Area3D" parent="." node_paths=PackedStringArray("health_component")]
+[node name="Area3D" type="Area3D" parent="." unique_id=1144575782 node_paths=PackedStringArray("health_component")]
 script = ExtResource("1_md0e3")
 health_component = NodePath("../HealthComponent")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=580549545]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03250152, 0)
 shape = SubResource("BoxShape3D_3vyb7")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1330338505]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03250152, 0)
 shape = SubResource("BoxShape3D_3vyb7")
 
-[node name="HealthComponent" type="Node" parent="."]
+[node name="HealthComponent" type="Node" parent="." unique_id=1279685025]
 script = ExtResource("2_4ra3w")
 metadata/_custom_type_script = "uid://bnu3xfpccylhs"
 
