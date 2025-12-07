@@ -1,0 +1,8 @@
+{
+	"InstallScripts" : 
+	[
+		"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug/cmake_install.cmake",
+		"C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug/vendor/spdlog/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

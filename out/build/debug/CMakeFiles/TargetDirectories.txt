@@ -1,0 +1,14 @@
+C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug/CMakeFiles/JOGO.dir
+C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug/CMakeFiles/edit_cache.dir
+C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug/CMakeFiles/rebuild_cache.dir
+C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug/CMakeFiles/list_install_components.dir
+C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug/CMakeFiles/install.dir
+C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug/CMakeFiles/install/local.dir
+C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug/CMakeFiles/install/strip.dir
+C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug/vendor/spdlog/CMakeFiles/spdlog.dir
+C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug/vendor/spdlog/CMakeFiles/edit_cache.dir
+C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug/vendor/spdlog/CMakeFiles/rebuild_cache.dir
+C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug/vendor/spdlog/CMakeFiles/list_install_components.dir
+C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug/vendor/spdlog/CMakeFiles/install.dir
+C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug/vendor/spdlog/CMakeFiles/install/local.dir
+C:/Users/acjpj/OneDrive - unb.br/12/IDJ/IDJ/out/build/debug/vendor/spdlog/CMakeFiles/install/strip.dir

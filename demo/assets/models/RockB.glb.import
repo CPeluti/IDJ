@@ -15,9 +15,17 @@ dest_files=["res://.godot/imported/RockB.glb-d0df90244ab14da61106a961f4faa07f.sc
 
 nodes/root_type="StaticBody3D"
 nodes/root_name="Scene Root"
+<<<<<<< HEAD
+nodes/root_script=null
 nodes/apply_root_scale=true
 nodes/root_scale=1.0
 nodes/import_as_skeleton_bones=false
+nodes/use_name_suffixes=true
+=======
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+nodes/import_as_skeleton_bones=false
+>>>>>>> f1f0cc6c92cee8960387cfb1a3550fea403a1ec5
 nodes/use_node_type_suffixes=true
 meshes/ensure_tangents=true
 meshes/generate_lods=true
@@ -32,6 +40,12 @@ animation/trimming=false
 animation/remove_immutable_tracks=true
 animation/import_rest_as_RESET=false
 import_script/path=""
+<<<<<<< HEAD
+materials/extract=0
+materials/extract_format=0
+materials/extract_path=""
+=======
+>>>>>>> f1f0cc6c92cee8960387cfb1a3550fea403a1ec5
 _subresources={
 "materials": {
 "@MATERIAL:0": {
