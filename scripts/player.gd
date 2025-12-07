@@ -43,6 +43,8 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 func shoot():
+	var effect = MoreProjectileSpellEffect.new()
 	var projectile_spell = ProjectileSpell.new(self, projectile)
+	projectile_spell.effects.append(effect)
 	casted_spells.push_back(projectile_spell)
 	projectile_spell.cast_spell(target.global_position)
