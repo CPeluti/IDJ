@@ -15,7 +15,13 @@ dest_files=["res://.godot/imported/RockB.glb-d0df90244ab14da61106a961f4faa07f.sc
 
 nodes/root_type="StaticBody3D"
 nodes/root_name="Scene Root"
+<<<<<<< HEAD
 nodes/root_script=null
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+nodes/import_as_skeleton_bones=false
+nodes/use_name_suffixes=true
+=======
 nodes/apply_root_scale=true
 nodes/root_scale=1.0
 nodes/import_as_skeleton_bones=false

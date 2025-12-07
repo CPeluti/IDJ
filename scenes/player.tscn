@@ -1,9 +1,11 @@
-[gd_scene load_steps=9 format=3 uid="uid://cv2bt1utpstrg"]
+[gd_scene load_steps=12 format=3 uid="uid://cv2bt1utpstrg"]
 
 [ext_resource type="Script" uid="uid://djndy0tk3bfjm" path="res://scripts/player.gd" id="1_3vyb7"]
 [ext_resource type="Shader" uid="uid://cr3rtb5jv83bh" path="res://shaders/edge.gdshader" id="2_qhqgy"]
 [ext_resource type="Shader" uid="uid://cxu5285smyef7" path="res://shaders/toon.gdshader" id="3_dqkch"]
 [ext_resource type="Texture2D" uid="uid://3wc5k60plbrm" path="res://assets/Textures/new_noise_texture_2d.tres" id="4_dqkch"]
+[ext_resource type="Script" uid="uid://bnu3xfpccylhs" path="res://scripts/HealthComponent.gd" id="5_tuyoq"]
+[ext_resource type="Script" uid="uid://dgww8xf5me3vy" path="res://scripts/HurtboxComponent.gd" id="6_fjrip"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dqkch"]
 render_priority = 0
@@ -48,7 +50,13 @@ material = SubResource("ShaderMaterial_qlg0r")
 [sub_resource type="BoxShape3D" id="BoxShape3D_3vyb7"]
 size = Vector3(1, 2.03198, 1)
 
+<<<<<<< HEAD
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_tuyoq"]
+
+[node name="Player" type="CharacterBody3D" groups=["Player"]]
+=======
 [node name="Player" type="CharacterBody3D" unique_id=952659437]
+>>>>>>> f1f0cc6c92cee8960387cfb1a3550fea403a1ec5
 script = ExtResource("1_3vyb7")
 speed = null
 rotation_speed = null
@@ -62,3 +70,20 @@ mesh = SubResource("CapsuleMesh_u8vuu")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=136654709]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.00500488, 0)
 shape = SubResource("BoxShape3D_3vyb7")
+<<<<<<< HEAD
+
+[node name="HurtboxComponent" type="Area3D" parent="." node_paths=PackedStringArray("health_component")]
+script = ExtResource("6_fjrip")
+health_component = NodePath("../HealthComponent")
+metadata/_custom_type_script = "uid://dgww8xf5me3vy"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HurtboxComponent"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, -0.10372424)
+shape = SubResource("CapsuleShape3D_tuyoq")
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("5_tuyoq")
+MAX_HEALTH = 100.0
+metadata/_custom_type_script = "uid://bnu3xfpccylhs"
+=======
+>>>>>>> f1f0cc6c92cee8960387cfb1a3550fea403a1ec5

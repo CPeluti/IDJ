@@ -33,7 +33,7 @@ enum class SpellElement
 };
 enum class SpellEffect {
     multiple,
-    pierce
+    pierce,
     freeze,
     chain,
     speed
