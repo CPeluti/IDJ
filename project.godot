@@ -23,10 +23,13 @@ project/assembly_name="Typeturge"
 
 enabled=PackedStringArray("res://addons/gut/plugin.cfg", "res://addons/terrain_3d/plugin.cfg")
 
+<<<<<<< HEAD
 [filesystem]
 
 import/blender/enabled=false
 
+=======
+>>>>>>> f1f0cc6c92cee8960387cfb1a3550fea403a1ec5
 [input]
 
 move_right={

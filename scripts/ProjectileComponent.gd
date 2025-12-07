@@ -5,7 +5,7 @@ var base_speed = 10.0
 func _physics_process(delta: float) -> void:
 	var forward = -global_transform.basis.z
 	global_position += forward * base_speed * delta
-	
+
 
 func _on_hurtbox_area_entered(area):
 	if area is HurtboxComponent:

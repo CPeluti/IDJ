@@ -50,9 +50,13 @@ material = SubResource("ShaderMaterial_qlg0r")
 [sub_resource type="BoxShape3D" id="BoxShape3D_3vyb7"]
 size = Vector3(1, 2.03198, 1)
 
+<<<<<<< HEAD
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_tuyoq"]
 
 [node name="Player" type="CharacterBody3D" groups=["Player"]]
+=======
+[node name="Player" type="CharacterBody3D"]
+>>>>>>> f1f0cc6c92cee8960387cfb1a3550fea403a1ec5
 script = ExtResource("1_3vyb7")
 
 [node name="Pivot" type="Node3D" parent="."]
@@ -63,6 +67,7 @@ mesh = SubResource("CapsuleMesh_u8vuu")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.00500488, 0)
 shape = SubResource("BoxShape3D_3vyb7")
+<<<<<<< HEAD
 
 [node name="HurtboxComponent" type="Area3D" parent="." node_paths=PackedStringArray("health_component")]
 script = ExtResource("6_fjrip")
@@ -77,3 +82,5 @@ shape = SubResource("CapsuleShape3D_tuyoq")
 script = ExtResource("5_tuyoq")
 MAX_HEALTH = 100.0
 metadata/_custom_type_script = "uid://bnu3xfpccylhs"
+=======
+>>>>>>> f1f0cc6c92cee8960387cfb1a3550fea403a1ec5
