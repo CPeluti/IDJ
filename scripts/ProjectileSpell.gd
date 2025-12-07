@@ -16,6 +16,7 @@ var spell_element : SpellElement = SpellElement.fire
 var base_damage = 10.0
 var base_speed = 30.0
 var projectile_amount : int
+var chain_amount: int
 var base_mana_cost : float = 10.0
 var caster: CharacterBody3D
 
@@ -39,6 +40,8 @@ func set_mana_cost(factor: float) -> void:
 	mana_cost = factor
 func increase_projectile_amount(amount: int) -> void:
 	projectile_amount += amount
+func set_chain_amount(amount: int) -> void:
+	chain_amount = amount
 func update_effect(_dt: float):
 	pass
 func remove_effect(_effect_name: String):

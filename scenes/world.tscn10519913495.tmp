@@ -315,3 +315,4 @@ target = NodePath("../SubViewport/Enemy")
 
 [node name="GameMaster" type="Node" parent="."]
 script = ExtResource("16_dss4m")
+enemy = ExtResource("11_dss4m")
