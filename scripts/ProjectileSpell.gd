@@ -20,9 +20,12 @@ var chain_amount: int
 var base_mana_cost : float = 10.0
 var caster: CharacterBody3D
 
-func _init(owner: CharacterBody3D, projectile: PackedScene) -> void:
+var gm: GameMaster
+
+func _init(owner: CharacterBody3D, projectile: PackedScene, gm: GameMaster) -> void:
 	self.caster = owner
 	self.projectile = projectile
+	self.gm = gm
 
 func get_spell_type():
 	return SpellType.projectile
@@ -53,11 +56,12 @@ func apply_effects() -> void:
 func cast_spell(target_pos: Vector3) -> void:
 	apply_effects()
 	for i in projectile_amount:
-		var instanced_entity: Node3D = projectile.instantiate()
+		var instanced_entity: Projectile = projectile.instantiate()
 		caster.get_parent().add_child(instanced_entity)
 		instanced_entity.global_position = caster.global_position
 		
 		instanced_entity.caster = self.caster
+		instanced_entity.gm = gm
 		var spread_angle = 30.0
 		var angle_offset: float = spread_angle * (i - (projectile_amount - 1) / 2.0) / (projectile_amount - 1)
 		instanced_entity.look_at(target_pos)

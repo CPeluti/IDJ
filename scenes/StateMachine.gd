@@ -16,12 +16,12 @@ func _ready():
 		current_state = initial_state
 			
 func _process(delta):
-	print("UPDATE: " + current_state.to_string())
+	#print("UPDATE: " + current_state.to_string())
 	if current_state:
 		current_state.Update(delta)
 	
 func _physics_process(delta):
-	print("PHYSICS UPDATE: " + current_state.to_string())
+	#print("PHYSICS UPDATE: " + current_state.to_string())
 	if current_state:
 		current_state.Physics_Update(delta)
 		

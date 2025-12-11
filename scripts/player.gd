@@ -1,4 +1,5 @@
 extends CharacterBody3D
+class_name Player
 
 @export var speed: float = 8
 @export var rotation_speed: float = 5
@@ -6,6 +7,8 @@ extends CharacterBody3D
 @export var cameraRig: Node3D
 
 @export var target: CharacterBody3D
+
+@export var gm: GameMaster
 
 var casted_spells: Array[SpellStrategy]= []
 
@@ -44,7 +47,12 @@ func _physics_process(delta: float) -> void:
 
 func shoot():
 	var effect = MoreProjectileSpellEffect.new()
-	var projectile_spell = ProjectileSpell.new(self, projectile)
+	var chainEffect = ChainProjectileSpellEffect.new()
+	var projectile_spell = ProjectileSpell.new(self, projectile, gm)
 	projectile_spell.effects.append(effect)
+	projectile_spell.effects.append(chainEffect)
 	casted_spells.push_back(projectile_spell)
-	projectile_spell.cast_spell(target.global_position)
+
+	var closestEnemy: CharacterBody3D = gm.getClosestEnemy(self.global_position, 300)
+	if (closestEnemy):
+		projectile_spell.cast_spell(closestEnemy.global_position)
