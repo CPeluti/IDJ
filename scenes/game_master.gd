@@ -6,8 +6,8 @@ var number_of_enemies: int = 5
 
 static var all_enemies : Array[CharacterBody3D]
 
-func getClosestEnemy(reference: Vector3, range: float, ignore: Array[CharacterBody3D] = []) -> CharacterBody3D:
-	var minDistance: float = 50.0
+func getClosestEnemy(reference: Vector3, range: float, ignore: Array[CharacterBody3D] = []) -> Enemy:
+	var minDistance: float = 1000000.0
 	var closestEnemy: CharacterBody3D
 	
 	for e in all_enemies:
@@ -17,6 +17,8 @@ func getClosestEnemy(reference: Vector3, range: float, ignore: Array[CharacterBo
 		if (distance <= minDistance and distance <= range):
 			minDistance = distance
 			closestEnemy = e
+	print(closestEnemy)
+	print(all_enemies)
 	return closestEnemy
 		
 

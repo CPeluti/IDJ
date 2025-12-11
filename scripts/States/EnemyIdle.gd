@@ -1,7 +1,7 @@
 extends State
 class_name EnemyIdle
 
-@export var enemy: CharacterBody3D
+@export var enemy: Enemy
 @export var move_speed := 5.0
 
 var player: CharacterBody3D
@@ -25,6 +25,9 @@ func Update(delta: float):
 func Physics_Update(delta: float):
 	if not is_instance_valid(player):
 		Transitioned.emit(self, "Idle")
+		return
+	if enemy.isFrozen:
+		Transitioned.emit(self, "Freeze")
 		return
 	
 	if enemy:

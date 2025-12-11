@@ -49,11 +49,13 @@ func shoot():
 	var effect = MoreProjectileSpellEffect.new()
 	var chainEffect = ChainProjectileSpellEffect.new()
 	var fasterProjectileEffect = FasterProjectileEffect.new()
+	var freezeProjectileEffect = FreezeProjectileSpellEffect.new()
 	
 	var projectile_spell = ProjectileSpell.new(self, projectile, gm)
 	projectile_spell.effects.append(effect)
 	projectile_spell.effects.append(chainEffect)
 	projectile_spell.effects.append(fasterProjectileEffect)
+	projectile_spell.effects.append(freezeProjectileEffect)
 	casted_spells.push_back(projectile_spell)
 
 	var closestEnemy: CharacterBody3D = gm.getClosestEnemy(self.global_position, 1000)

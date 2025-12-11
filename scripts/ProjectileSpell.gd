@@ -18,6 +18,7 @@ var base_speed = 30.0
 var speed_increase = 0.0
 var projectile_amount : int = 1
 var chain_amount: int = 0
+var is_freezing_projectile: bool = false
 var base_mana_cost : float = 10.0
 var caster: CharacterBody3D
 
@@ -46,6 +47,8 @@ func increase_projectile_amount(amount: int) -> void:
 	projectile_amount += amount
 func increase_projectile_speed(amount: float) -> void:
 	speed_increase += amount
+func set_projectile_as_freezing() -> void:
+	is_freezing_projectile = true
 func set_chain_amount(amount: int) -> void:
 	chain_amount = amount
 func update_effect(_dt: float):
@@ -66,9 +69,11 @@ func cast_spell(target_pos: Vector3) -> void:
 		instanced_entity.caster = self.caster
 		instanced_entity.gm = gm
 		instanced_entity.chain_amount = chain_amount
-		instanced_entity.base_speed = speed_increase
+		instanced_entity.base_speed = base_speed + speed_increase
+		instanced_entity.is_freezing_projectile = is_freezing_projectile
 		var spread_angle = 30.0
-		var angle_offset: float = spread_angle * (i - (projectile_amount - 1) / 2.0) / (projectile_amount - 1)
+		#var angle_offset: float = spread_angle * (i - (projectile_amount - 1) / 2.0) / (projectile_amount - 1)
+		var angle_offset: float = spread_angle * (i - (projectile_amount / 2))
 		instanced_entity.look_at(target_pos)
 		instanced_entity.rotate(Vector3.UP, deg_to_rad(angle_offset))
 		#var direction = -instanced_entity.global_transform.basis.z.rotated(Vector3.UP, deg_to_rad(angle_offset))
