@@ -9,10 +9,10 @@ var player: CharacterBody3D
 func Enter():
 	player = get_tree().get_first_node_in_group("Player")
 
-func Update(delta: float):
+func Update(_delta: float):
 	pass
 
-func Physics_Update(delta: float):
+func Physics_Update(_delta: float):
 	if not is_instance_valid(player):
 		Transitioned.emit(self, "Idle")
 		return

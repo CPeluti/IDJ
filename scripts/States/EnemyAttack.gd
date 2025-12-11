@@ -32,7 +32,7 @@ func Update(delta: float):
 		var attack := create_attack()
 		hurtbox.damage(attack)
 	
-func Physics_Update(delta: float):
+func Physics_Update(_delta: float):
 	if not is_instance_valid(player):
 		Transitioned.emit(self, "Idle")
 		return

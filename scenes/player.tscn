@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://cv2bt1utpstrg"]
+[gd_scene load_steps=14 format=3 uid="uid://cv2bt1utpstrg"]
 
 [ext_resource type="Script" uid="uid://djndy0tk3bfjm" path="res://scripts/player.gd" id="1_3vyb7"]
 [ext_resource type="Shader" uid="uid://cr3rtb5jv83bh" path="res://shaders/edge.gdshader" id="2_qhqgy"]
@@ -6,6 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://3wc5k60plbrm" path="res://assets/Textures/new_noise_texture_2d.tres" id="4_dqkch"]
 [ext_resource type="Script" uid="uid://bnu3xfpccylhs" path="res://scripts/HealthComponent.gd" id="5_tuyoq"]
 [ext_resource type="Script" uid="uid://dgww8xf5me3vy" path="res://scripts/HurtboxComponent.gd" id="6_fjrip"]
+[ext_resource type="PackedScene" uid="uid://b7ogxr76tmtko" path="res://scenes/HealthBar3D.tscn" id="7_fjrip"]
+[ext_resource type="PackedScene" uid="uid://dwu5yfoq235ts" path="res://scenes/FloatingText3D.tscn" id="8_smehm"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dqkch"]
 render_priority = 0
@@ -23,11 +25,11 @@ next_pass = SubResource("ShaderMaterial_dqkch")
 shader = ExtResource("3_dqkch")
 shader_parameter/use_cloud_shadows = true
 shader_parameter/noise_texture = ExtResource("4_dqkch")
-shader_parameter/noise_speed = 0.1650000078375
-shader_parameter/noise_scale = 0.022000001045
+shader_parameter/noise_speed = 0.165
+shader_parameter/noise_scale = 0.022
 shader_parameter/noise_strength = 1.0
 shader_parameter/threshold = 0.1
-shader_parameter/fluffiness = 0.1630000077425
+shader_parameter/fluffiness = 0.163
 shader_parameter/albedo = Color(1, 1, 1, 1)
 shader_parameter/clamp_diffuse_to_max = false
 shader_parameter/cuts = 3
@@ -52,8 +54,9 @@ size = Vector3(1, 2.03198, 1)
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_tuyoq"]
 
-[node name="Player" type="CharacterBody3D" groups=["Player"]]
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("textRenderer") groups=["Player"]]
 script = ExtResource("1_3vyb7")
+textRenderer = NodePath("FloatingText3d")
 
 [node name="Pivot" type="Node3D" parent="."]
 
@@ -70,10 +73,17 @@ health_component = NodePath("../HealthComponent")
 metadata/_custom_type_script = "uid://dgww8xf5me3vy"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="HurtboxComponent"]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, -0.10372424)
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, -0.103724)
 shape = SubResource("CapsuleShape3D_tuyoq")
 
-[node name="HealthComponent" type="Node" parent="."]
+[node name="HealthComponent" type="Node" parent="." node_paths=PackedStringArray("HealthBar")]
 script = ExtResource("5_tuyoq")
+HealthBar = NodePath("../HealthBar3d")
 MAX_HEALTH = 100.0
 metadata/_custom_type_script = "uid://bnu3xfpccylhs"
+
+[node name="HealthBar3d" parent="." instance=ExtResource("7_fjrip")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.37714, 0)
+
+[node name="FloatingText3d" parent="." instance=ExtResource("8_smehm")]
+transform = Transform3D(3.805, 0, 0, 0, 3.805, 0, 0, 0, 3.805, 0, 2.2430246, 0)

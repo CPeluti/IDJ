@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://b7ogxr76tmtko"]
+
+[ext_resource type="PackedScene" uid="uid://u5oe5ahp7p8b" path="res://scenes/HealthBar2D.tscn" id="1_22rjv"]
+[ext_resource type="Script" uid="uid://cvu2khpo313fv" path="res://scripts/Lifebar.gd" id="1_620v2"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_620v2"]
+viewport_path = NodePath("SubViewport")
+
+[node name="HealthBar3d" type="Node3D" node_paths=PackedStringArray("progressBar")]
+script = ExtResource("1_620v2")
+progressBar = NodePath("SubViewport/healthbar")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+size = Vector2i(256, 32)
+
+[node name="healthbar" parent="SubViewport" instance=ExtResource("1_22rjv")]
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+billboard = 1
+texture = SubResource("ViewportTexture_620v2")

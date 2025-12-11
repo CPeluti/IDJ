@@ -13,13 +13,13 @@ void vertex() {
         MODEL_MATRIX[3]
     );
     MODELVIEW_NORMAL_MATRIX = mat3(MODELVIEW_MATRIX);
-    
+
 }
 
 void fragment() {
     ALBEDO = albedo;
     //NORMAL = vec3(0.0, 1.0, 0.0);
-    
+
 }
 
 void light() {

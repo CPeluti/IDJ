@@ -1,11 +1,22 @@
 extends CharacterBody3D
 
+enum Mode{
+	Cast,
+	Normal
+}
+
 @export var speed: float = 8
 @export var rotation_speed: float = 5
 @export var fall_acceleration: float = 75
 @export var cameraRig: Node3D
 
+@export var textRenderer: Node3D
+
 @export var target: CharacterBody3D
+
+var mode: Mode = Mode.Cast
+
+var castString = "teste"
 
 var casted_spells: Array[SpellStrategy]= []
 
@@ -15,6 +26,9 @@ var target_rotation = Vector3.ZERO
 var projectile = preload("res://scenes/Projectile.tscn")
 
 func _physics_process(delta: float) -> void:
+	if mode == Mode.Cast:
+		textRenderer.set_text(castString)
+		return
 	var direction = Vector3.ZERO
 	var _rotation = Vector3.ZERO
 	if Input.is_action_just_pressed("attack"):
@@ -41,6 +55,22 @@ func _physics_process(delta: float) -> void:
 	# cameraRig.global_translate(rotated_speed * delta * -1)
 	velocity = target_velocity
 	move_and_slide()
+
+func _input(event: InputEvent) -> void:
+	if mode == Mode.Cast:
+		if event.keycode == KEY_SHIFT and event.pressed:
+			if mode == Mode.Cast:
+				mode = Mode.Normal
+			if mode == Mode.Normal:
+				mode = Mode.Cast
+		if event.keycode == KEY_BACKSPACE and event.pressed:
+			castString = castString.substr(0, castString.length() - 1)
+		if event.keycode == KEY_ENTER and event.pressed:
+			castString = ""
+			mode = Mode.Normal
+		if event is InputEventKey and event.pressed and event.unicode > 0:
+			var c = char(event.unicode)
+			castString += c
 
 func shoot():
 	var projectile_spell = ProjectileSpell.new(self, projectile)
