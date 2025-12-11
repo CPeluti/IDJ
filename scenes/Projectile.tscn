@@ -10,15 +10,15 @@ albedo_color = Color(1, 0, 0, 1)
 [sub_resource type="SphereMesh" id="SphereMesh_dprbf"]
 material = SubResource("StandardMaterial3D_6ku62")
 
-[node name="Projectile" type="Node3D" unique_id=373425538]
+[node name="Projectile" type="Node3D"]
 script = ExtResource("1_dprbf")
 
-[node name="Area3D" type="Area3D" parent="." unique_id=1735124298]
+[node name="Area3D" type="Area3D" parent="."]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=2078876686]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 shape = SubResource("BoxShape3D_vihyi")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=868956236]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("SphereMesh_dprbf")
 skeleton = NodePath("")
 

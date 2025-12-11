@@ -19,6 +19,8 @@ enum SpellEffect {
 	speed
 };
 
+var effects: Array[Effect]
+
 @abstract
 func get_spell_type() -> SpellType
 @abstract
@@ -30,10 +32,9 @@ func get_mana_cost() -> float
 @abstract
 func GetElementCount() -> int
 @abstract
-func ApplyEffects() -> void
-@abstract
 func set_mana_cost(factor: float) -> void
-
+@abstract
+func apply_effects() -> void
 @abstract
 func cast_spell(target_pos: Vector3) -> void
 
