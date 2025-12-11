@@ -6,6 +6,13 @@ enum Mode{
 	Normal
 }
 
+var magicWordsEffect = {
+	"multi": MoreProjectileSpellEffect.new(),
+	"chain": ChainProjectileSpellEffect.new(),
+	"fast": FasterProjectileEffect.new(),
+	"freeze": FreezeProjectileSpellEffect.new()
+}
+
 @export var speed: float = 8
 @export var rotation_speed: float = 5
 @export var fall_acceleration: float = 75
@@ -17,7 +24,7 @@ enum Mode{
 
 var mode: Mode = Mode.Cast
 
-var castString = "teste"
+var castString = " "
 @export var gm: GameMaster
 
 var casted_spells: Array[SpellStrategy]= []
@@ -33,8 +40,6 @@ func _physics_process(delta: float) -> void:
 	textRenderer.set_text(castString)
 	var _rotation = Vector3.ZERO
 	
-	if Input.is_action_just_pressed("attack"):
-			shoot()
 	if Input.is_action_pressed("move_right"):
 		direction.x+=1
 	if Input.is_action_pressed("move_left"):
@@ -65,29 +70,28 @@ func _physics_process(delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	if event is not InputEventMouseMotion:
 		
-			
 		if event.keycode == KEY_BACKSPACE and event.pressed:
 			castString = castString.substr(0, castString.length() - 1)
 		if event.keycode == KEY_ENTER and event.pressed:
+			shoot(castString)
 			castString = ""
 			mode = Mode.Normal
 		if event is InputEventKey and event.pressed and event.unicode > 0:
 			var c = char(event.unicode)
 			castString += c
 
-func shoot():
-	var effect = MoreProjectileSpellEffect.new()
-	var chainEffect = ChainProjectileSpellEffect.new()
-	var fasterProjectileEffect = FasterProjectileEffect.new()
-	var freezeProjectileEffect = FreezeProjectileSpellEffect.new()
-	
+func shoot(castString: String):
 	var projectile_spell = ProjectileSpell.new(self, projectile, gm)
-	projectile_spell.effects.append(effect)
-	projectile_spell.effects.append(chainEffect)
-	projectile_spell.effects.append(fasterProjectileEffect)
-	projectile_spell.effects.append(freezeProjectileEffect)
+	
+	if "ball" not in castString.to_lower():
+		return
+	
+	for s in castString.split(" "):	
+		if s.to_lower() in magicWordsEffect.keys():
+			projectile_spell.effects.append(magicWordsEffect[s.to_lower()])
+
 	casted_spells.push_back(projectile_spell)
 
 	var closestEnemy: CharacterBody3D = gm.getClosestEnemy(self.global_position, 1000)
-	if (closestEnemy):
+	if closestEnemy and projectile_spell:
 		projectile_spell.cast_spell(closestEnemy.global_position)
