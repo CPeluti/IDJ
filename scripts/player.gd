@@ -59,6 +59,8 @@ func _physics_process(delta: float) -> void:
 	velocity = target_velocity
 	move_and_slide()
 	direction = Vector3.ZERO
+	
+	cameraRig.global_position = self.global_position
 
 func _input(event: InputEvent) -> void:
 	if event is not InputEventMouseMotion:
