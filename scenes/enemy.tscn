@@ -7,7 +7,11 @@
 [ext_resource type="Script" uid="uid://be2er48nx8qmn" path="res://scripts/States/EnemyIdle.gd" id="4_5uy6h"]
 [ext_resource type="Script" uid="uid://cy578qv1ka6mj" path="res://scripts/States/EnemyFollow.gd" id="6_xwavj"]
 [ext_resource type="Script" uid="uid://bhx26uqv6fiv" path="res://scripts/States/EnemyAttack.gd" id="7_nenq2"]
+<<<<<<< HEAD
 [ext_resource type="PackedScene" uid="uid://b7ogxr76tmtko" path="res://scenes/HealthBar3D.tscn" id="8_md484"]
+=======
+[ext_resource type="Script" uid="uid://bujmv8trli15i" path="res://scripts/States/EnemyFreeze.gd" id="8_md484"]
+>>>>>>> 4b2a3d84d549b9806f0f7efdd8184f2824df96ec
 
 [sub_resource type="PrismMesh" id="PrismMesh_7p1mj"]
 
@@ -27,6 +31,7 @@ script = ExtResource("1_md0e3")
 health_component = NodePath("../HealthComponent")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+<<<<<<< HEAD
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0325015, 0)
 shape = SubResource("BoxShape3D_3vyb7")
 
@@ -35,6 +40,16 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0325015, 0)
 shape = SubResource("BoxShape3D_3vyb7")
 
 [node name="HealthComponent" type="Node" parent="." node_paths=PackedStringArray("HealthBar")]
+=======
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03250152, 0)
+shape = SubResource("BoxShape3D_3vyb7")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03250152, 0)
+shape = SubResource("BoxShape3D_3vyb7")
+
+[node name="HealthComponent" type="Node" parent="."]
+>>>>>>> 4b2a3d84d549b9806f0f7efdd8184f2824df96ec
 script = ExtResource("2_4ra3w")
 HealthBar = NodePath("../HealthBar3d")
 metadata/_custom_type_script = "uid://bnu3xfpccylhs"
@@ -62,5 +77,12 @@ script = ExtResource("7_nenq2")
 enemy = NodePath("../..")
 metadata/_custom_type_script = "uid://bhx26uqv6fiv"
 
+<<<<<<< HEAD
 [node name="HealthBar3d" parent="." instance=ExtResource("8_md484")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8269017, 0)
+=======
+[node name="Freeze" type="Node" parent="StateMachine" node_paths=PackedStringArray("enemy")]
+script = ExtResource("8_md484")
+enemy = NodePath("../..")
+metadata/_custom_type_script = "uid://bujmv8trli15i"
+>>>>>>> 4b2a3d84d549b9806f0f7efdd8184f2824df96ec

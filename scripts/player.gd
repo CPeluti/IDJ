@@ -1,4 +1,5 @@
 extends CharacterBody3D
+class_name Player
 
 enum Mode{
 	Cast,
@@ -14,9 +15,13 @@ enum Mode{
 
 @export var target: CharacterBody3D
 
+<<<<<<< HEAD
 var mode: Mode = Mode.Cast
 
 var castString = "teste"
+=======
+@export var gm: GameMaster
+>>>>>>> 4b2a3d84d549b9806f0f7efdd8184f2824df96ec
 
 var casted_spells: Array[SpellStrategy]= []
 
@@ -73,6 +78,18 @@ func _input(event: InputEvent) -> void:
 			castString += c
 
 func shoot():
-	var projectile_spell = ProjectileSpell.new(self, projectile)
+	var effect = MoreProjectileSpellEffect.new()
+	var chainEffect = ChainProjectileSpellEffect.new()
+	var fasterProjectileEffect = FasterProjectileEffect.new()
+	var freezeProjectileEffect = FreezeProjectileSpellEffect.new()
+	
+	var projectile_spell = ProjectileSpell.new(self, projectile, gm)
+	projectile_spell.effects.append(effect)
+	projectile_spell.effects.append(chainEffect)
+	projectile_spell.effects.append(fasterProjectileEffect)
+	projectile_spell.effects.append(freezeProjectileEffect)
 	casted_spells.push_back(projectile_spell)
-	projectile_spell.cast_spell(target.global_position)
+
+	var closestEnemy: CharacterBody3D = gm.getClosestEnemy(self.global_position, 1000)
+	if (closestEnemy):
+		projectile_spell.cast_spell(closestEnemy.global_position)

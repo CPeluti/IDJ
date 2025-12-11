@@ -1,7 +1,7 @@
 extends State
 class_name EnemyAttack
 
-@export var enemy: CharacterBody3D
+@export var enemy: Enemy
 @export var move_speed := 5.0
 @export var attack_range := 2.0
 @export var attack_cooldown := 10.0
@@ -35,6 +35,9 @@ func Update(delta: float):
 func Physics_Update(_delta: float):
 	if not is_instance_valid(player):
 		Transitioned.emit(self, "Idle")
+		return
+	if enemy.isFrozen:
+		Transitioned.emit(self, "Freeze")
 		return
 	
 	var direction = player.global_position - enemy.global_position

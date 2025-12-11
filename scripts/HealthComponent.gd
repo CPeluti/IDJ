@@ -12,4 +12,7 @@ func damage(attack: Attack):
 	if HealthBar:
 		HealthBar.set_health(health, MAX_HEALTH)
 	if health <= 0:
-		get_parent().queue_free()
+		var parent = get_parent()
+		if parent is Enemy:
+			GameMaster.all_enemies.erase(parent)
+		parent.queue_free()
