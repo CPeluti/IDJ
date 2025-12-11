@@ -13,7 +13,7 @@ var modifiers : Array[String]
 var projectile: PackedScene
 
 var spell_element : SpellElement = SpellElement.fire
-var base_damage = 10.0
+var base_damage = 2.0
 var base_speed = 30.0
 var speed_increase = 0.0
 var projectile_amount : int = 1
@@ -71,6 +71,7 @@ func cast_spell(target_pos: Vector3) -> void:
 		instanced_entity.chain_amount = chain_amount
 		instanced_entity.base_speed = base_speed + speed_increase
 		instanced_entity.is_freezing_projectile = is_freezing_projectile
+		instanced_entity.base_attack_damage = base_damage
 		var spread_angle = 30.0
 		#var angle_offset: float = spread_angle * (i - (projectile_amount - 1) / 2.0) / (projectile_amount - 1)
 		var angle_offset: float = spread_angle * (i - (projectile_amount / 2))

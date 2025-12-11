@@ -12,6 +12,8 @@ material = SubResource("StandardMaterial3D_6ku62")
 
 [node name="Projectile" type="Node3D"]
 script = ExtResource("1_dprbf")
+base_speed = null
+base_attack_damage = null
 
 [node name="Area3D" type="Area3D" parent="."]
 

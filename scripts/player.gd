@@ -15,29 +15,26 @@ enum Mode{
 
 @export var target: CharacterBody3D
 
-<<<<<<< HEAD
 var mode: Mode = Mode.Cast
 
 var castString = "teste"
-=======
 @export var gm: GameMaster
->>>>>>> 4b2a3d84d549b9806f0f7efdd8184f2824df96ec
 
 var casted_spells: Array[SpellStrategy]= []
 
 var target_velocity = Vector3.ZERO
 var target_rotation = Vector3.ZERO
 
+var direction = Vector3.ZERO
+
 var projectile = preload("res://scenes/Projectile.tscn")
 
 func _physics_process(delta: float) -> void:
-	if mode == Mode.Cast:
-		textRenderer.set_text(castString)
-		return
-	var direction = Vector3.ZERO
+	textRenderer.set_text(castString)
 	var _rotation = Vector3.ZERO
+	
 	if Input.is_action_just_pressed("attack"):
-		shoot()
+			shoot()
 	if Input.is_action_pressed("move_right"):
 		direction.x+=1
 	if Input.is_action_pressed("move_left"):
@@ -46,6 +43,7 @@ func _physics_process(delta: float) -> void:
 		direction.z+=1
 	if Input.is_action_pressed("move_forward"):
 		direction.z-=1
+	
 	if direction != Vector3.ZERO:
 		direction = direction.normalized()
 		$Pivot.basis = Basis.looking_at(direction)
@@ -60,14 +58,12 @@ func _physics_process(delta: float) -> void:
 	# cameraRig.global_translate(rotated_speed * delta * -1)
 	velocity = target_velocity
 	move_and_slide()
+	direction = Vector3.ZERO
 
 func _input(event: InputEvent) -> void:
-	if mode == Mode.Cast:
-		if event.keycode == KEY_SHIFT and event.pressed:
-			if mode == Mode.Cast:
-				mode = Mode.Normal
-			if mode == Mode.Normal:
-				mode = Mode.Cast
+	if event is not InputEventMouseMotion:
+		
+			
 		if event.keycode == KEY_BACKSPACE and event.pressed:
 			castString = castString.substr(0, castString.length() - 1)
 		if event.keycode == KEY_ENTER and event.pressed:
