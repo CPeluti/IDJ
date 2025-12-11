@@ -6,11 +6,11 @@ enum Mode{
 	Normal
 }
 
-var magicWordsEffect = {
-	"multi": MoreProjectileSpellEffect.new(),
-	"chain": ChainProjectileSpellEffect.new(),
-	"fast": FasterProjectileEffect.new(),
-	"freeze": FreezeProjectileSpellEffect.new()
+var magicWordsEffectTypes = {
+	"multi": MoreProjectileSpellEffect,
+	"chain": ChainProjectileSpellEffect,
+	"fast": FasterProjectileEffect,
+	"freeze": FreezeProjectileSpellEffect
 }
 
 @export var speed: float = 8
@@ -87,8 +87,9 @@ func shoot(castString: String):
 		return
 	
 	for s in castString.split(" "):	
-		if s.to_lower() in magicWordsEffect.keys():
-			projectile_spell.effects.append(magicWordsEffect[s.to_lower()])
+		if s.to_lower() in magicWordsEffectTypes.keys():
+			var effectType = magicWordsEffectTypes[s.to_lower()]
+			projectile_spell.effects.append(effectType.new())
 
 	casted_spells.push_back(projectile_spell)
 
