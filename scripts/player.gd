@@ -48,11 +48,14 @@ func _physics_process(delta: float) -> void:
 func shoot():
 	var effect = MoreProjectileSpellEffect.new()
 	var chainEffect = ChainProjectileSpellEffect.new()
+	var fasterProjectileEffect = FasterProjectileEffect.new()
+	
 	var projectile_spell = ProjectileSpell.new(self, projectile, gm)
 	projectile_spell.effects.append(effect)
 	projectile_spell.effects.append(chainEffect)
+	projectile_spell.effects.append(fasterProjectileEffect)
 	casted_spells.push_back(projectile_spell)
 
-	var closestEnemy: CharacterBody3D = gm.getClosestEnemy(self.global_position, 300)
+	var closestEnemy: CharacterBody3D = gm.getClosestEnemy(self.global_position, 1000)
 	if (closestEnemy):
 		projectile_spell.cast_spell(closestEnemy.global_position)

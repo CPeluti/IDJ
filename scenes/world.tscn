@@ -260,6 +260,7 @@ surface_material_override/0 = ExtResource("11_xo05s")
 
 [node name="Enemy" parent="SubViewport" instance=ExtResource("11_dss4m")]
 transform = Transform3D(2.37, 0, 0, 0, 2.37, 0, 0, 0, 2.37, -10.242359, 1.6118536, 0)
+visible = false
 
 [node name="Display" type="Control" parent="." node_paths=PackedStringArray("viewport")]
 clip_contents = true
